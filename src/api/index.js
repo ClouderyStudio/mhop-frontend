@@ -1,7 +1,11 @@
 import axios from 'axios'
 import { ElMessage } from 'element-plus'
+import { API_BASE_URL, runtimeSummary } from '../config/runtime'
 
-const http = axios.create({ baseURL: '/mhop', timeout: 60000 })
+// 部署排查用：启动时打印一次实际生效的 API 地址及来源
+console.info('[MHOP] ' + runtimeSummary())
+
+const http = axios.create({ baseURL: API_BASE_URL, timeout: 60000 })
 
 http.interceptors.request.use((config) => {
   const token = localStorage.getItem('mhop_token')
