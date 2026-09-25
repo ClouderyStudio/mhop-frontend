@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import http from '../api'
+import { ADMIN_PERMS } from '../utils/permissions'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -8,10 +9,24 @@ export const useAuthStore = defineStore('auth', {
   }),
   getters: {
     isLoggedIn: (s) => !!s.token,
-    isAdmin: (s) => s.user?.role === 'admin',
+    // 后台人员：普通管理员或超级管理员
+    isAdmin: (s) => ['admin', 'superadmin'].includes(s.user?.role),
+    isSuperadmin: (s) => s.user?.role === 'superadmin',
+    // 当前账号拥有的模块权限码（超管隐式全量）
+    permissions: (s) => (s.user?.role === 'superadmin'
+      ? ADMIN_PERMS.map((p) => p.code)
+      : s.user?.permissions || []),
     displayName: (s) => s.user?.username || '',
+    // 登录后第一个可进入的后台模块路径；一个权限都没有时为 null
+    firstAdminPath() {
+      const hit = ADMIN_PERMS.find((p) => this.permissions.includes(p.code))
+      return hit ? hit.path : null
+    },
   },
   actions: {
+    can(perm) {
+      return this.permissions.includes(perm)
+    },
     setAuth(token, user) {
       this.token = token
       this.user = user

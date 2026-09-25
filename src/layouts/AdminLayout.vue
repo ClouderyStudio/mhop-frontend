@@ -33,7 +33,7 @@
         <el-dropdown @command="onCommand">
           <span class="user-trigger">
             <el-icon><Avatar /></el-icon>
-            {{ auth.displayName }}<span class="admin-role">（管理员）</span>
+            {{ auth.displayName }}<span class="admin-role">（{{ auth.isSuperadmin ? '超级管理员' : '管理员' }}）</span>
             <el-icon><ArrowDown /></el-icon>
           </span>
           <template #dropdown>
@@ -71,21 +71,30 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { ADMIN_PERMS } from '../utils/permissions'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const drawer = ref(false)
 
-const menus = [
-  { path: '/admin/dashboard', name: '数据看板', icon: 'DataBoard' },
-  { path: '/admin/review', name: '内容审核', icon: 'Checked' },
-  { path: '/admin/users', name: '用户管理', icon: 'UserFilled' },
-  { path: '/admin/ai-logs', name: 'AI 交互日志', icon: 'MagicStick' },
-]
+// 菜单按被授予的模块权限过滤（超管拥有全部）
+const iconOf = {
+  dashboard: 'DataBoard',
+  review: 'Checked',
+  users: 'UserFilled',
+  ai_logs: 'MagicStick',
+}
+const menus = computed(() =>
+  ADMIN_PERMS.filter((p) => auth.can(p.code)).map((p) => ({
+    path: p.path,
+    name: p.name,
+    icon: iconOf[p.code],
+  }))
+)
 
 function go(path) {
   drawer.value = false
@@ -103,6 +112,8 @@ function onCommand(cmd) {
 <style scoped>
 .admin-shell {
   height: 100vh;
+  /* 支持动态视口的浏览器用 dvh，避免移动端地址栏收起/展开造成底部留白或遮挡 */
+  height: 100dvh;
 }
 .admin-aside {
   background: linear-gradient(180deg, #206b62 0%, #18514b 100%);
@@ -206,10 +217,12 @@ function onCommand(cmd) {
   }
   .admin-header {
     height: 54px !important;
-    padding: 0 12px;
+    padding: env(safe-area-inset-top) calc(12px + env(safe-area-inset-right)) 0
+      calc(12px + env(safe-area-inset-left));
   }
   .admin-main {
-    padding: 14px 10px;
+    padding: 14px calc(10px + env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom))
+      calc(10px + env(safe-area-inset-left));
   }
 }
 </style>

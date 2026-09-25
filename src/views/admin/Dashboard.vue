@@ -67,7 +67,7 @@
 
     <el-card shadow="never" style="margin-top: 18px">
       <template #header><strong>累计数据</strong></template>
-      <el-descriptions :column="4" border>
+      <el-descriptions :column="isMobile ? 1 : 4" border>
         <el-descriptions-item label="注册用户">{{ stats.users ?? 0 }}</el-descriptions-item>
         <el-descriptions-item label="帖子总量">{{ stats.posts ?? 0 }}</el-descriptions-item>
         <el-descriptions-item label="回复总量">{{ stats.replies ?? 0 }}</el-descriptions-item>
@@ -80,7 +80,9 @@
 <script setup>
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 import http from '../../api'
+import { useIsMobile } from '../../utils/useIsMobile'
 
+const isMobile = useIsMobile()
 const stats = ref({})
 const loading = ref(false)
 let timer = null

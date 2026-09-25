@@ -300,6 +300,10 @@ function onCommand(cmd) {
 }
 
 @media (max-width: 760px) {
+  /* 横屏时顶栏避开刘海/状态栏区域 */
+  .nav-header {
+    padding-top: env(safe-area-inset-top);
+  }
   .nav-inner {
     height: 56px;
     gap: 12px;
@@ -328,6 +332,10 @@ function onCommand(cmd) {
   main.mhop-container {
     padding-top: 14px !important;
     padding-bottom: 28px !important;
+  }
+  /* 页脚避开 iPhone 底部横条 */
+  .site-footer {
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
   }
 }
 </style>

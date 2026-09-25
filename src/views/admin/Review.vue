@@ -17,7 +17,37 @@
           <el-radio-button :value="2">已隐藏</el-radio-button>
         </el-radio-group>
 
-        <el-table :data="posts" stripe>
+        <!-- 窄屏：帖子卡片 -->
+        <div v-if="isMobile" class="admin-mobile-list">
+          <div v-for="row in posts" :key="'p' + row.id" class="admin-mobile-card mhop-card">
+            <div class="am-head">
+              <span class="board-chip" :style="chipStyle(row.board)">{{ boardOf(row.board).name }}</span>
+              <el-tag size="small" :type="postStatusType(row.status)" effect="dark">
+                {{ ['待巡检', '正常', '已隐藏'][row.status] }}
+              </el-tag>
+              <span class="am-id">#{{ row.id }} · {{ fmtTime(row.created_at) }}</span>
+            </div>
+            <p class="am-content">{{ row.content }}</p>
+            <div class="am-tags">
+              <el-tag v-if="row.crisis" size="small" type="danger" effect="light">危机信号</el-tag>
+              <el-tag size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain">
+                {{ authorTag(row) }}
+              </el-tag>
+              <el-tag v-if="row.review_note" size="small" type="info" effect="plain">备注：{{ row.review_note }}</el-tag>
+              <span class="am-id" style="margin-left: 0">回应 {{ row.reply_count }}</span>
+            </div>
+            <div class="am-actions">
+              <el-button v-if="row.status !== 1" size="small" type="success" @click="moderate('post', row, 'approve')">标记正常</el-button>
+              <el-button v-if="row.status !== 2" size="small" type="danger" @click="moderate('post', row, 'reject')">隐藏</el-button>
+              <el-button size="small" type="danger" plain @click="removePost(row)">删除</el-button>
+              <el-button size="small" text @click="$router.push(`/forum/${row.id}`)">查看</el-button>
+            </div>
+          </div>
+          <el-empty v-if="!loading && posts.length === 0" description="暂无帖子" />
+        </div>
+
+        <!-- 宽屏：帖子表格 -->
+        <el-table v-else :data="posts" stripe>
           <el-table-column label="内容" min-width="320">
             <template #default="{ row }">
               <p class="cell-content">{{ row.content }}</p>
@@ -73,7 +103,51 @@
           <el-radio-button :value="2">已驳回/拦截</el-radio-button>
         </el-radio-group>
 
-        <el-table :data="replies" stripe>
+        <!-- 窄屏：回复卡片 -->
+        <div v-if="isMobile" class="admin-mobile-list">
+          <div v-for="row in replies" :key="'r' + row.id" class="admin-mobile-card mhop-card">
+            <div class="am-head">
+              <el-tag size="small" :type="replyStatusType(row.status)" effect="dark">
+                {{ ['待审核', '已通过', '已驳回'][row.status] }}
+              </el-tag>
+              <el-tag v-if="row.is_ai" size="small" type="success">AI 回复</el-tag>
+              <span class="am-id">#{{ row.id }} · {{ fmtTime(row.created_at) }}</span>
+            </div>
+            <p class="am-sub">{{ row.post_excerpt }}
+              <el-button link type="primary" size="small" @click="$router.push(`/forum/${row.post_id}`)">
+                打开原帖 #{{ row.post_id }}
+              </el-button>
+            </p>
+            <p class="am-content">{{ row.content }}</p>
+            <div class="am-tags">
+              <el-tag v-if="!row.is_ai" size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain">
+                {{ authorTag(row) }}
+              </el-tag>
+              <el-tag v-if="row.recalled" size="small" type="info" effect="dark">已撤回</el-tag>
+              <el-tag v-if="row.crisis" size="small" type="danger" effect="light">危机信号</el-tag>
+              <el-tag v-if="row.recall_reason" size="small" type="warning" effect="plain">撤回原因：{{ row.recall_reason }}</el-tag>
+              <el-tag v-else-if="row.review_note" size="small" type="info" effect="plain">{{ row.review_note }}</el-tag>
+            </div>
+            <div class="am-actions">
+              <template v-if="!row.is_ai">
+                <el-button v-if="row.status !== 1" size="small" type="success" @click="moderate('reply', row, 'approve')">通过</el-button>
+                <el-button v-if="row.status !== 2" size="small" type="danger" @click="moderate('reply', row, 'reject')">驳回</el-button>
+                <el-button size="small" type="danger" plain @click="removeReply(row)">删除</el-button>
+              </template>
+              <template v-else>
+                <el-button v-if="!row.recalled" size="small" type="danger" plain @click="recallReply(row)">撤回</el-button>
+                <el-button v-else size="small" type="success" plain @click="restoreReply(row)">恢复</el-button>
+                <el-button size="small" type="warning" plain @click="regenerateReply(row)">重新生成</el-button>
+                <el-button size="small" type="danger" plain @click="removeReply(row)">删除</el-button>
+                <el-button size="small" text @click="$router.push(`/forum/${row.post_id}`)">查看</el-button>
+              </template>
+            </div>
+          </div>
+          <el-empty v-if="!loading && replies.length === 0" description="暂无回复" />
+        </div>
+
+        <!-- 宽屏：回复表格 -->
+        <el-table v-else :data="replies" stripe>
           <el-table-column label="所属帖子" width="200">
             <template #default="{ row }">
               <p class="cell-excerpt">{{ row.post_excerpt }}</p>
@@ -143,7 +217,9 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
 import { fmtTime } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
+import { useIsMobile } from '../../utils/useIsMobile'
 
+const isMobile = useIsMobile()
 const tab = ref('posts')
 const postStatus = ref(0)
 const replyStatus = ref(0)

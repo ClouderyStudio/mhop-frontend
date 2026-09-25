@@ -600,8 +600,8 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     position: fixed;
-    right: 18px;
-    bottom: 22px;
+    right: calc(18px + env(safe-area-inset-right));
+    bottom: calc(22px + env(safe-area-inset-bottom));
     width: 54px;
     height: 54px;
     border: none;

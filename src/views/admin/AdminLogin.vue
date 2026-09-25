@@ -27,13 +27,14 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
 
 const router = useRouter()
+const route = useRoute()
 const auth = useAuthStore()
 const formRef = ref()
 const loading = ref(false)
@@ -43,18 +44,30 @@ const rules = {
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
 }
 
+onMounted(() => {
+  if (route.query.reason === 'no-permission') {
+    ElMessage.warning('该账号未被授予任何后台模块权限，请联系超级管理员')
+  }
+})
+
 async function submit() {
   await formRef.value.validate()
   loading.value = true
   try {
     const user = await auth.login(form.value.username.trim(), form.value.password)
-    if (user.role !== 'admin') {
+    if (!['admin', 'superadmin'].includes(user.role)) {
       ElMessage.error('该账号不是管理员')
       auth.logout()
       return
     }
+    const target = auth.firstAdminPath
+    if (!target) {
+      ElMessage.error('该管理员账号尚未被授予任何后台模块权限，请联系超级管理员')
+      auth.logout()
+      return
+    }
     ElMessage.success('登录成功')
-    router.push('/admin/dashboard')
+    router.push(target)
   } finally {
     loading.value = false
   }

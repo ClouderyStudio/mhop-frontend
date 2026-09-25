@@ -1,7 +1,43 @@
 <template>
   <div v-loading="loading">
     <h2 class="page-title">AI 交互日志</h2>
-    <el-card shadow="never">
+
+    <!-- 窄屏：卡片列表 -->
+    <div v-if="isMobile" class="admin-mobile-list">
+      <div v-for="row in logs" :key="row.id" class="admin-mobile-card mhop-card">
+        <div class="am-head">
+          <el-tag :type="row.module === 'forum' ? 'success' : 'warning'" effect="plain" size="small">
+            {{ row.module === 'forum' ? '论坛自动回复' : '心理评估' }}
+          </el-tag>
+          <el-tag :type="row.engine === 'llm' ? 'primary' : 'info'" size="small" effect="dark">
+            {{ row.engine === 'llm' ? '大模型' : '本地兜底' }}
+          </el-tag>
+          <el-tag v-if="row.recalled" type="info" effect="dark" size="small">已撤回</el-tag>
+          <span class="am-id">{{ fmtTime(row.created_at) }}</span>
+        </div>
+        <div class="am-meta">
+          <div class="am-row"><span class="am-label">用户输入</span><p class="am-value am-content">{{ row.prompt }}</p></div>
+          <div class="am-row">
+            <span class="am-label">AI 输出</span>
+            <div class="am-value">
+              <el-tag v-if="row.recall_reason" type="warning" effect="plain" size="small" style="margin-bottom: 4px">
+                {{ row.recall_reason }}
+              </el-tag>
+              <p class="am-content" :class="{ 'is-recalled': row.recalled }">{{ row.response }}</p>
+            </div>
+          </div>
+        </div>
+        <div v-if="canRecall(row)" class="am-actions">
+          <el-button v-if="!row.recalled" size="small" type="danger" plain @click="recall(row)">撤回</el-button>
+          <el-button v-else size="small" type="success" plain @click="restore(row)">恢复</el-button>
+          <el-button size="small" text @click="router.push(`/forum/${row.post_id}`)">查看</el-button>
+        </div>
+      </div>
+      <el-empty v-if="!loading && logs.length === 0" description="暂无日志" />
+    </div>
+
+    <!-- 宽屏：表格 -->
+    <el-card v-else shadow="never">
       <el-table :data="logs" stripe>
         <el-table-column label="模块" min-width="110">
           <template #default="{ row }">
@@ -57,7 +93,9 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
 import { fmtTime } from '../../utils/format'
+import { useIsMobile } from '../../utils/useIsMobile'
 
+const isMobile = useIsMobile()
 const router = useRouter()
 const logs = ref([])
 const loading = ref(false)
@@ -132,7 +170,8 @@ onMounted(loadLogs)
   overflow: hidden;
   white-space: pre-wrap;
 }
-.cell-text.is-recalled {
+.cell-text.is-recalled,
+.am-content.is-recalled {
   color: var(--mhop-text-sub);
 }
 .recalled-line {
