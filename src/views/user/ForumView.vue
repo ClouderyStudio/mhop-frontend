@@ -54,13 +54,13 @@
       <div class="topic-list mhop-card" v-loading="loading">
         <div v-for="p in posts" :key="p.id" class="topic-row" @click="router.push(`/forum/${p.id}`)">
           <span class="t-avatar">
-            <img v-if="p.author_avatar" :src="p.author_avatar" class="t-avatar-img" />
+            <img v-if="p.author_avatar" :src="assetUrl(p.author_avatar)" class="t-avatar-img" />
             <el-icon v-else><User /></el-icon>
           </span>
           <div class="t-main">
             <p class="t-title">{{ firstLine(p.content) }}</p>
             <div v-if="p.images?.length" class="t-thumbs">
-              <img v-for="(img, i) in p.images.slice(0, 3)" :key="i" :src="img" class="t-thumb" />
+              <img v-for="(img, i) in p.images.slice(0, 3)" :key="i" :src="assetUrl(img)" class="t-thumb" />
               <span v-if="p.images.length > 3" class="t-thumb-more">+{{ p.images.length - 3 }}</span>
             </div>
             <p class="t-excerpt">{{ p.content }}</p>
@@ -128,7 +128,7 @@
       <div class="post-images">
         <div class="img-thumbs">
           <div v-for="(img, i) in form.images" :key="i" class="img-thumb">
-            <img :src="img" />
+            <img :src="assetUrl(img)" />
             <span class="img-remove" @click="form.images.splice(i, 1)">&times;</span>
           </div>
           <button v-if="form.images.length < 9" class="img-add" @click="pickImage" type="button">
@@ -169,6 +169,7 @@ import { hasCrisisHint } from '../../utils/crisis'
 import { fromNow } from '../../utils/format'
 import { BOARDS, boardOf } from '../../utils/boards'
 import MdComposer from '../../components/MdComposer.vue'
+import { assetUrl } from '../../utils/asset'
 
 const router = useRouter()
 const auth = useAuthStore()

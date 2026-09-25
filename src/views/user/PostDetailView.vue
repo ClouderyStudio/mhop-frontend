@@ -27,7 +27,7 @@
           <section ref="topRef" class="floor mhop-card">
             <div class="floor-side">
               <span class="f-avatar">
-                <img v-if="post.author_avatar" :src="post.author_avatar" class="f-avatar-img" />
+                <img v-if="post.author_avatar" :src="assetUrl(post.author_avatar)" class="f-avatar-img" />
                 <el-icon v-else><User /></el-icon>
               </span>
               <span class="floor-no">#楼主</span>
@@ -49,7 +49,7 @@
               />
               <div class="md-body floor-content" v-html="renderMarkdown(post.content)"></div>
               <div v-if="post.images?.length" class="floor-images">
-                <img v-for="(img, i) in post.images" :key="i" :src="img" class="floor-img" @click="previewImage(img)" />
+                <img v-for="(img, i) in post.images" :key="i" :src="assetUrl(img)" class="floor-img" @click="previewImage(img)" />
               </div>
               <div class="floor-actions">
                 <button class="act-like" :class="{ on: post.liked }" @click="likeTarget('post', post)">
@@ -77,7 +77,7 @@
               :class="['floor', r.is_ai ? 'ai-floor' : 'mhop-card', { recalled: r.recalled }]">
               <div class="floor-side">
                 <span class="f-avatar" :class="{ ai: r.is_ai, recalled: r.recalled }">
-                  <img v-if="r.author_avatar && !r.is_ai" :src="r.author_avatar" class="f-avatar-img" />
+                  <img v-if="r.author_avatar && !r.is_ai" :src="assetUrl(r.author_avatar)" class="f-avatar-img" />
                   <el-icon v-else><component :is="r.is_ai ? 'MagicStick' : 'User'" /></el-icon>
                 </span>
                 <span class="floor-no">#{{ idx + 1 }}</span>
@@ -116,7 +116,7 @@
                   </div>
                   <div class="md-body floor-content" v-html="renderMarkdown(r.content)"></div>
                   <div v-if="r.images?.length" class="floor-images">
-                    <img v-for="(img, i) in r.images" :key="i" :src="img" class="floor-img" @click="previewImage(img)" />
+                    <img v-for="(img, i) in r.images" :key="i" :src="assetUrl(img)" class="floor-img" @click="previewImage(img)" />
                   </div>
                   <div class="floor-actions">
                     <button class="act-like" :class="{ on: r.liked }" @click="likeTarget('reply', r)">
@@ -167,7 +167,7 @@
             <div class="reply-images" v-if="replyImages.length || auth.isLoggedIn">
               <div class="img-thumbs">
                 <div v-for="(img, i) in replyImages" :key="i" class="img-thumb">
-                  <img :src="img" />
+                  <img :src="assetUrl(img)" />
                   <span class="img-remove" @click="replyImages.splice(i, 1)">&times;</span>
                 </div>
                 <button v-if="replyImages.length < 9 && auth.isLoggedIn" class="img-add" @click="replyImageInput?.click()" type="button">
@@ -222,6 +222,7 @@ import { fmtTime, fromNow } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { renderMarkdown } from '../../utils/markdown'
 import MdComposer from '../../components/MdComposer.vue'
+import { assetUrl } from '../../utils/asset'
 
 const route = useRoute()
 const router = useRouter()

@@ -22,7 +22,7 @@
           <template v-if="auth.isLoggedIn">
             <el-dropdown @command="onCommand" class="user-dropdown">
               <span class="user-trigger">
-                <img v-if="auth.user?.avatar" :src="auth.user.avatar" class="nav-avatar" />
+                <img v-if="auth.user?.avatar" :src="assetUrl(auth.user.avatar)" class="nav-avatar" />
                 <el-icon v-else><UserFilled /></el-icon>
                 {{ auth.displayName }}
                 <el-icon><ArrowDown /></el-icon>
@@ -117,6 +117,7 @@ import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
 import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
+import { assetUrl } from '../utils/asset'
 
 const router = useRouter()
 const auth = useAuthStore()

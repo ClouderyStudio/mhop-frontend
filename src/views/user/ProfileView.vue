@@ -5,7 +5,7 @@
       <div class="profile-body">
         <div class="avatar-section">
           <div class="avatar-wrap" @click="pickAvatar">
-            <img v-if="avatarUrl" :src="avatarUrl" class="avatar-img" alt="头像" />
+            <img v-if="avatarUrl" :src="assetUrl(avatarUrl)" class="avatar-img" alt="头像" />
             <span v-else class="avatar-placeholder">{{ form.username.charAt(0).toUpperCase() }}</span>
             <span class="avatar-overlay">更换</span>
           </div>
@@ -76,7 +76,7 @@
             <div class="manage-body">{{ p.content }}</div>
             <div v-if="p.status === 2 && p.review_note" class="reject-note">驳回原因：{{ p.review_note }}</div>
             <div v-if="p.images && p.images.length" class="img-strip">
-              <img v-for="u in p.images" :key="u" :src="u" />
+              <img v-for="u in p.images" :key="u" :src="assetUrl(u)" />
             </div>
             <div class="manage-meta">回复 {{ p.reply_count }} · 浏览 {{ p.view_count }} · 获赞 {{ p.like_count }}</div>
             <div class="manage-actions">
@@ -114,7 +114,7 @@
             <div class="manage-body">{{ r.content }}</div>
             <div v-if="r.status === 2 && r.review_note" class="reject-note">驳回原因：{{ r.review_note }}</div>
             <div v-if="r.images && r.images.length" class="img-strip">
-              <img v-for="u in r.images" :key="u" :src="u" />
+              <img v-for="u in r.images" :key="u" :src="assetUrl(u)" />
             </div>
             <div class="manage-meta">
               获赞 {{ r.like_count }}
@@ -151,7 +151,7 @@
         <el-form-item :label="'图片（最多 9 张，已选 ' + editForm.images.length + '）'">
           <div class="img-grid">
             <div v-for="(u, i) in editForm.images" :key="u" class="img-cell">
-              <img :src="u" />
+              <img :src="assetUrl(u)" />
               <span class="img-del" @click="editForm.images.splice(i, 1)">×</span>
             </div>
             <label v-if="editForm.images.length < 9" class="img-add">
@@ -181,6 +181,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
 import { useAuthStore } from '../../stores/auth'
 import { BOARDS, boardOf } from '../../utils/boards'
+import { assetUrl } from '../../utils/asset'
 
 const auth = useAuthStore()
 const form = ref({ username: '' })
