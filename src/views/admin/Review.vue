@@ -44,7 +44,7 @@
           <el-table-column label="发布时间" width="165">
             <template #default="{ row }">{{ fmtTime(row.created_at) }}</template>
           </el-table-column>
-          <el-table-column label="操作" width="190" fixed="right">
+          <el-table-column label="操作" width="260" fixed="right">
             <template #default="{ row }">
               <el-button v-if="row.status !== 1" size="small" type="success" @click="moderate('post', row, 'approve')">
                 标记正常
@@ -52,6 +52,7 @@
               <el-button v-if="row.status !== 2" size="small" type="danger" @click="moderate('post', row, 'reject')">
                 隐藏
               </el-button>
+              <el-button size="small" type="danger" plain @click="removePost(row)">删除</el-button>
               <el-button size="small" text @click="$router.push(`/forum/${row.id}`)">查看</el-button>
             </template>
           </el-table-column>
@@ -117,12 +118,15 @@
                   @click="moderate('reply', row, 'approve')">通过</el-button>
                 <el-button v-if="row.status !== 2" size="small" type="danger"
                   @click="moderate('reply', row, 'reject')">驳回</el-button>
+                <el-button size="small" type="danger" plain @click="removeReply(row)">删除</el-button>
               </template>
               <template v-else>
                 <el-button v-if="!row.recalled" size="small" type="danger" plain
                   @click="recallReply(row)">撤回</el-button>
                 <el-button v-else size="small" type="success" plain
                   @click="restoreReply(row)">恢复</el-button>
+                <el-button size="small" type="warning" plain @click="regenerateReply(row)">重新生成</el-button>
+                <el-button size="small" type="danger" plain @click="removeReply(row)">删除</el-button>
                 <el-button size="small" text @click="$router.push(`/forum/${row.post_id}`)">查看</el-button>
               </template>
             </template>
@@ -246,6 +250,52 @@ async function restoreReply(row) {
     ElMessage.success('已恢复展示')
     reload()
   } catch (e) {
+    /* 用户取消 */
+  }
+}
+
+async function removePost(row) {
+  try {
+    await ElMessageBox.confirm(
+      '确定删除帖子 #' + row.id + ' 吗？将同时删除其 ' + (row.reply_count || 0) +
+        ' 条回复、相关点赞与图片，操作不可恢复。',
+      '删除帖子',
+      { type: 'error', confirmButtonText: '确认删除' }
+    )
+    const res = await http.delete('/admin/posts/' + row.id)
+    ElMessage.success('已删除，连带 ' + res.deleted_replies + ' 条回复')
+    reload()
+  } catch {
+    /* 用户取消 */
+  }
+}
+
+async function removeReply(row) {
+  try {
+    await ElMessageBox.confirm(
+      '确定删除回复 #' + row.id + ' 吗？相关点赞、AI 日志与图片会一并清理，操作不可恢复。',
+      row.is_ai ? '删除 AI 回复' : '删除回复',
+      { type: 'error', confirmButtonText: '确认删除' }
+    )
+    await http.delete('/admin/replies/' + row.id)
+    ElMessage.success('已删除')
+    reload()
+  } catch {
+    /* 用户取消 */
+  }
+}
+
+async function regenerateReply(row) {
+  try {
+    await ElMessageBox.confirm(
+      '重新生成帖子 #' + row.post_id + ' 的 AI 自动回复？现有 AI 回复会被替换，并重新调用一次大模型。',
+      '重新生成 AI 回复',
+      { type: 'warning', confirmButtonText: '确认重新生成' }
+    )
+    await http.post('/admin/posts/' + row.post_id + '/ai-reply/regenerate')
+    ElMessage.success('已重新生成')
+    reload()
+  } catch {
     /* 用户取消 */
   }
 }

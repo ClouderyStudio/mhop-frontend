@@ -36,15 +36,22 @@
             />
           </template>
         </el-table-column>
+        <el-table-column label="内容" width="130">
+          <template #default="{ row }">
+            <span class="count-chip">帖子 {{ row.post_count ?? 0 }}</span>
+            <span class="count-chip">回复 {{ row.reply_count ?? 0 }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="注册时间" min-width="170">
           <template #default="{ row }">{{ fmtTime(row.created_at) }}</template>
         </el-table-column>
-        <el-table-column label="操作" min-width="280" fixed="right">
+        <el-table-column label="操作" min-width="350" fixed="right">
           <template #default="{ row }">
             <el-button size="small" @click="openBadgeDialog(row)">标识</el-button>
             <el-button v-if="row.role !== 'admin'" size="small" type="warning" plain @click="promote(row)">设为管理员</el-button>
             <el-button v-else-if="row.id !== auth.user?.id" size="small" type="info" plain @click="demote(row)">取消管理员</el-button>
             <el-button size="small" @click="openResetDialog(row)">重置密码</el-button>
+            <el-button v-if="row.id !== auth.user?.id" size="small" type="danger" plain @click="removeUser(row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -174,6 +181,24 @@ async function saveReset() {
   }
 }
 
+async function removeUser(row) {
+  const posts = row.post_count ?? 0
+  const replies = row.reply_count ?? 0
+  try {
+    await ElMessageBox.confirm(
+      '确定删除用户「' + row.username + '」吗？将同时删除该用户的 ' + posts + ' 篇帖子、' + replies +
+        ' 条回复，以及相关点赞、图片与 AI 日志，操作不可恢复。',
+      '删除用户',
+      { type: 'error', confirmButtonText: '确认删除' }
+    )
+    const res = await http.delete('/admin/users/' + row.id)
+    ElMessage.success('已删除，连带 ' + res.deleted_posts + ' 篇帖子、' + res.deleted_replies + ' 条回复')
+    load()
+  } catch {
+    /* 用户取消 */
+  }
+}
+
 onMounted(load)
 </script>
 
@@ -181,5 +206,11 @@ onMounted(load)
 .page-title {
   margin: 0 0 14px;
   font-size: 20px;
+}
+.count-chip {
+  display: inline-block;
+  margin-right: 6px;
+  font-size: 12px;
+  color: var(--mhop-text-sub);
 }
 </style>
