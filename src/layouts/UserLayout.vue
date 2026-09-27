@@ -87,8 +87,6 @@
       </div>
     </el-drawer>
 
-    <EmergencyBanner />
-
     <main class="mhop-container" style="flex: 1; width: 100%; padding-top: 22px; padding-bottom: 40px">
       <router-view v-slot="{ Component }">
         <transition name="page-fade" mode="out-in">
@@ -105,6 +103,10 @@
           <br />紧急情况请立即拨打 12356 / 010-82951332 / 110 / 120。
           <router-link to="/admin/login" style="margin-left: 8px">运营入口</router-link>
         </p>
+      </div>
+      <!-- 紧急热线横幅：从顶部移至页脚最底部，限宽收窄，不干扰正常浏览 -->
+      <div class="mhop-container footer-hotline">
+        <EmergencyBanner />
       </div>
     </footer>
   </div>

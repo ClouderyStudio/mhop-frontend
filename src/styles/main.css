@@ -92,10 +92,36 @@ img {
   line-height: 1.85;
 }
 
-/* ---------- 紧急援助横幅 ---------- */
+/* ---------- 紧急援助横幅（置于页脚最底部，展开面板朝上） ---------- */
 .emergency-banner {
+  display: flex;
+  flex-direction: column;
   background: linear-gradient(100deg, #d83a2e 0%, #e8502f 45%, #f4713f 100%);
   color: #fff;
+}
+
+/* 页脚场景：限宽居中、圆角收窄，降低视觉存在感，但危机时仍可找到 */
+.footer-hotline {
+  margin-top: 14px;
+}
+.footer-hotline .emergency-banner {
+  max-width: 720px;
+  margin: 0 auto;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.footer-hotline .emergency-bar {
+  padding: 8px 18px;
+}
+.footer-hotline .emergency-title {
+  font-size: 13.5px;
+}
+.footer-hotline .emergency-main-phone {
+  font-size: 15px;
+  padding: 1px 9px;
+}
+.footer-hotline .emergency-toggle {
+  font-size: 12.5px;
 }
 
 .emergency-bar {
@@ -149,7 +175,8 @@ img {
 }
 
 .emergency-detail {
-  padding: 4px 20px 16px;
+  order: -1; /* 展开的热线卡片出现在横条上方（横幅位于页脚，朝下会超出视口） */
+  padding: 14px 20px 4px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 12px;
@@ -422,7 +449,7 @@ img {
     width: 100%;
   }
   .emergency-detail {
-    padding: 4px 12px 14px;
+    padding: 14px 12px 4px;
     grid-template-columns: 1fr;
   }
 
