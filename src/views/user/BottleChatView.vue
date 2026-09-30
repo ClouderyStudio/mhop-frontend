@@ -12,16 +12,16 @@
       <div class="header-actions">
         <el-tag v-if="detail && isActive" size="small" type="success" effect="light">对话中</el-tag>
         <el-button text type="danger" :disabled="!detail || !isActive" @click="askEnd">
-          <el-icon><SwitchButton /></el-icon> 结束对话
+          <el-icon><SwitchButton /></el-icon><span class="btn-label">结束对话</span>
         </el-button>
         <el-button text :disabled="!detail || detail.status === 4" @click="reportDialog = true">
-          <el-icon><Warning /></el-icon> 举报
+          <el-icon><Warning /></el-icon><span class="btn-label">举报</span>
         </el-button>
       </div>
     </div>
 
-    <!-- 危机横幅 -->
-    <div v-if="detail?.crisis" class="crisis-banner">
+    <!-- 危机横幅（瓶身或任一条消息命中危机词时展示） -->
+    <div v-if="crisisActive" class="crisis-banner">
       <el-icon><WarningFilled /></el-icon>
       <span>如果你正出现伤害自己的念头，请立即拨打全国心理援助热线 <strong>12356</strong>（24 小时），你不是一个人。</span>
     </div>
@@ -142,6 +142,10 @@ let pollTimer = null
 const iAmThrower = computed(() => detail.value?.role === 'thrower')
 const otherName = computed(() => (iAmThrower.value ? '捞瓶人' : '扔瓶人'))
 const isActive = computed(() => detail.value?.status === BOTTLE_STATUS.PICKED)
+// 瓶身或任意可见消息命中危机词，即展示热线横幅
+const crisisActive = computed(() =>
+  Boolean(detail.value?.crisis || detail.value?.messages?.some((m) => m.crisis))
+)
 
 async function loadDetail(markRead) {
   try {
@@ -496,6 +500,16 @@ onUnmounted(() => {
   .composer {
     padding: 10px;
     bottom: 6px;
+  }
+}
+
+/* 390px 级窄屏：顶栏操作按钮仅保留图标，避免挤压换行 */
+@media (max-width: 420px) {
+  .header-actions .btn-label {
+    display: none;
+  }
+  .header-actions .el-button {
+    padding: 6px;
   }
 }
 </style>
