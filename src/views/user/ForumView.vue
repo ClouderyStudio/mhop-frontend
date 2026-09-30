@@ -58,12 +58,12 @@
             <el-icon v-else><User /></el-icon>
           </span>
           <div class="t-main">
-            <p class="t-title">{{ postTitle(p) }}</p>
+            <p class="t-title">{{ firstLine(p.content) }}</p>
             <div v-if="p.images?.length" class="t-thumbs">
               <img v-for="(img, i) in p.images.slice(0, 3)" :key="i" :src="assetUrl(img)" class="t-thumb" />
               <span v-if="p.images.length > 3" class="t-thumb-more">+{{ p.images.length - 3 }}</span>
             </div>
-            <p class="t-excerpt">{{ excerpt(p.content, 120) }}</p>
+            <p class="t-excerpt">{{ p.content }}</p>
             <div class="t-tags">
               <span class="board-chip" :style="chipStyle(p.board)">{{ boardOf(p.board).name }}</span>
               <el-tag v-if="p.crisis" size="small" type="danger" effect="light">危机</el-tag>
@@ -117,13 +117,11 @@
         <span class="desc-dot" :style="{ background: boardOf(form.board).color }" />
         {{ boardOf(form.board).desc }}
       </p>
-      <el-input v-model="form.title" class="post-title-input" maxlength="50" show-word-limit
-        placeholder="标题（必填，1-50 字）" />
       <MdComposer
         v-model="form.content"
         :rows="5"
         :maxlength="2000"
-        placeholder="正文…支持 Markdown 语法"
+        placeholder="我在这里，你可以放心说。发布后 AI 心理助手会立刻回应你……"
       />
       <p class="text-sub" style="font-size: 12.5px; margin-top: 6px">登录后可发帖，提交后需管理员审核通过才公开展示。</p>
       <!-- 图片上传 -->
@@ -189,20 +187,13 @@ const board = ref('')
 const sort = ref('latest')
 
 const composerVisible = ref(false)
-const form = ref({ board: 'mood', title: '', content: '', is_anonymous: true, images: [] })
+const form = ref({ board: 'mood', content: '', is_anonymous: true, images: [] })
 const submitting = ref(false)
 const imageInput = ref(null)
 const crisis = computed(() => hasCrisisHint(form.value.content))
 
-function postTitle(p) {
-  const t = (p?.title || '').trim()
-  if (t) return t
-  const first = (p?.content || '').split('\n').find((l) => l.trim()) || ''
-  return first.length > 50 ? `${first.slice(0, 50)}…` : first
-}
-function excerpt(content, max) {
-  const c = (content || '').replace(/\n/g, ' ').trim()
-  return c.length > max ? `${c.slice(0, max)}…` : c
+function firstLine(content) {
+  return (content || '').split('\n').find((l) => l.trim()) || '（无内容）'
 }
 function fmtK(n) {
   if (n == null) return 0
@@ -288,32 +279,22 @@ async function ensureCanPost() {
 
 async function openComposer() {
   if (!await ensureCanPost()) return
-  form.value = { board: board.value || 'mood', title: '', content: '', is_anonymous: true, images: [] }
+  form.value = { board: board.value || 'mood', content: '', is_anonymous: true, images: [] }
   composerVisible.value = true
 }
 function resetForm() {
-  form.value = { board: 'mood', title: '', content: '', is_anonymous: true, images: [] }
+  form.value = { board: 'mood', content: '', is_anonymous: true, images: [] }
 }
 
 async function submit() {
-  const title = form.value.title.trim()
-  if (!title) {
-    ElMessage.warning('请填写标题')
-    return
-  }
-  if (title.length > 50) {
-    ElMessage.warning('标题最多 50 字')
-    return
-  }
   const content = form.value.content.trim()
   if (!content) {
-    ElMessage.warning('先写点正文吧')
+    ElMessage.warning('先写点什么吧')
     return
   }
   submitting.value = true
   try {
     const post = await http.post('/forum/posts', {
-      title,
       content,
       is_anonymous: form.value.is_anonymous,
       board: form.value.board,
@@ -525,14 +506,6 @@ onMounted(() => {
 }
 .crisis-alert {
   margin-top: 12px;
-}
-.post-title-input {
-  margin-bottom: 10px;
-  font-size: 15px;
-  font-weight: 600;
-}
-.post-title-input :deep(.el-input__wrapper) {
-  padding: 6px 12px;
 }
 .composer-foot {
   display: flex;

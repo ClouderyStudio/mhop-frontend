@@ -244,8 +244,6 @@ let timer = null
 const aiReady = computed(() => post.value?.replies?.some((r) => r.is_ai))
 const replyCrisis = computed(() => hasCrisisHint(draft.value))
 const titleText = computed(() => {
-  const title = (post.value?.title || '').trim()
-  if (title) return title
   const first = (post.value?.content || '').split('\n').find((l) => l.trim()) || ''
   return first.length > 40 ? `${first.slice(0, 40)}…` : first
 })

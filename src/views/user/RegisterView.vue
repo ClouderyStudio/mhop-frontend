@@ -92,12 +92,6 @@ async function submit() {
   color: var(--mhop-teal);
   font-weight: 600;
 }
-.pwd-hint {
-  font-size: 12px;
-  color: var(--mhop-text-sub);
-  margin-top: 4px;
-  line-height: 1.6;
-}
 @media (max-width: 640px) {
   .auth-wrap {
     margin: 20px auto;
