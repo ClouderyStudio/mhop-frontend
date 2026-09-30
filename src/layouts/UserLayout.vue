@@ -12,6 +12,12 @@
         <nav class="nav-links">
           <router-link to="/">首页</router-link>
           <router-link v-if="auth.isLoggedIn" to="/forum">互助论坛</router-link>
+          <router-link v-if="auth.isLoggedIn" to="/bottles" class="bottle-link">
+            漂流瓶
+            <span v-if="bottleStore.unreadTotal > 0" class="bottle-badge">
+              {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
+            </span>
+          </router-link>
           <router-link v-if="auth.isLoggedIn" to="/assessment">AI 心理评估</router-link>
         </nav>
         <div class="nav-right">
@@ -67,6 +73,12 @@
       <nav class="drawer-links" @click="drawer = false">
         <router-link to="/"><el-icon><HomeFilled /></el-icon> 首页</router-link>
         <router-link v-if="auth.isLoggedIn" to="/forum"><el-icon><ChatLineSquare /></el-icon> 互助论坛</router-link>
+        <router-link v-if="auth.isLoggedIn" to="/bottles">
+          <el-icon><Promotion /></el-icon> 漂流瓶
+          <span v-if="bottleStore.unreadTotal > 0" class="drawer-badge">
+            {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
+          </span>
+        </router-link>
         <router-link v-if="auth.isLoggedIn" to="/assessment"><el-icon><DataAnalysis /></el-icon> AI 心理评估</router-link>
         <router-link v-if="auth.isLoggedIn" to="/profile"><el-icon><User /></el-icon> 个人主页</router-link>
       </nav>
@@ -113,18 +125,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
 import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
+import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
 
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
+const bottleStore = useBottleStore()
 const drawer = ref(false)
+let bottleTimer = null
+
+onMounted(() => {
+  if (!auth.isLoggedIn) return
+  // 拉取我的瓶子摘要（导航未读角标），之后每 60 秒静默刷新
+  bottleStore.refresh(true)
+  bottleTimer = window.setInterval(() => bottleStore.refresh(true), 60000)
+})
+
+onUnmounted(() => {
+  if (bottleTimer) window.clearInterval(bottleTimer)
+})
 
 function go(path) {
   drawer.value = false
@@ -206,6 +232,36 @@ function onCommand(cmd) {
   color: var(--mhop-teal);
   font-weight: 600;
   border-bottom-color: var(--mhop-teal);
+}
+.bottle-link {
+  position: relative;
+}
+.bottle-badge {
+  position: absolute;
+  top: -6px;
+  right: -16px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: #e26d5a;
+  color: #fff;
+  font-size: 10.5px;
+  line-height: 17px;
+  text-align: center;
+  font-weight: 600;
+}
+.drawer-badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #e26d5a;
+  color: #fff;
+  font-size: 11.5px;
+  line-height: 20px;
+  text-align: center;
 }
 .nav-right {
   margin-left: auto;

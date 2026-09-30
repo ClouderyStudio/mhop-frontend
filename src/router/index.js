@@ -27,6 +27,7 @@ const routes = [
       { path: 'review', name: 'admin-review', component: () => import('../views/admin/Review.vue'), meta: { perm: 'review' } },
       { path: 'users', name: 'admin-users', component: () => import('../views/admin/Users.vue'), meta: { perm: 'users' } },
       { path: 'ai-logs', name: 'admin-logs', component: () => import('../views/admin/AiLogs.vue'), meta: { perm: 'ai_logs' } },
+      { path: 'bottles', name: 'admin-bottles', component: () => import('../views/admin/BottleReview.vue'), meta: { perm: 'bottles' } },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

@@ -39,6 +39,11 @@
         <h3>互助论坛</h3>
         <p class="text-sub">匿名说出困扰，AI 即时回应，社区温暖陪伴，管理员持续巡检。</p>
       </router-link>
+      <router-link to="/bottles" class="feature-card mhop-card">
+        <span class="feature-icon" style="background: #e8f1fb; color: #3a78c2"><el-icon :size="26"><Promotion /></el-icon></span>
+        <h3>漂流瓶</h3>
+        <p class="text-sub">把心事封进瓶子投入大海，被一位陌生人捞起后，开始一段匿名的持续对话。</p>
+      </router-link>
       <router-link to="/assessment" class="feature-card mhop-card">
         <span class="feature-icon" style="background: #fdf3e7; color: #d98a2b"><el-icon :size="26"><DocumentChecked /></el-icon></span>
         <h3>AI 心理评估</h3>
@@ -179,7 +184,7 @@ function goHotline() {
 }
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
   gap: 18px;
   margin-top: 22px;
 }
