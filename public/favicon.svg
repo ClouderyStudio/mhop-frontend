@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 心光 MHOP 网站 favicon：M 形 teal 山峰 + 白色太阳 + 心形，与 Android App 图标同源 -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 108 108" width="108" height="108">
+    <!-- 米白底 -->
+    <rect x="0" y="0" width="108" height="108" fill="#F5F2EA" />
+
+    <!-- 后山（深 teal） -->
+    <path fill="#1A6B62" d="M10,98 C16,66 14,38 22,28 C30,22 40,32 54,48 C68,32 78,22 86,28 C94,38 92,66 98,98 Z" />
+
+    <!-- 前山（主题 teal） -->
+    <path fill="#2F8F83" d="M10,98 C24,78 34,64 54,58 C74,64 84,78 98,98 Z" />
+
+    <!-- 最前山（薄荷绿） -->
+    <path fill="#5EAAA1" d="M10,98 C22,92 38,86 54,82 C70,86 86,92 98,98 Z" />
+
+    <!-- 白色太阳 -->
+    <circle cx="54" cy="52" r="12" fill="#FFFFFF" />
+
+    <!-- 白色心形 -->
+    <path fill="#FFFFFF" d="M54,80 C49,74 40,78 43,86 C46,92 54,98 54,98 C54,98 62,92 65,86 C68,78 59,74 54,80 Z" />
+</svg>
