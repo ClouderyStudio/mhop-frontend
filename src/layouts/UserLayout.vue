@@ -1,5 +1,5 @@
 <template>
-  <div class="app-shell" style="min-height: 100vh; display: flex; flex-direction: column">
+  <div class="app-shell" :class="{ 'has-tabbar': auth.isLoggedIn }" style="min-height: 100vh; display: flex; flex-direction: column">
     <header class="nav-header">
       <div class="mhop-container nav-inner">
         <router-link to="/" class="brand">
@@ -122,8 +122,8 @@
       </div>
     </footer>
 
-    <!-- 移动端底部导航（≤760px 显示，桌面端隐藏） -->
-    <nav class="mobile-tabbar" aria-label="主导航">
+    <!-- 移动端底部导航：≤760px 且已登录时显示；未登录移动端靠顶栏/汉堡 -->
+    <nav class="mobile-tabbar" v-if="auth.isLoggedIn" aria-label="主导航">
       <router-link to="/" class="tb-item" :class="{ active: tabActive('/') }">
         <el-icon :size="22"><HomeFilled /></el-icon>
         <span>首页</span>
@@ -461,8 +461,8 @@ function onCommand(cmd) {
     padding-top: 14px !important;
     padding-bottom: 20px !important;
   }
-  /* 为固定底栏让出空间（含 iPhone 底部横条） */
-  .app-shell {
+  /* 已登录才为固定底栏让出空间（含 iPhone 底部横条），未登录移动端无死区 */
+  .app-shell.has-tabbar {
     padding-bottom: calc(60px + env(safe-area-inset-bottom));
   }
   .site-footer {
