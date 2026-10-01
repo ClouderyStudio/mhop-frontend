@@ -15,7 +15,7 @@
                 {{ boardOf(post.board).name }}
               </span>
               <el-tag v-if="post.crisis" size="small" type="danger" effect="dark">危机关注</el-tag>
-              <el-tag v-if="post.status === 0" size="small" type="warning" effect="plain">巡检中</el-tag>
+              <el-tag v-if="post.status === 0" size="small" type="warning" effect="plain">AI 审核中</el-tag>
             </div>
             <h1>{{ titleText }}</h1>
             <p class="hero-meta">
@@ -136,7 +136,7 @@
               <div class="floor-body">
                 <div class="floor-head">
                   <strong>我的回复</strong>
-                  <el-tag size="small" type="warning" effect="plain">审核通过后公开展示</el-tag>
+                  <el-tag size="small" type="warning" effect="plain">AI 审核中</el-tag>
                 </div>
                 <div class="md-body floor-content" v-html="renderMarkdown(r.content)"></div>
               </div>
@@ -149,7 +149,7 @@
           <!-- 回复框 -->
           <section class="mhop-card reply-composer">
             <h4>我想回应 TA</h4>
-            <p class="text-sub tip">登录后可回复，提交后需管理员审核通过才公开展示；支持 Markdown 排版，请避免评判、说教或提供伤害方法。</p>
+            <p class="text-sub tip">登录后可回复，提交后先由 AI 审核，通过后自动公开；支持 Markdown 排版，请避免评判、说教或提供伤害方法。</p>
             <MdComposer
               v-model="draft"
               :rows="4"
@@ -347,7 +347,7 @@ async function submit() {
     if (reply.status === 2) {
       ElMessage.error('回复含违规内容，已被系统拦截')
     } else {
-      ElMessage.success('回复已提交，审核通过后将公开展示')
+      ElMessage.success('已提交，AI 审核通过后将自动公开')
       myPending.value.unshift({ id: reply.id, content, created_at: new Date().toISOString() })
       await nextTick()
       scrollTo('reply')

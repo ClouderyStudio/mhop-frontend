@@ -70,7 +70,7 @@
               <el-tag v-if="p.ai_replied" size="small" type="success" effect="light">
                 <el-icon><MagicStick /></el-icon> AI 已回应
               </el-tag>
-              <el-tag v-if="p.status === 0" size="small" type="warning" effect="plain">巡检中</el-tag>
+              <el-tag v-if="p.status === 0" size="small" type="warning" effect="plain">AI 审核中</el-tag>
               <span class="t-author">
                 {{ p.author }}
                 <el-tag v-if="p.author_badge" size="small" type="success" effect="dark" style="margin-right: 4px">{{ p.author_badge }}</el-tag>
@@ -123,7 +123,7 @@
         :maxlength="2000"
         placeholder="我在这里，你可以放心说。发布后 AI 心理助手会立刻回应你……"
       />
-      <p class="text-sub" style="font-size: 12.5px; margin-top: 6px">登录后可发帖，提交后需管理员审核通过才公开展示。</p>
+      <p class="text-sub" style="font-size: 12.5px; margin-top: 6px">登录后可发帖，提交后先由 AI 审核，通过后自动公开；未通过将转人工复核。</p>
       <!-- 图片上传 -->
       <div class="post-images">
         <div class="img-thumbs">
@@ -300,13 +300,15 @@ async function submit() {
       board: form.value.board,
       images: form.value.images,
     })
-    ElMessage.success('已提交，管理员审核通过后将公开展示')
+    ElMessage.success('已提交，AI 审核通过后将自动公开')
     composerVisible.value = false
     await fetchSide()
     if (board.value && board.value !== form.value.board) {
       board.value = ''
     }
     await reload(1)
+    // AI 审核异步完成，稍后再刷新一次，让审核通过的帖子自动出现
+    setTimeout(() => { reload(1).catch(() => {}) }, 4000)
   } finally {
     submitting.value = false
   }

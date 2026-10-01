@@ -51,4 +51,5 @@ export const AI_FLAG_LABEL = {
   safe: '安全',
   suspect: '疑似违规',
   violation: '违规',
+  unavailable: 'AI 未定论',
 }

@@ -4,6 +4,10 @@
 
     <!-- 统计 -->
     <div class="stat-grid">
+      <div class="stat-card stat-pending" style="cursor: pointer" @click="filterPending">
+        <el-icon :size="22"><Clock /></el-icon>
+        <div><strong>{{ stats.pending }}</strong><span>待审核（AI 未放行）</span></div>
+      </div>
       <div class="stat-card stat-crisis">
         <el-icon :size="22"><WarningFilled /></el-icon>
         <div><strong>{{ stats.crisis }}</strong><span>危机关注（漂流/对话中）</span></div>
@@ -22,6 +26,7 @@
     <div class="filter-bar">
       <el-radio-group v-model="statusFilter" size="small" @change="reload">
         <el-radio-button :value="null">全部</el-radio-button>
+        <el-radio-button :value="0">待审核</el-radio-button>
         <el-radio-button :value="1">漂流中</el-radio-button>
         <el-radio-button :value="2">对话中</el-radio-button>
         <el-radio-button :value="3">已结束</el-radio-button>
@@ -55,6 +60,7 @@
           </el-tag>
           <span class="am-id">消息 {{ b.message_count }}</span>
         </div>
+        <p v-if="b.ai_review_note" class="am-report">AI 初筛理由：{{ b.ai_review_note }}</p>
         <p v-if="b.report_reason" class="am-report">举报理由：{{ b.report_reason }}</p>
         <div class="am-actions">
           <el-button size="small" type="primary" @click="openDetail(b.id)">查看对话</el-button>
@@ -81,6 +87,7 @@
             </el-tag>
             <el-tag v-if="row.review_note" size="small" type="info" effect="plain">备注：{{ row.review_note }}</el-tag>
           </div>
+          <p v-if="row.ai_review_note" class="row-report">AI 初筛理由：{{ row.ai_review_note }}</p>
           <p v-if="row.report_reason" class="row-report">最近举报理由：{{ row.report_reason }}</p>
         </template>
       </el-table-column>
@@ -134,6 +141,7 @@
           </el-tag>
           <span class="text-sub" style="font-size: 12.5px">{{ fmtTime(detail.created_at) }}</span>
         </div>
+        <p v-if="detail.ai_review_note" class="detail-ai">AI 初筛理由：{{ detail.ai_review_note }}</p>
 
         <div class="detail-bottle">
           <p>{{ detail.content }}</p>
@@ -203,7 +211,7 @@ const pageSize = 20
 const statusFilter = ref(null)
 const flagFilter = ref('')
 const reportedOnly = ref(false)
-const stats = ref({ crisis: 0, suspect: 0, reported: 0 })
+const stats = ref({ crisis: 0, suspect: 0, reported: 0, pending: 0 })
 
 const detailVisible = ref(false)
 const detail = ref(null)
@@ -213,7 +221,11 @@ function statusLabel(s) {
   return BOTTLE_STATUS_LABEL[s] || String(s)
 }
 function statusType(s) {
-  return { 1: 'info', 2: 'success', 3: 'warning', 4: 'danger' }[s] || 'info'
+  return { 0: 'warning', 1: 'info', 2: 'success', 3: 'warning', 4: 'danger' }[s] || 'info'
+}
+function filterPending() {
+  statusFilter.value = 0
+  reload()
 }
 
 async function loadStats() {
@@ -348,7 +360,7 @@ onMounted(() => {
 <style scoped>
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 14px;
   margin-bottom: 16px;
 }
@@ -370,6 +382,7 @@ onMounted(() => {
   font-size: 12.5px;
   color: var(--mhop-text-sub);
 }
+.stat-pending { border-left-color: #3a7bd5; color: #3a7bd5; }
 .stat-crisis { border-left-color: #d83a2e; color: #d83a2e; }
 .stat-suspect { border-left-color: #d98a2b; color: #d98a2b; }
 .stat-reported { border-left-color: #8a5cf6; color: #8a5cf6; }
@@ -462,6 +475,14 @@ onMounted(() => {
 .detail-bottle p {
   margin: 0 0 10px;
   line-height: 1.8;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.detail-ai {
+  margin: 0 0 12px;
+  font-size: 12.5px;
+  color: #b06a3a;
+  line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
 }

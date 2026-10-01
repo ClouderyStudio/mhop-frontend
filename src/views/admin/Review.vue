@@ -11,11 +11,19 @@
           </el-badge>
         </template>
 
-        <el-radio-group v-model="postStatus" size="small" style="margin-bottom: 12px" @change="reload">
-          <el-radio-button :value="0">待巡检</el-radio-button>
-          <el-radio-button :value="1">正常</el-radio-button>
-          <el-radio-button :value="2">已隐藏</el-radio-button>
-        </el-radio-group>
+        <div class="filter-row">
+          <el-radio-group v-model="postStatus" size="small" @change="reload">
+            <el-radio-button :value="0">待巡检</el-radio-button>
+            <el-radio-button :value="1">正常</el-radio-button>
+            <el-radio-button :value="2">已隐藏</el-radio-button>
+          </el-radio-group>
+          <el-select v-model="flagFilter" size="small" clearable placeholder="AI 初筛标记" style="width: 150px"
+            @change="reload">
+            <el-option label="疑似违规" value="suspect" />
+            <el-option label="违规" value="violation" />
+            <el-option label="AI 未定论" value="unavailable" />
+          </el-select>
+        </div>
 
         <!-- 窄屏：帖子卡片 -->
         <div v-if="isMobile" class="admin-mobile-list">
@@ -30,12 +38,16 @@
             <p class="am-content">{{ row.content }}</p>
             <div class="am-tags">
               <el-tag v-if="row.crisis" size="small" type="danger" effect="light">危机信号</el-tag>
+              <el-tag v-if="row.ai_flag" size="small" :type="aiTagType(row.ai_flag)" effect="dark">
+                AI 初筛：{{ aiTagLabel(row.ai_flag) }}
+              </el-tag>
               <el-tag size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain">
                 {{ authorTag(row) }}
               </el-tag>
               <el-tag v-if="row.review_note" size="small" type="info" effect="plain">备注：{{ row.review_note }}</el-tag>
               <span class="am-id" style="margin-left: 0">回应 {{ row.reply_count }}</span>
             </div>
+            <p v-if="row.ai_review_note" class="ai-note">AI 初筛理由：{{ row.ai_review_note }}</p>
             <div class="am-actions">
               <el-button v-if="row.status !== 1" size="small" type="success" @click="moderate('post', row, 'approve')">标记正常</el-button>
               <el-button v-if="row.status !== 2" size="small" type="danger" @click="moderate('post', row, 'reject')">隐藏</el-button>
@@ -54,6 +66,9 @@
               <div style="margin-top: 6px">
                 <span class="board-chip" :style="chipStyle(row.board)">{{ boardOf(row.board).name }}</span>
                 <el-tag v-if="row.crisis" size="small" type="danger" effect="light" style="margin-left: 4px">危机信号</el-tag>
+                <el-tag v-if="row.ai_flag" size="small" :type="aiTagType(row.ai_flag)" effect="dark" style="margin-left: 4px">
+                  AI 初筛：{{ aiTagLabel(row.ai_flag) }}
+                </el-tag>
                 <el-tag size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain" style="margin-left: 4px">
                   {{ authorTag(row) }}
                 </el-tag>
@@ -61,6 +76,7 @@
                   备注：{{ row.review_note }}
                 </el-tag>
               </div>
+              <p v-if="row.ai_review_note" class="ai-note">AI 初筛理由：{{ row.ai_review_note }}</p>
             </template>
           </el-table-column>
           <el-table-column label="状态" width="100">
@@ -97,11 +113,19 @@
           </el-badge>
         </template>
 
-        <el-radio-group v-model="replyStatus" size="small" style="margin-bottom: 12px" @change="reload">
-          <el-radio-button :value="0">待审核</el-radio-button>
-          <el-radio-button :value="1">已通过</el-radio-button>
-          <el-radio-button :value="2">已驳回/拦截</el-radio-button>
-        </el-radio-group>
+        <div class="filter-row">
+          <el-radio-group v-model="replyStatus" size="small" @change="reload">
+            <el-radio-button :value="0">待审核</el-radio-button>
+            <el-radio-button :value="1">已通过</el-radio-button>
+            <el-radio-button :value="2">已驳回/拦截</el-radio-button>
+          </el-radio-group>
+          <el-select v-model="flagFilter" size="small" clearable placeholder="AI 初筛标记" style="width: 150px"
+            @change="reload">
+            <el-option label="疑似违规" value="suspect" />
+            <el-option label="违规" value="violation" />
+            <el-option label="AI 未定论" value="unavailable" />
+          </el-select>
+        </div>
 
         <!-- 窄屏：回复卡片 -->
         <div v-if="isMobile" class="admin-mobile-list">
@@ -120,6 +144,9 @@
             </p>
             <p class="am-content">{{ row.content }}</p>
             <div class="am-tags">
+              <el-tag v-if="!row.is_ai && row.ai_flag" size="small" :type="aiTagType(row.ai_flag)" effect="dark">
+                AI 初筛：{{ aiTagLabel(row.ai_flag) }}
+              </el-tag>
               <el-tag v-if="!row.is_ai" size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain">
                 {{ authorTag(row) }}
               </el-tag>
@@ -128,6 +155,7 @@
               <el-tag v-if="row.recall_reason" size="small" type="warning" effect="plain">撤回原因：{{ row.recall_reason }}</el-tag>
               <el-tag v-else-if="row.review_note" size="small" type="info" effect="plain">{{ row.review_note }}</el-tag>
             </div>
+            <p v-if="!row.is_ai && row.ai_review_note" class="ai-note">AI 初筛理由：{{ row.ai_review_note }}</p>
             <div class="am-actions">
               <template v-if="!row.is_ai">
                 <el-button v-if="row.status !== 1" size="small" type="success" @click="moderate('reply', row, 'approve')">通过</el-button>
@@ -164,6 +192,9 @@
                 <el-tag v-else size="small" :type="row.is_anonymous ? 'warning' : 'success'" effect="plain" style="margin-left: 4px">
                   {{ authorTag(row) }}
                 </el-tag>
+                <el-tag v-if="!row.is_ai && row.ai_flag" size="small" :type="aiTagType(row.ai_flag)" effect="dark" style="margin-left: 4px">
+                  AI 初筛：{{ aiTagLabel(row.ai_flag) }}
+                </el-tag>
                 <el-tag v-if="row.recalled" size="small" type="info" effect="dark" style="margin-left: 4px">已撤回</el-tag>
                 <el-tag v-if="row.crisis" size="small" type="danger" effect="light" style="margin-left: 4px">危机信号</el-tag>
                 <el-tag v-if="row.recall_reason" size="small" type="warning" effect="plain" style="margin-left: 4px">
@@ -173,6 +204,7 @@
                   {{ row.review_note }}
                 </el-tag>
               </div>
+              <p v-if="!row.is_ai && row.ai_review_note" class="ai-note">AI 初筛理由：{{ row.ai_review_note }}</p>
             </template>
           </el-table-column>
           <el-table-column label="状态" width="100">
@@ -215,6 +247,7 @@
 import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
+import { AI_FLAG_LABEL } from '../../api/bottles'
 import { fmtTime } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { useIsMobile } from '../../utils/useIsMobile'
@@ -223,6 +256,7 @@ const isMobile = useIsMobile()
 const tab = ref('posts')
 const postStatus = ref(0)
 const replyStatus = ref(0)
+const flagFilter = ref('')
 const posts = ref([])
 const replies = ref([])
 const loading = ref(false)
@@ -236,6 +270,12 @@ function authorTag(row) {
     return `匿名·实名：${row.author}${row.author_phone ? ' / ' + row.author_phone : ''}`
   }
   return '匿名（历史记录不可追溯）'
+}
+function aiTagType(flag) {
+  return flag === 'violation' ? 'danger' : flag === 'suspect' ? 'warning' : 'info'
+}
+function aiTagLabel(flag) {
+  return AI_FLAG_LABEL[flag] || flag
 }
 function postStatusType(s) {
   return ['warning', 'success', 'danger'][s] || 'info'
@@ -261,10 +301,11 @@ async function loadPending() {
 async function reload() {
   loading.value = true
   try {
+    const params = { flag: flagFilter.value || undefined }
     if (tab.value === 'posts') {
-      posts.value = await http.get('/admin/posts', { params: { status: postStatus.value } })
+      posts.value = await http.get('/admin/posts', { params: { ...params, status: postStatus.value } })
     } else {
-      replies.value = await http.get('/admin/replies', { params: { status: replyStatus.value } })
+      replies.value = await http.get('/admin/replies', { params: { ...params, status: replyStatus.value } })
     }
     loadPending()
   } finally {
@@ -383,6 +424,21 @@ onMounted(reload)
 .page-title {
   margin: 0 0 14px;
   font-size: 20px;
+}
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+.ai-note {
+  margin: 6px 0 0;
+  font-size: 12.5px;
+  color: #b06a3a;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 .cell-content {
   margin: 0;

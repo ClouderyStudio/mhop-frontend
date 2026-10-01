@@ -74,6 +74,7 @@
               <span class="text-sub">{{ fmtTime(p.created_at) }}</span>
             </div>
             <div class="manage-body">{{ p.content }}</div>
+            <div v-if="p.status !== 1 && p.ai_review_note" class="reject-note">AI 初筛：{{ p.ai_review_note }}</div>
             <div v-if="p.status === 2 && p.review_note" class="reject-note">驳回原因：{{ p.review_note }}</div>
             <div v-if="p.images && p.images.length" class="img-strip">
               <img v-for="u in p.images" :key="u" :src="assetUrl(u)" />
@@ -112,6 +113,7 @@
               <span class="text-sub">{{ fmtTime(r.created_at) }}</span>
             </div>
             <div class="manage-body">{{ r.content }}</div>
+            <div v-if="r.status !== 1 && r.ai_review_note" class="reject-note">AI 初筛：{{ r.ai_review_note }}</div>
             <div v-if="r.status === 2 && r.review_note" class="reject-note">驳回原因：{{ r.review_note }}</div>
             <div v-if="r.images && r.images.length" class="img-strip">
               <img v-for="u in r.images" :key="u" :src="assetUrl(u)" />

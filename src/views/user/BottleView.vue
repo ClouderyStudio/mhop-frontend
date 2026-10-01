@@ -137,11 +137,13 @@ async function onThrow() {
   throwing.value = true
   try {
     const data = await bottlesApi.throwBottle(content)
-    ElMessage.success('瓶子已漂入大海，等待被人捞起')
+    ElMessage.success('已提交，AI 审核通过后将漂入大海')
     throwDialog.value = false
     draft.value = ''
     store.bumpThrown()
     await store.refresh(false)
+    // AI 审核在后台异步完成，稍后再拉一次，让「审核中」自动变为「漂流中」
+    setTimeout(() => { store.refresh(false) }, 4000)
     if (data.crisis) {
       ElMessageBox.alert(
         '你写下的内容里出现了与危机相关的表达。我们很担心你。\n如果你正处于伤害自己的危险念头中，请立即拨打全国心理援助热线 12356，或联系身边可信任的人陪伴你。',
@@ -180,6 +182,7 @@ function openChat(id) {
 
 function statusTag(status) {
   switch (status) {
+    case BOTTLE_STATUS.PENDING: return 'warning'
     case BOTTLE_STATUS.DRIFTING: return 'info'
     case BOTTLE_STATUS.PICKED: return 'success'
     case BOTTLE_STATUS.ENDED: return 'warning'
@@ -193,6 +196,7 @@ function statusText(b) {
     return b.end_reason === 1 ? '已结束（超时）' : '对话已结束'
   }
   if (b.status === BOTTLE_STATUS.REMOVED) return '已下架'
+  if (b.status === BOTTLE_STATUS.PENDING) return 'AI 审核中'
   if (b.status === BOTTLE_STATUS.PICKED) return '对话中'
   return '漂流中'
 }
