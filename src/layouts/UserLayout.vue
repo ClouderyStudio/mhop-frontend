@@ -1,5 +1,5 @@
 <template>
-  <div style="min-height: 100vh; display: flex; flex-direction: column">
+  <div class="app-shell" style="min-height: 100vh; display: flex; flex-direction: column">
     <header class="nav-header">
       <div class="mhop-container nav-inner">
         <router-link to="/" class="brand">
@@ -121,12 +121,44 @@
         <EmergencyBanner />
       </div>
     </footer>
+
+    <!-- 移动端底部导航（≤760px 显示，桌面端隐藏） -->
+    <nav class="mobile-tabbar" aria-label="主导航">
+      <router-link to="/" class="tb-item" :class="{ active: tabActive('/') }">
+        <el-icon :size="22"><HomeFilled /></el-icon>
+        <span>首页</span>
+      </router-link>
+      <router-link to="/forum" class="tb-item" :class="{ active: tabActive('/forum') }"
+        @click="(e) => goAuthTab(e, '/forum')">
+        <el-icon :size="22"><ChatLineSquare /></el-icon>
+        <span>论坛</span>
+      </router-link>
+      <router-link to="/bottles" class="tb-item" :class="{ active: tabActive('/bottles') }"
+        @click="(e) => goAuthTab(e, '/bottles')">
+        <span class="tb-icon">
+          <el-icon :size="22"><Promotion /></el-icon>
+          <span v-if="bottleStore.unreadTotal > 0" class="tb-badge">
+            {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
+          </span>
+        </span>
+        <span>漂流瓶</span>
+      </router-link>
+      <router-link to="/assessment" class="tb-item" :class="{ active: tabActive('/assessment') }"
+        @click="(e) => goAuthTab(e, '/assessment')">
+        <el-icon :size="22"><DataAnalysis /></el-icon>
+        <span>评估</span>
+      </router-link>
+      <router-link to="/profile" class="tb-item" :class="{ active: tabActive('/profile') }">
+        <el-icon :size="22"><User /></el-icon>
+        <span>我的</span>
+      </router-link>
+    </nav>
   </div>
 </template>
 
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
 import { useAuthStore } from '../stores/auth'
@@ -134,12 +166,27 @@ import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
 const bottleStore = useBottleStore()
 const drawer = ref(false)
 let bottleTimer = null
+
+// 底部 tab 激活态：首页精确匹配，其余前缀匹配（如 /bottles/12 仍高亮漂流瓶）
+function tabActive(prefix) {
+  if (prefix === '/') return route.path === '/'
+  return route.path.startsWith(prefix)
+}
+
+// 论坛/漂流瓶/评估的路由守卫对未登录是弹回首页；底栏场景改为主动引导去登录
+function goAuthTab(e, path) {
+  if (!auth.isLoggedIn) {
+    e.preventDefault()
+    router.push('/login')
+  }
+}
 
 onMounted(() => {
   if (!auth.isLoggedIn) return
@@ -357,6 +404,31 @@ function onCommand(cmd) {
   margin: 4px 0 0;
 }
 
+/* ============ 移动端底部 tab 导航（桌面端隐藏） ============ */
+.mobile-tabbar {
+  display: none;
+}
+.tb-icon {
+  position: relative;
+  display: inline-flex;
+  line-height: 0;
+}
+.tb-badge {
+  position: absolute;
+  top: -7px;
+  right: -11px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: #e26d5a;
+  color: #fff;
+  font-size: 10px;
+  line-height: 16px;
+  text-align: center;
+  font-weight: 600;
+}
+
 @media (max-width: 760px) {
   /* 横屏时顶栏避开刘海/状态栏区域 */
   .nav-header {
@@ -381,19 +453,50 @@ function onCommand(cmd) {
   .online-tag,
   .user-dropdown,
   .login-link,
-  .register-link {
-    display: none;
-  }
+  .register-link,
   .nav-burger {
-    display: inline-block;
+    display: none;
   }
   main.mhop-container {
     padding-top: 14px !important;
-    padding-bottom: 28px !important;
+    padding-bottom: 20px !important;
   }
-  /* 页脚避开 iPhone 底部横条 */
+  /* 为固定底栏让出空间（含 iPhone 底部横条） */
+  .app-shell {
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+  }
   .site-footer {
-    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+    padding-bottom: 22px;
+  }
+
+  /* 底部导航 */
+  .mobile-tabbar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 200;
+    height: calc(60px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid #e9e4da;
+  }
+  .tb-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--mhop-text-sub);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .tb-item.active {
+    color: var(--mhop-teal);
+    font-weight: 600;
   }
 }
 </style>

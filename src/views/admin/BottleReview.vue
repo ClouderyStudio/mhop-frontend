@@ -239,8 +239,8 @@
     </el-tabs>
 
     <!-- 详情抽屉 -->
-    <el-drawer v-model="detailVisible" :title="`漂流瓶 #${detail?.id ?? ''}`" size="600px"
-      :destroy-on-close="false">
+    <el-drawer v-model="detailVisible" :title="`漂流瓶 #${detail?.id ?? ''}`"
+      :size="isMobile ? '100%' : '600px'" :destroy-on-close="false" class="bottle-detail-drawer">
       <div v-if="detail" class="detail-wrap">
         <div class="detail-head">
           <el-tag :type="statusType(detail.status)" effect="dark">{{ statusLabel(detail.status) }}</el-tag>
@@ -797,11 +797,75 @@ onMounted(() => {
 
 @media (max-width: 760px) {
   .stat-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .stat-card {
+    padding: 12px 10px;
+    gap: 8px;
+    border-left-width: 3px;
+  }
+  .stat-card .el-icon {
+    display: none;
+  }
+  .stat-card strong {
+    font-size: 19px;
+  }
+  .stat-card span {
+    font-size: 11.5px;
+    line-height: 1.4;
   }
   .filter-bar {
     gap: 8px;
+  }
+  /* 状态按钮组在窄屏允许换行，不产生横向滚动 */
+  .filter-bar :deep(.el-radio-group) {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .filter-bar .el-select {
+    width: 100% !important;
+  }
+  .filter-hint {
+    width: 100%;
+    line-height: 1.5;
+  }
+  .am-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .am-actions .el-button {
+    margin-left: 0;
+    padding: 7px 12px;
+  }
+  .pager {
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .pager :deep(.el-pagination) {
+    --el-pagination-button-width: 30px;
+  }
+  /* 抽屉内消息操作按钮允许换行 */
+  .dm-actions {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .dm-actions .el-button {
+    margin-left: 0;
+  }
+  /* 抽屉底部处置区：输入框整行，按钮均分 */
+  .drawer-footer {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .drawer-footer .el-input {
+    flex: 1 1 100%;
+  }
+  .drawer-footer .el-button {
+    flex: 1;
+    margin-left: 0;
   }
 }
 </style>

@@ -38,6 +38,14 @@
             </el-form-item>
           </el-form>
           <el-button type="primary" round :loading="saving" @click="save">保存修改</el-button>
+          <div class="account-actions">
+            <el-button v-if="isAdmin" type="danger" plain round @click="router.push('/admin/dashboard')">
+              <el-icon><Setting /></el-icon> 管理后台
+            </el-button>
+            <el-button plain round @click="logout">
+              <el-icon><SwitchButton /></el-icon> 退出登录
+            </el-button>
+          </div>
         </div>
       </div>
       <div class="my-stats" v-if="summary">
@@ -179,12 +187,14 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
 import { useAuthStore } from '../../stores/auth'
 import { BOARDS, boardOf } from '../../utils/boards'
 import { assetUrl } from '../../utils/asset'
 
+const router = useRouter()
 const auth = useAuthStore()
 const form = ref({ username: '' })
 const avatarUrl = ref('')
@@ -464,6 +474,16 @@ async function save() {
     saving.value = false
   }
 }
+
+async function logout() {
+  try {
+    await ElMessageBox.confirm('确定退出登录吗？', '提示', { type: 'warning' })
+  } catch {
+    return
+  }
+  auth.logout()
+  router.push('/')
+}
 </script>
 
 <style scoped>
@@ -523,6 +543,12 @@ async function save() {
 .info-section {
   flex: 1;
   min-width: 0;
+}
+.account-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
 }
 .phone-row {
   display: flex;

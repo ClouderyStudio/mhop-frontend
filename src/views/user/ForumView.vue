@@ -596,14 +596,14 @@ onMounted(() => {
     margin-left: 4px;
   }
 
-  /* FAB */
+  /* FAB：抬高到全局底部 tab 栏（60px + 安全区）之上 */
   .mobile-fab {
     display: flex;
     align-items: center;
     justify-content: center;
     position: fixed;
     right: calc(18px + env(safe-area-inset-right));
-    bottom: calc(22px + env(safe-area-inset-bottom));
+    bottom: calc(74px + env(safe-area-inset-bottom));
     width: 54px;
     height: 54px;
     border: none;
