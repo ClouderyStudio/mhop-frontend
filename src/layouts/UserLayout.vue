@@ -3,7 +3,7 @@
     <header class="nav-header">
       <div class="mhop-container nav-inner">
         <router-link to="/" class="brand">
-          <span class="brand-mark"><el-icon><Sunny /></el-icon></span>
+          <span class="brand-mark"><BrandMark :size="34" /></span>
           <span>
             <strong>心光 MHOP</strong>
             <small>公益心理辅助平台</small>
@@ -161,6 +161,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
+import BrandMark from '../components/BrandMark.vue'
 import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
@@ -248,12 +249,11 @@ function onCommand(cmd) {
   width: 38px;
   height: 38px;
   border-radius: 12px;
-  background: linear-gradient(135deg, #2f8f83, #5eaaa1);
-  color: #fff;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  flex-shrink: 0;
 }
 .brand strong {
   display: block;

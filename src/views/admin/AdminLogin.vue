@@ -2,7 +2,7 @@
   <div class="login-shell">
     <div class="login-card">
       <div class="login-brand">
-        <el-icon :size="34"><Sunny /></el-icon>
+        <BrandMark :size="68" />
         <h2>心光 MHOP · 运营管理后台</h2>
         <p>内容审核 · 用户管理 · 数据看板</p>
       </div>
@@ -32,6 +32,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
+import BrandMark from '../../components/BrandMark.vue'
 
 const router = useRouter()
 const route = useRoute()

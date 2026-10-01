@@ -2,7 +2,7 @@
   <el-container class="admin-shell">
     <el-aside width="220px" class="admin-aside">
       <div class="logo">
-        <el-icon :size="22"><Sunny /></el-icon>
+        <BrandMark :size="36" />
         <div>
           <strong>心光 MHOP</strong>
           <small>运营管理后台</small>
@@ -52,7 +52,7 @@
     <!-- 移动端抽屉菜单（桌面端隐藏侧栏，不显示汉堡） -->
     <el-drawer v-model="drawer" direction="ltr" size="72%" :with-header="false" class="admin-drawer">
       <div class="drawer-brand">
-        <el-icon :size="22"><Sunny /></el-icon>
+        <BrandMark :size="34" />
         <div>
           <strong>心光 MHOP</strong>
           <small>运营管理后台</small>
@@ -75,6 +75,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ADMIN_PERMS } from '../utils/permissions'
+import BrandMark from '../components/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()

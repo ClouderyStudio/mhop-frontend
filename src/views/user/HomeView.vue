@@ -28,8 +28,8 @@
         </div>
       </div>
       <div class="hero-illu">
-        <el-icon :size="150"><Sunny /></el-icon>
-      </div>
+          <BrandMark :size="170" />
+        </div>
     </section>
 
     <!-- 服务入口（登录后可见） -->
@@ -91,6 +91,7 @@ import http from '../../api'
 import { fromNow } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { useAuthStore } from '../../stores/auth'
+import BrandMark from '../../components/BrandMark.vue'
 
 const auth = useAuthStore()
 const posts = ref([])
