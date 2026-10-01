@@ -26,8 +26,16 @@ export const bottlesApi = {
   adminDetail: (id) => http.get(`/admin/bottles/${id}`),
   adminRemove: (id, note = '') => http.post(`/admin/bottles/${id}/remove`, { note }),
   adminRestore: (id, note = '') => http.post(`/admin/bottles/${id}/restore`, { note }),
+  /** 人工放行待审核的瓶子（一键通过并放入海中） */
+  adminApprove: (id, note = '') => http.post(`/admin/bottles/${id}/approve`, { note }),
+  /** 重跑瓶身的 AI 审核 */
+  adminRescreen: (id) => http.post(`/admin/bottles/${id}/rescreen`),
+  /** 消息审核队列（默认只列需要处置的消息） */
+  adminMessages: (params) => http.get('/admin/bottles/messages', { params }),
   adminHideMessage: (messageId) => http.post(`/admin/bottles/messages/${messageId}/hide`),
   adminRestoreMessage: (messageId) => http.post(`/admin/bottles/messages/${messageId}/restore`),
+  /** 重跑某条消息的 AI 审核 */
+  adminRescreenMessage: (messageId) => http.post(`/admin/bottles/messages/${messageId}/rescreen`),
 }
 
 /** 瓶子状态码（与后端 MhopBottleStatus 一致） */
@@ -52,4 +60,13 @@ export const AI_FLAG_LABEL = {
   suspect: '疑似违规',
   violation: '违规',
   unavailable: 'AI 未定论',
+  approved: '人工已放行',
+}
+
+/** AI 标记对应的标签色 */
+export const AI_FLAG_TYPE = {
+  suspect: 'warning',
+  violation: 'danger',
+  unavailable: 'info',
+  approved: 'success',
 }
