@@ -14,7 +14,7 @@
         <el-button text type="danger" :disabled="!detail || !isActive" @click="askEnd">
           <el-icon><SwitchButton /></el-icon><span class="btn-label">结束对话</span>
         </el-button>
-        <el-button text :disabled="!detail || detail.status === 4" @click="reportDialog = true">
+        <el-button text :disabled="!canReport" @click="reportDialog = true">
           <el-icon><Warning /></el-icon><span class="btn-label">举报</span>
         </el-button>
       </div>
@@ -62,9 +62,17 @@
         </div>
       </div>
 
-      <!-- 状态条：结束 / 下架 / 超时 -->
+      <!-- 状态条：待审核 / 漂流中 / 结束 / 下架 / 超时 -->
       <div v-if="!isActive" class="ended-strip">
-        <template v-if="detail.status === 4">
+        <template v-if="detail.status === 0">
+          <el-icon><Promotion /></el-icon>
+          瓶子正在等待 AI 安全初筛，通过后会自动漂入大海，暂时还没有人能捞到它。
+        </template>
+        <template v-else-if="detail.status === 1">
+          <el-icon><Promotion /></el-icon>
+          瓶子还在海里漂流，等待一位陌生人偶然捞起；被捞起后，这里才会变成匿名对话。
+        </template>
+        <template v-else-if="detail.status === 4">
           <el-icon><CircleCloseFilled /></el-icon> 该内容因违规已被下架，仅可查看此提示。
         </template>
         <template v-else-if="detail.end_reason === 1">
@@ -142,6 +150,12 @@ let pollTimer = null
 const iAmThrower = computed(() => detail.value?.role === 'thrower')
 const otherName = computed(() => (iAmThrower.value ? '捞瓶人' : '扔瓶人'))
 const isActive = computed(() => detail.value?.status === BOTTLE_STATUS.PICKED)
+// 审核中 / 漂流中的瓶子还没有对话对方，不提供举报（后端也会以 409 拒绝）
+const canReport = computed(() =>
+  Boolean(detail.value) && detail.value.status !== BOTTLE_STATUS.PENDING
+  && detail.value.status !== BOTTLE_STATUS.DRIFTING
+  && detail.value.status !== BOTTLE_STATUS.REMOVED
+)
 // 瓶身或任意可见消息命中危机词，即展示热线横幅
 const crisisActive = computed(() =>
   Boolean(detail.value?.crisis || detail.value?.messages?.some((m) => m.crisis))
