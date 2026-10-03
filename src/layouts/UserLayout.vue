@@ -21,6 +21,15 @@
           <router-link v-if="auth.isLoggedIn" to="/assessment">AI 心理评估</router-link>
         </nav>
         <div class="nav-right">
+          <button
+            class="theme-toggle"
+            type="button"
+            :title="isDark ? '切换到白天模式' : '切换到黑夜模式'"
+            :aria-label="isDark ? '切换到白天模式' : '切换到黑夜模式'"
+            @click="toggleTheme"
+          >
+            <el-icon :size="20"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
+          </button>
           <el-tag type="success" effect="light" round class="online-tag">
             <el-icon style="vertical-align: -2px"><Connection /></el-icon>
             {{ online.count }} 人在线
@@ -83,6 +92,10 @@
         <router-link v-if="auth.isLoggedIn" to="/profile"><el-icon><User /></el-icon> 个人主页</router-link>
       </nav>
       <div class="drawer-actions">
+        <el-button round @click="toggleTheme">
+          <el-icon><Sunny v-if="isDark" /><Moon v-else /></el-icon>
+          {{ isDark ? '切换到白天模式' : '切换到黑夜模式' }}
+        </el-button>
         <template v-if="auth.isLoggedIn">
           <el-button v-if="auth.isAdmin" round @click="go('/admin/dashboard')">
             <el-icon><Setting /></el-icon> 管理后台
@@ -166,12 +179,14 @@ import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
+import { useTheme } from '../utils/theme'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
 const bottleStore = useBottleStore()
+const { isDark, toggleTheme } = useTheme()
 const drawer = ref(false)
 let bottleTimer = null
 
@@ -315,6 +330,25 @@ function onCommand(cmd) {
   display: flex;
   align-items: center;
   gap: 14px;
+}
+/* 日夜模式切换按钮（桌面顶栏 + 移动端均可见） */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mhop-text-sub);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.theme-toggle:hover {
+  background: var(--mhop-teal-light);
+  color: var(--mhop-teal);
 }
 .user-trigger {
   display: inline-flex;

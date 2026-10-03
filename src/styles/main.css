@@ -602,3 +602,309 @@ img {
     transform: translateY(0);
   }
 }
+
+/* ==================== 黑夜模式 ==================== */
+/* 激活方式：<html class="dark">；同时覆盖自定义令牌与 Element Plus 中性色变量，
+   保证卡片、弹窗、表格、输入框等 el-* 组件与手写界面统一为带青绿倾向的深色。 */
+html.dark {
+  color-scheme: dark;
+
+  --mhop-bg: #111817;
+  --mhop-card: #1b2422;
+  --mhop-sand: #18211f;
+  --mhop-teal: #41a89b;
+  --mhop-teal-dark: #7cc9bf;
+  --mhop-teal-light: #223330;
+  --mhop-text: #dce7e4;
+  --mhop-text-sub: #93a7a2;
+  --mhop-danger: #ef6a5e;
+  --mhop-danger-2: #f08058;
+
+  --el-color-primary: #41a89b;
+  --el-color-primary-light-3: #2f857b;
+  --el-color-primary-light-5: #376b64;
+  --el-color-primary-light-7: #2e504b;
+  --el-color-primary-light-8: #2a4440;
+  --el-color-primary-light-9: #243a37;
+  --el-color-primary-dark-2: #6cbfb4;
+
+  --el-bg-color: #1b2422;
+  --el-bg-color-page: #111817;
+  --el-bg-color-overlay: #232e2b;
+  --el-text-color-primary: #dce7e4;
+  --el-text-color-regular: #a8bbb5;
+  --el-text-color-secondary: #8fa49f;
+  --el-text-color-placeholder: #6f837e;
+  --el-border-color: #34403d;
+  --el-border-color-light: #2d3836;
+  --el-border-color-lighter: #28322f;
+  --el-border-color-extra-light: #242e2c;
+  --el-border-color-dark: #3d4b48;
+  --el-border-color-darker: #475551;
+  --el-fill-color: #232e2b;
+  --el-fill-color-light: #202a28;
+  --el-fill-color-lighter: #1d2624;
+  --el-fill-color-blank: transparent;
+  --el-mask-color: rgba(10, 15, 14, 0.75);
+}
+
+html.dark body {
+  background: var(--mhop-bg);
+}
+
+html.dark .mhop-card {
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.32);
+}
+
+/* ---------- 通用组件 / 排版 ---------- */
+html.dark .ai-reply-card {
+  background: linear-gradient(180deg, #1d2a28 0%, #1b2422 100%);
+  border-color: #314540;
+}
+
+html.dark .crisis-tag {
+  background: #3a211e;
+  border-color: #5e3631;
+  color: #f1a39a;
+}
+
+html.dark .md-body .md-quote {
+  background: var(--mhop-teal-light);
+  color: #b8d2cb;
+}
+
+html.dark .md-body .md-hr {
+  border-top-color: #2e3936;
+}
+
+html.dark .md-body .md-code {
+  background: #2a3432;
+  color: #e2a58e;
+}
+
+html.dark .board-nav a:hover {
+  background: #232e2b;
+}
+
+html.dark .am-actions {
+  border-top-color: #35403d;
+}
+
+/* Markdown 编辑预览面板（MdComposer） */
+html.dark .md-preview {
+  background: #161e1c;
+}
+
+/* ---------- 用户站导航 / 页脚（UserLayout scoped 选择器，以更高优先级覆盖） ---------- */
+html.dark .nav-header {
+  background: rgba(17, 24, 23, 0.9);
+  border-bottom-color: #28322f;
+}
+
+html.dark .site-footer {
+  background: #161e1c;
+  border-top-color: #28322f;
+}
+
+html.dark .drawer-online {
+  border-bottom-color: #2a3432;
+}
+
+html.dark .mobile-tabbar {
+  background: rgba(17, 24, 23, 0.96);
+  border-top-color: #28322f;
+}
+
+/* ---------- 首页 ---------- */
+html.dark .hero {
+  background: linear-gradient(120deg, #1b2422 0%, #1d2c29 100%);
+}
+
+html.dark .hero-badge {
+  background: var(--mhop-teal-light);
+  color: #8fd3c9;
+}
+
+/* hero 插画是浅色水印，深色下改为深青剪影 */
+html.dark .hero-illu {
+  color: #2c443f;
+}
+
+/* 四个功能图标的底色为内联浅色，统一压暗（保留各自彩色图标） */
+html.dark .feature-icon {
+  background: #223330 !important;
+}
+
+/* ---------- 漂流瓶海洋页 ---------- */
+html.dark .sea-card {
+  background: linear-gradient(180deg, #163247 0%, #102a3e 46%, #0a1f2e 100%);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* 深色海洋上白色捞瓶按钮仍可读，蓝字加深一点 */
+html.dark .pick-btn {
+  color: #1d5b76;
+}
+
+/* ---------- 漂流瓶会话页 ---------- */
+html.dark .crisis-banner {
+  background: #3a211e;
+  color: #f1a39a;
+  border-color: #5e3631;
+}
+
+html.dark .bottle-card.mine {
+  background: linear-gradient(135deg, #23524b, #1d443e);
+  color: #cfe8e2;
+}
+
+html.dark .bottle-card.other {
+  background: var(--mhop-card);
+  border-color: #34403d;
+}
+
+html.dark .bubble-row.other .bubble {
+  background: var(--mhop-card);
+  border-color: #34403d;
+}
+
+html.dark .bubble-row.other .bubble-crisis {
+  color: #e09084;
+}
+
+html.dark .ended-strip {
+  background: #1a2321;
+  border-color: #3b4744;
+}
+
+/* ---------- 论坛 ---------- */
+html.dark .topic-row {
+  border-bottom-color: #27312e;
+}
+
+html.dark .topic-row:hover {
+  background: #1f2927;
+}
+
+html.dark .t-avatar {
+  background: var(--mhop-teal-light);
+  color: #8fd3c9;
+}
+
+html.dark .like-btn:hover {
+  background: #2e2920;
+  color: #e6a95c;
+}
+
+html.dark .img-add {
+  background: #202a28;
+  border-color: #3d4946;
+  color: #8fa49f;
+}
+
+/* ---------- 帖子详情 ---------- */
+html.dark .ai-floor {
+  background: linear-gradient(180deg, #1d2a28 0%, #1b2422 100%);
+  border-color: #314540;
+}
+
+html.dark .f-avatar {
+  background: var(--mhop-teal-light);
+  color: #8fd3c9;
+}
+
+html.dark .act-like {
+  background: var(--mhop-card);
+  border-color: #34403d;
+}
+
+html.dark .act-like:hover {
+  background: #2c2a22;
+  border-color: #8a6a35;
+  color: #e6a95c;
+}
+
+html.dark .act-like.on {
+  background: #2e2920;
+  border-color: #c0813f;
+  color: #e6a95c;
+}
+
+html.dark .floor.recalled {
+  background: #1c2422;
+  border-color: #424c48;
+}
+
+/* ---------- AI 评估 ---------- */
+html.dark .history-item {
+  border-bottom-color: #2c3633;
+}
+
+html.dark .history-item:hover {
+  background: #1c2624;
+}
+
+/* ---------- 管理后台框架 ---------- */
+html.dark .admin-header {
+  background: #1b2422;
+  border-bottom-color: #2a3432;
+}
+
+html.dark .admin-main {
+  background: #121918;
+}
+
+/* 后台登录卡片 */
+html.dark .login-card {
+  background: #1b2422;
+}
+
+html.dark .login-brand {
+  color: #8fd3c9;
+}
+
+/* Dashboard / BottleReview 统计卡（Dashboard 底色为内联样式，需 !important） */
+html.dark .stat-card {
+  background: #1f2927 !important;
+  color: var(--mhop-text);
+}
+
+html.dark .stat-card.stat-pending { color: #6aa5e8; }
+html.dark .stat-card.stat-unavailable { color: #93a3b5; }
+html.dark .stat-card.stat-crisis { color: #ef6a5e; }
+html.dark .stat-card.stat-suspect { color: #e6a95c; }
+html.dark .stat-card.stat-message { color: #d99b5f; }
+html.dark .stat-card.stat-hidden { color: #b08cf8; }
+html.dark .stat-card.stat-reported { color: #d983a1; }
+
+html.dark .todo-list li {
+  border-bottom-color: #2c3633;
+}
+
+/* 瓶子审核详情抽屉里的米底说明块 */
+html.dark .detail-bottle {
+  background: #1f2927;
+}
+
+html.dark .dm-item {
+  border-color: #34403d;
+}
+
+html.dark .dm-item.is-hidden {
+  background: #18201e;
+}
+
+/* 米底棕字的 AI 备注在深色底上提亮 */
+html.dark .detail-ai,
+html.dark .dm-ai,
+html.dark .am-report,
+html.dark .row-report,
+html.dark .ai-note,
+html.dark .report-line {
+  color: #d99a6c;
+}
+
+/* 用户管理弹窗中内联 #606266 灰字（内联样式只能用 !important 覆盖） */
+html.dark [style*="#606266"] {
+  color: #a8bbb5 !important;
+}

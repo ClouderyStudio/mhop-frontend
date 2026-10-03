@@ -29,6 +29,15 @@
           </span>
           <strong class="brand-mini">心光 MHOP 后台</strong>
           <router-link to="/" class="back-site"><el-icon><Monitor /></el-icon> 访问前台</router-link>
+          <button
+            class="admin-theme"
+            type="button"
+            :title="isDark ? '切换到白天模式' : '切换到黑夜模式'"
+            :aria-label="isDark ? '切换到白天模式' : '切换到黑夜模式'"
+            @click="toggleTheme"
+          >
+            <el-icon :size="18"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
+          </button>
         </div>
         <el-dropdown @command="onCommand">
           <span class="user-trigger">
@@ -75,11 +84,13 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ADMIN_PERMS } from '../utils/permissions'
+import { useTheme } from '../utils/theme'
 import BrandMark from '../components/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const { isDark, toggleTheme } = useTheme()
 const drawer = ref(false)
 
 // 菜单按被授予的模块权限过滤（超管拥有全部）
@@ -181,6 +192,24 @@ function onCommand(cmd) {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+.admin-theme {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--mhop-text-sub);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.admin-theme:hover {
+  background: var(--mhop-teal-light);
+  color: var(--mhop-teal);
 }
 .user-trigger {
   display: inline-flex;
