@@ -9,11 +9,11 @@
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" size="large" type="password" show-password placeholder="至少 6 位"
-            :prefix-icon="Lock" />
+            :prefix-icon="Lock" @input="(v) => form.password = sanitizePassword(v)" />
         </el-form-item>
         <el-form-item label="确认密码" prop="confirm">
           <el-input v-model="form.confirm" size="large" type="password" show-password placeholder="再次输入密码"
-            :prefix-icon="Lock" @keyup.enter="submit" />
+            :prefix-icon="Lock" @input="(v) => form.confirm = sanitizePassword(v)" @keyup.enter="submit" />
         </el-form-item>
         <el-button type="primary" size="large" style="width: 100%" :loading="loading" round @click="submit">注 册</el-button>
       </el-form>
@@ -30,6 +30,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
+import { sanitizePassword, PASSWORD_REGEX, PASSWORD_HINT } from '../../utils/password'
 
 const router = useRouter()
 const auth = useAuthStore()
@@ -44,7 +45,7 @@ const rules = {
   ],
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, message: '密码至少 6 位', trigger: 'blur' },
+    { pattern: PASSWORD_REGEX, message: PASSWORD_HINT, trigger: 'blur' },
   ],
   confirm: [
     { required: true, message: '请再次输入密码', trigger: 'blur' },

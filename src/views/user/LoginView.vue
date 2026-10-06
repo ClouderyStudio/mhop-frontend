@@ -16,7 +16,7 @@
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" size="large" type="password" show-password placeholder="请输入密码"
-            :prefix-icon="Lock" @keyup.enter="submit" />
+            :prefix-icon="Lock" @input="(v) => form.password = sanitizePassword(v)" @keyup.enter="submit" />
         </el-form-item>
         <el-button type="primary" size="large" style="width: 100%" :loading="loading" round @click="submit">登 录</el-button>
       </el-form>
@@ -67,6 +67,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Key, Lock, Message, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
+import { sanitizePassword, PASSWORD_REGEX, PASSWORD_HINT } from '../../utils/password'
 
 const router = useRouter()
 const route = useRoute()
@@ -99,7 +100,10 @@ const formRef = ref()
 const form = reactive({ username: '', password: '' })
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { pattern: PASSWORD_REGEX, message: PASSWORD_HINT, trigger: 'blur' },
+  ],
 }
 
 // ---- 邮箱验证码 ----

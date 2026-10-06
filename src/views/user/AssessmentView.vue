@@ -15,6 +15,15 @@
       </el-radio-button>
     </el-radio-group>
 
+    <!-- 更多测试表格外链 -->
+    <a class="more-scales-link" href="https://pt.cldery.com/" target="_blank" rel="noopener noreferrer">
+      <el-icon><Link /></el-icon>
+      <div>
+        <strong>更多测试表格，来到这里测试</strong>
+        <span>前往 pt.cldery.com 进行更多心理测试 →</span>
+      </div>
+    </a>
+
     <div class="assess-layout">
       <!-- 作答区 -->
       <section class="mhop-card form-card">
@@ -128,6 +137,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
+import { Link } from '@element-plus/icons-vue'
 import http from '../../api'
 import { useAuthStore } from '../../stores/auth'
 import { hasCrisisHint } from '../../utils/crisis'
@@ -242,6 +252,38 @@ onMounted(async () => {
   margin: 16px 0;
   flex-wrap: wrap;
   gap: 8px;
+}
+.more-scales-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+  border-radius: 12px;
+  background: var(--mhop-card);
+  border: 1px solid var(--mhop-teal-light);
+  text-decoration: none;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.more-scales-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(47, 143, 131, 0.18);
+}
+.more-scales-link .el-icon {
+  font-size: 22px;
+  color: var(--mhop-teal);
+  flex-shrink: 0;
+}
+.more-scales-link strong {
+  display: block;
+  color: var(--mhop-text);
+  font-size: 14.5px;
+}
+.more-scales-link span {
+  display: block;
+  color: var(--mhop-text-sub);
+  font-size: 12.5px;
+  margin-top: 2px;
 }
 .assess-layout {
   display: grid;
