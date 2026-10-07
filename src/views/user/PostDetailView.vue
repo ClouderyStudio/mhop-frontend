@@ -330,6 +330,17 @@ async function submit() {
     } catch { /* 用户取消 */ }
     return
   }
+  if (!auth.user?.email_verified) {
+    try {
+      await ElMessageBox.confirm('回复前需要先完成邮箱验证码验证（在个人主页绑定邮箱并填入验证码），现在去验证？', '回复前请先完成邮箱验证', {
+        confirmButtonText: '去验证',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+      router.push('/profile')
+    } catch { /* 用户取消 */ }
+    return
+  }
   const content = draft.value.trim()
   if (!content) {
     ElMessage.warning('先写点回应吧')

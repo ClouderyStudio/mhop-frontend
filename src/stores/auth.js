@@ -12,6 +12,8 @@ export const useAuthStore = defineStore('auth', {
     // 后台人员：普通管理员或超级管理员
     isAdmin: (s) => ['admin', 'superadmin'].includes(s.user?.role),
     isSuperadmin: (s) => s.user?.role === 'superadmin',
+    // 发帖 / 回帖与漂流瓶写操作的后端门槛：已绑定手机号且邮箱已通过验证码验证
+    canPost: (s) => !!s.user?.phone && !!s.user?.email_verified,
     // 当前账号拥有的模块权限码（超管隐式全量）
     permissions: (s) => (s.user?.role === 'superadmin'
       ? ADMIN_PERMS.map((p) => p.code)
@@ -45,6 +47,13 @@ export const useAuthStore = defineStore('auth', {
       const data = await http.post('/auth/login-email', { email, code })
       this.setAuth(data.access_token, data.user)
       return { user: data.user, newAccount: !!data.new_account }
+    },
+    // 绑定并验证邮箱：验证码复用匿名接口 /auth/email-code
+    async bindEmail(email, code) {
+      const updated = await http.put('/auth/me/email', { email, code })
+      this.user = { ...(this.user || {}), ...updated }
+      localStorage.setItem('mhop_user', JSON.stringify(this.user))
+      return updated
     },
     async register(username, password) {
       const data = await http.post('/auth/register', { username, password })

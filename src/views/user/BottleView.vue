@@ -30,7 +30,7 @@
 
         <div class="sea-actions">
           <el-button type="primary" size="large" round :disabled="store.throwRemaining <= 0"
-            :loading="throwing" @click="throwDialog = true">
+            :loading="throwing" @click="openThrow">
             <el-icon><Promotion /></el-icon> 扔一个瓶子
           </el-button>
           <el-button size="large" round plain class="pick-btn" :loading="picking"
@@ -107,10 +107,12 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { bottlesApi, BOTTLE_STATUS } from '../../api/bottles'
 import { useBottleStore } from '../../stores/bottles'
+import { useAuthStore } from '../../stores/auth'
 import { fromNow } from '../../utils/format'
 
 const router = useRouter()
 const store = useBottleStore()
+const auth = useAuthStore()
 const loading = ref(false)
 const throwing = ref(false)
 const picking = ref(false)
@@ -127,6 +129,32 @@ async function loadData() {
 }
 
 onMounted(loadData)
+
+// 漂流瓶写操作（投瓶 / 捞瓶 / 发消息）要求邮箱已验证，与后端门槛一致
+async function ensureEmailVerified(action) {
+  if (!auth.isLoggedIn) {
+    ElMessage.warning('请先登录')
+    router.push('/login')
+    return false
+  }
+  if (!auth.user?.email_verified) {
+    try {
+      await ElMessageBox.confirm(
+        `${action}前需要先完成邮箱验证码验证（在个人主页绑定邮箱并填入验证码），现在去验证？`,
+        `${action}前请先完成邮箱验证`,
+        { confirmButtonText: '去验证', cancelButtonText: '取消', type: 'warning' }
+      )
+      router.push('/profile')
+    } catch { /* 用户取消 */ }
+    return false
+  }
+  return true
+}
+
+async function openThrow() {
+  if (!await ensureEmailVerified('投瓶')) return
+  throwDialog.value = true
+}
 
 async function onThrow() {
   const content = draft.value.trim()
@@ -159,6 +187,7 @@ async function onThrow() {
 }
 
 async function onPick() {
+  if (!await ensureEmailVerified('捞瓶')) return
   if (store.pickRemaining <= 0) {
     ElMessage.warning('今天已经捞了足够多瓶子，明天再来吧')
     return

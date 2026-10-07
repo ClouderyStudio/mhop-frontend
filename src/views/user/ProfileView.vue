@@ -17,7 +17,23 @@
               <el-input v-model="form.username" placeholder="用户名" maxlength="32" show-word-limit />
             </el-form-item>
             <el-form-item label="邮箱">
-              <el-input :model-value="email || '未绑定'" disabled />
+              <div v-if="!emailEditing" class="phone-row">
+                <el-input :model-value="email ? email + (emailVerified ? '（已验证）' : '（未验证）') : '未绑定（发帖前必须绑定并验证）'" disabled />
+                <el-button type="primary" link @click="startEditEmail">{{ emailVerified ? '换绑' : '绑定' }}</el-button>
+              </div>
+              <div v-else class="phone-row">
+                <el-input v-model="emailInput" placeholder="请输入邮箱地址" />
+                <el-button type="primary" :disabled="emailCountdown > 0" :loading="emailSending" @click="sendEmailCode">
+                  {{ emailCountdown > 0 ? `${emailCountdown}s 后重发` : '发送验证码' }}
+                </el-button>
+              </div>
+              <div v-if="emailEditing" class="phone-row email-code-row">
+                <el-input v-model="emailCodeInput" placeholder="6 位验证码" maxlength="6" />
+                <el-button type="primary" :loading="emailSaving" @click="saveEmail">保存</el-button>
+                <el-button @click="cancelEditEmail">取消</el-button>
+              </div>
+              <el-alert v-if="emailEditing && emailDevCode" type="warning" :closable="false" class="email-dev-tip"
+                :title="`开发模式：SMTP 未配置，本次验证码为 ${emailDevCode}`" />
             </el-form-item>
             <el-form-item label="手机号">
               <div v-if="!phoneEditing" class="phone-row">
@@ -186,7 +202,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import http from '../../api'
@@ -199,6 +215,15 @@ const auth = useAuthStore()
 const form = ref({ username: '' })
 const avatarUrl = ref('')
 const email = ref('')
+const emailVerified = ref(false)
+const emailEditing = ref(false)
+const emailInput = ref('')
+const emailCodeInput = ref('')
+const emailSending = ref(false)
+const emailSaving = ref(false)
+const emailDevCode = ref('')
+const emailCountdown = ref(0)
+let emailTimer = null
 const phone = ref('')
 const phoneEditing = ref(false)
 const phoneInput = ref('')
@@ -241,6 +266,7 @@ onMounted(async () => {
   form.value.username = auth.user?.username || ''
   avatarUrl.value = auth.user?.avatar || ''
   email.value = auth.user?.email || ''
+  emailVerified.value = !!auth.user?.email_verified
   phone.value = auth.user?.phone || ''
   createdAt.value = auth.user?.created_at ? new Date(auth.user.created_at).toLocaleString('zh-CN') : ''
   loadSummary()
@@ -433,6 +459,74 @@ async function savePhone() {
   }
 }
 
+function startEditEmail() {
+  emailInput.value = email.value || ''
+  emailCodeInput.value = ''
+  emailDevCode.value = ''
+  emailEditing.value = true
+}
+function cancelEditEmail() {
+  emailEditing.value = false
+  emailCodeInput.value = ''
+  emailInput.value = ''
+  emailDevCode.value = ''
+}
+function startEmailCountdown(seconds) {
+  emailCountdown.value = seconds
+  if (emailTimer) clearInterval(emailTimer)
+  emailTimer = setInterval(() => {
+    emailCountdown.value -= 1
+    if (emailCountdown.value <= 0) {
+      clearInterval(emailTimer)
+      emailTimer = null
+    }
+  }, 1000)
+}
+onBeforeUnmount(() => { if (emailTimer) clearInterval(emailTimer) })
+
+async function sendEmailCode() {
+  const addr = emailInput.value.trim()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
+    ElMessage.warning('请输入正确的邮箱地址')
+    return
+  }
+  emailSending.value = true
+  emailDevCode.value = ''
+  try {
+    const res = await auth.sendEmailCode(addr.toLowerCase())
+    ElMessage.success('验证码已发送，请查收邮箱（10 分钟内有效）')
+    if (res.dev_mode && res.dev_code) emailDevCode.value = res.dev_code
+    startEmailCountdown(res.resend_after || 60)
+  } finally {
+    emailSending.value = false
+  }
+}
+
+async function saveEmail() {
+  const addr = emailInput.value.trim().toLowerCase()
+  const code = emailCodeInput.value.trim()
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(addr)) {
+    ElMessage.warning('请输入正确的邮箱地址')
+    return
+  }
+  if (!/^\d{6}$/.test(code)) {
+    ElMessage.warning('请输入 6 位数字验证码')
+    return
+  }
+  emailSaving.value = true
+  try {
+    const updated = await auth.bindEmail(addr, code)
+    email.value = updated.email || addr
+    emailVerified.value = !!updated.email_verified
+    emailEditing.value = false
+    emailCodeInput.value = ''
+    emailDevCode.value = ''
+    ElMessage.success('邮箱验证成功')
+  } finally {
+    emailSaving.value = false
+  }
+}
+
 function pickAvatar() {
   avatarInput.value?.click()
 }
@@ -558,6 +652,13 @@ async function logout() {
 }
 .phone-row .el-input {
   flex: 1;
+}
+.email-code-row {
+  margin-top: 8px;
+}
+.email-dev-tip {
+  margin-top: 8px;
+  width: 100%;
 }
 .my-stats {
   display: flex;

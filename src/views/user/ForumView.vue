@@ -274,6 +274,17 @@ async function ensureCanPost() {
     } catch { /* 用户取消 */ }
     return false
   }
+  if (!auth.user?.email_verified) {
+    try {
+      await ElMessageBox.confirm('平台要求发帖前完成邮箱验证码验证（在个人主页绑定邮箱并填入验证码），现在去验证？', '发帖前请先完成邮箱验证', {
+        confirmButtonText: '去验证',
+        cancelButtonText: '取消',
+        type: 'warning',
+      })
+      router.push('/profile')
+    } catch { /* 用户取消 */ }
+    return false
+  }
   return true
 }
 

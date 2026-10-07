@@ -124,14 +124,17 @@
 
 <script setup>
 import { computed, nextTick, onMounted, onUnmounted, ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { bottlesApi, BOTTLE_STATUS } from '../../api/bottles'
 import { useBottleStore } from '../../stores/bottles'
+import { useAuthStore } from '../../stores/auth'
 import { fmtTime } from '../../utils/format'
 
 const route = useRoute()
+const router = useRouter()
 const store = useBottleStore()
+const auth = useAuthStore()
 const bottleId = Number(route.params.id)
 
 const detail = ref(null)
@@ -216,6 +219,18 @@ async function scrollToBottom() {
 async function onSend() {
   const content = draft.value.trim()
   if (!content || sending.value) return
+  // 发消息要求邮箱已验证（结束会话与举报不受此限制）
+  if (!auth.user?.email_verified) {
+    try {
+      await ElMessageBox.confirm(
+        '发送消息前需要先完成邮箱验证码验证（在个人主页绑定邮箱并填入验证码），现在去验证？',
+        '发送消息前请先完成邮箱验证',
+        { confirmButtonText: '去验证', cancelButtonText: '取消', type: 'warning' }
+      )
+      router.push('/profile')
+    } catch { /* 用户取消 */ }
+    return
+  }
   sending.value = true
   try {
     const msg = await bottlesApi.sendMessage(bottleId, content)
