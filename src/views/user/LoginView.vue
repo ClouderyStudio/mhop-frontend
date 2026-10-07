@@ -91,7 +91,8 @@ async function submitCasdoor() {
   try {
     await auth.loginWithCasdoor(window.location.origin + '/auth/casdoor/callback')
   } catch (e) {
-    ElMessage.error(e?.response?.data?.detail || e?.message || '统一身份认证暂不可用')
+    // 无响应时 axios 的 message 是英文（Network Error 等），这里统一回退到中文提示。
+    ElMessage.error(e?.response?.data?.detail || (e?.response ? e?.message : '') || '统一身份认证暂不可用')
     casdoorLoading.value = false
   }
 }
