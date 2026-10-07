@@ -8,7 +8,7 @@
           <small>运营管理后台</small>
         </div>
       </div>
-      <el-menu :default-active="route.path" router background-color="transparent" text-color="#cfe4e0"
+      <el-menu :default-active="route.path" router background-color="transparent" text-color="#c2cedb"
         active-text-color="#ffffff">
         <el-menu-item v-for="item in menus" :key="item.path" :index="item.path">
           <el-icon><component :is="item.icon" /></el-icon><span>{{ item.name }}</span>
@@ -129,7 +129,7 @@ function onCommand(cmd) {
   height: 100dvh;
 }
 .admin-aside {
-  background: linear-gradient(180deg, #206b62 0%, #18514b 100%);
+  background: linear-gradient(180deg, #1d2835 0%, #16202b 100%);
   display: flex;
   flex-direction: column;
 }
@@ -145,7 +145,7 @@ function onCommand(cmd) {
   font-size: 16px;
 }
 .logo small {
-  color: #a9cfc9;
+  color: #8fa3b6;
   font-size: 11.5px;
 }
 .admin-aside :deep(.el-menu) {
@@ -161,8 +161,8 @@ function onCommand(cmd) {
   margin: 4px 10px;
 }
 .admin-header {
-  background: #fff;
-  border-bottom: 1px solid #ebe6dc;
+  background: var(--mhop-card);
+  border-bottom: 1px solid var(--mhop-border);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,8 +208,8 @@ function onCommand(cmd) {
   transition: background 0.15s, color 0.15s;
 }
 .admin-theme:hover {
-  background: var(--mhop-teal-light);
-  color: var(--mhop-teal);
+  background: var(--mhop-link-light);
+  color: var(--mhop-link);
 }
 .user-trigger {
   display: inline-flex;
@@ -221,7 +221,7 @@ function onCommand(cmd) {
   white-space: nowrap;
 }
 .admin-main {
-  background: #f4f2ed;
+  background: var(--mhop-bg);
   padding: 22px;
 }
 
@@ -261,7 +261,7 @@ function onCommand(cmd) {
 <!-- 抽屉被 teleport 到 body，scoped 样式选不中，使用全局样式块 -->
 <style>
 .admin-drawer.el-drawer {
-  background: linear-gradient(180deg, #206b62 0%, #18514b 100%);
+  background: linear-gradient(180deg, #1d2835 0%, #16202b 100%);
 }
 .admin-drawer .el-drawer__body {
   padding: 0;
@@ -279,7 +279,7 @@ function onCommand(cmd) {
   font-size: 16px;
 }
 .admin-drawer .drawer-brand small {
-  color: #a9cfc9;
+  color: #8fa3b6;
   font-size: 11.5px;
 }
 .admin-drawer .drawer-nav {
@@ -294,7 +294,7 @@ function onCommand(cmd) {
   padding: 13px 12px;
   margin: 3px 0;
   border-radius: 8px;
-  color: #cfe4e0;
+  color: #c2cedb;
   font-size: 15.5px;
   cursor: pointer;
 }

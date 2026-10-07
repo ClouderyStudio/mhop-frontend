@@ -603,7 +603,7 @@ async function logout() {
   overflow: hidden;
   cursor: pointer;
   position: relative;
-  background: var(--mhop-primary, #5b8def);
+  background: var(--mhop-link);
   display: flex;
   align-items: center;
   justify-content: center;

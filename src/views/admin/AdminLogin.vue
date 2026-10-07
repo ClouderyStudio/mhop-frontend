@@ -19,7 +19,7 @@
         </el-button>
       </el-form>
       <div style="text-align: center; margin-top: 14px">
-        <router-link to="/" style="color: #9fc4be; font-size: 13px">← 返回前台首页</router-link>
+        <router-link to="/" style="color: #9fb2c4; font-size: 13px">← 返回前台首页</router-link>
       </div>
       <p class="hint">默认管理员：admin / admin123（首次登录后请修改密码）</p>
     </div>
@@ -81,7 +81,7 @@ async function submit() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #18514b 0%, #2f8f83 100%);
+  background: linear-gradient(135deg, #182331 0%, #23364a 100%);
 }
 .login-card {
   width: 420px;
@@ -98,7 +98,7 @@ async function submit() {
 }
 .login-brand {
   text-align: center;
-  color: #227067;
+  color: var(--mhop-link-dark);
   margin-bottom: 24px;
 }
 .login-brand h2 {
@@ -112,7 +112,7 @@ async function submit() {
 }
 .hint {
   text-align: center;
-  color: #a0978a;
+  color: var(--mhop-text-sub);
   font-size: 12px;
   margin-top: 14px;
 }

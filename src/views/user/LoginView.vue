@@ -242,7 +242,7 @@ async function submitEmail() {
   font-size: 13.5px;
 }
 .auth-foot a {
-  color: var(--mhop-teal);
+  color: var(--mhop-link);
   font-weight: 600;
 }
 @media (max-width: 640px) {

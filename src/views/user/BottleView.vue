@@ -241,9 +241,9 @@ function statusText(b) {
   position: relative;
   border-radius: 18px;
   overflow: hidden;
-  background: linear-gradient(180deg, #9fd6e8 0%, #5aa9c9 46%, #357fa6 100%);
+  background: linear-gradient(180deg, #8ec7e4 0%, #4f9cc4 46%, #2f75a3 100%);
   color: #fff;
-  box-shadow: 0 10px 28px rgba(53, 127, 166, 0.28);
+  box-shadow: 0 10px 28px rgba(47, 117, 163, 0.28);
 }
 .sea-inner {
   position: relative;
@@ -358,7 +358,7 @@ function statusText(b) {
   transition: box-shadow 0.15s, transform 0.1s;
 }
 .conv-item:hover {
-  box-shadow: 0 6px 18px rgba(38, 58, 55, 0.1);
+  box-shadow: var(--mhop-shadow-hover);
   transform: translateY(-1px);
 }
 .conv-top {

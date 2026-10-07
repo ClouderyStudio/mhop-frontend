@@ -435,7 +435,7 @@ onMounted(reload)
 .ai-note {
   margin: 6px 0 0;
   font-size: 12.5px;
-  color: #b06a3a;
+  color: var(--mhop-violet);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;

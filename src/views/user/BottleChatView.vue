@@ -360,13 +360,13 @@ onUnmounted(() => {
 }
 .bottle-card.mine {
   align-self: flex-end;
-  background: linear-gradient(135deg, #d7efe9, #c5e6de);
-  color: #1d5b50;
+  background: linear-gradient(135deg, #e4f0fb, #cfe4f6);
+  color: #23557a;
 }
 .bottle-card.other {
   align-self: flex-start;
-  background: #fff;
-  border: 1px solid #e7e2d8;
+  background: var(--mhop-card);
+  border: 1px solid var(--mhop-border);
 }
 .bottle-label {
   display: flex;
@@ -412,12 +412,12 @@ onUnmounted(() => {
   position: relative;
 }
 .bubble-row.other .bubble {
-  background: #fff;
-  border: 1px solid #e7e2d8;
+  background: var(--mhop-card);
+  border: 1px solid var(--mhop-border);
   border-top-left-radius: 4px;
 }
 .bubble-row.mine .bubble {
-  background: linear-gradient(135deg, #3aa79a, #2f8f83);
+  background: linear-gradient(135deg, #4a8acb, #3a78c2);
   color: #fff;
   border-top-right-radius: 4px;
 }
@@ -469,9 +469,9 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: #f6f3ec;
+  background: var(--mhop-sand);
   color: var(--mhop-text-sub);
-  border: 1px dashed #d9d2c3;
+  border: 1px dashed var(--mhop-border-strong);
   border-radius: 12px;
   padding: 12px;
   font-size: 13px;

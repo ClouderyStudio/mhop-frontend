@@ -260,18 +260,18 @@ onMounted(async () => {
   padding: 14px 18px;
   margin-bottom: 16px;
   border-radius: 12px;
-  background: var(--mhop-card);
-  border: 1px solid var(--mhop-teal-light);
+  background: linear-gradient(180deg, #f6f4fe 0%, var(--mhop-card) 100%);
+  border: 1px solid #d9d1f8;
   text-decoration: none;
   transition: box-shadow 0.2s, transform 0.2s;
 }
 .more-scales-link:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(47, 143, 131, 0.18);
+  box-shadow: var(--mhop-shadow-hover);
 }
 .more-scales-link .el-icon {
   font-size: 22px;
-  color: var(--mhop-teal);
+  color: var(--mhop-violet);
   flex-shrink: 0;
 }
 .more-scales-link strong {
@@ -307,8 +307,8 @@ onMounted(async () => {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: var(--mhop-teal-light);
-  color: var(--mhop-teal-dark);
+  background: var(--mhop-violet-light);
+  color: var(--mhop-violet);
   font-size: 12.5px;
   align-items: center;
   justify-content: center;
@@ -342,10 +342,10 @@ onMounted(async () => {
   font-size: 40px;
   font-weight: 800;
   line-height: 1;
-  color: var(--mhop-teal);
+  color: var(--mhop-leaf);
 }
 .score-num.moderate {
-  color: #d98a2b;
+  color: var(--mhop-amber);
 }
 .score-num.severe,
 .score-num.danger {
@@ -374,12 +374,12 @@ onMounted(async () => {
   align-items: center;
   gap: 8px;
   padding: 9px 4px;
-  border-bottom: 1px dashed #ece7dd;
+  border-bottom: 1px dashed var(--mhop-border);
   font-size: 13px;
   cursor: pointer;
 }
 .history-item:hover {
-  background: #faf8f3;
+  background: var(--mhop-sand);
 }
 @media (max-width: 900px) {
   .assess-layout {

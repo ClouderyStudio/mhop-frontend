@@ -604,7 +604,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #fff;
+  background: var(--mhop-card);
   border-radius: 12px;
   padding: 16px 18px;
   border-left: 4px solid #909399;
@@ -660,7 +660,7 @@ onMounted(() => {
 .row-report {
   margin: 6px 0 0;
   font-size: 12.5px;
-  color: #b06a3a;
+  color: var(--mhop-violet);
 }
 .person-cell {
   font-size: 13px;
@@ -699,7 +699,7 @@ onMounted(() => {
 .am-report {
   margin: 8px 0 0;
   font-size: 12.5px;
-  color: #b06a3a;
+  color: var(--mhop-violet);
 }
 .am-actions {
   margin-top: 10px;
@@ -717,7 +717,7 @@ onMounted(() => {
   margin-bottom: 12px;
 }
 .detail-bottle {
-  background: #f6f3ec;
+  background: var(--mhop-sand);
   border-radius: 12px;
   padding: 14px 16px;
 }
@@ -730,7 +730,7 @@ onMounted(() => {
 .detail-ai {
   margin: 0 0 12px;
   font-size: 12.5px;
-  color: #b06a3a;
+  color: var(--mhop-violet);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
@@ -743,7 +743,7 @@ onMounted(() => {
   color: var(--mhop-text-sub);
 }
 .report-line {
-  color: #b05a3a;
+  color: var(--mhop-violet);
 }
 .msg-title {
   margin: 18px 0 10px;
@@ -755,12 +755,12 @@ onMounted(() => {
   gap: 10px;
 }
 .dm-item {
-  border: 1px solid #ebe6dc;
+  border: 1px solid var(--mhop-border);
   border-radius: 10px;
   padding: 10px 12px;
 }
 .dm-item.is-hidden {
-  background: #faf8f4;
+  background: var(--mhop-sand);
   opacity: 0.75;
 }
 .dm-item.is-focus {
@@ -782,7 +782,7 @@ onMounted(() => {
 .dm-ai {
   margin: 0 0 7px;
   font-size: 12.5px;
-  color: #b06a3a;
+  color: var(--mhop-violet);
   line-height: 1.6;
 }
 .dm-actions {

@@ -88,12 +88,12 @@ const loading = ref(false)
 let timer = null
 
 const cards = computed(() => [
-  { label: '注册用户', value: stats.value.users, icon: 'UserFilled', bg: '#e7f3f1' },
-  { label: '论坛帖子', value: stats.value.posts, icon: 'ChatLineSquare', bg: '#eef4fb' },
-  { label: '回复总数', value: stats.value.replies, icon: 'ChatDotRound', bg: '#f3eefa' },
-  { label: 'AI 测评记录', value: stats.value.assessments, icon: 'DocumentChecked', bg: '#fdf3e7' },
-  { label: '待处理审核', value: (stats.value.pending_posts || 0) + (stats.value.pending_replies || 0), icon: 'Bell', bg: '#fcf0e6' },
-  { label: '在线访客', value: stats.value.online, icon: 'Connection', bg: '#e9f7ee' },
+  { label: '注册用户', value: stats.value.users, icon: 'UserFilled', bg: '#eaf1f8' },
+  { label: '论坛帖子', value: stats.value.posts, icon: 'ChatLineSquare', bg: '#e8f1fb' },
+  { label: '回复总数', value: stats.value.replies, icon: 'ChatDotRound', bg: '#fceef3' },
+  { label: 'AI 测评记录', value: stats.value.assessments, icon: 'DocumentChecked', bg: '#efecfd' },
+  { label: '待处理审核', value: (stats.value.pending_posts || 0) + (stats.value.pending_replies || 0), icon: 'Bell', bg: '#fbf2e3' },
+  { label: '在线访客', value: stats.value.online, icon: 'Connection', bg: '#e9f6ee' },
 ])
 
 async function load() {
@@ -120,7 +120,7 @@ onBeforeUnmount(() => timer && clearInterval(timer))
 .stat-card {
   border-radius: 14px;
   padding: 18px;
-  color: #227067;
+  color: var(--mhop-text);
   margin-bottom: 16px;
 }
 .stat-num {
@@ -146,7 +146,7 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   align-items: center;
   gap: 12px;
   padding: 12px 6px;
-  border-bottom: 1px dashed #ece7dd;
+  border-bottom: 1px dashed var(--mhop-border);
   cursor: pointer;
 }
 .todo-list li:last-child {
@@ -161,6 +161,6 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   color: var(--mhop-danger);
 }
 .todo-list .arrow {
-  color: #c2bdb2;
+  color: var(--mhop-text-sub);
 }
 </style>

@@ -1,14 +1,45 @@
 :root {
-  --mhop-bg: #f5f3ee;
+  /* ---- 中性基底（冷灰白，替代旧的米色+青绿调） ---- */
+  --mhop-bg: #f3f5f8;
   --mhop-card: #ffffff;
+  --mhop-sand: #f7f9fb;
+  --mhop-border: #e3e8ef;
+  --mhop-border-strong: #d2dae4;
+
+  /* ---- 文字：中性蓝灰 ---- */
+  --mhop-text: #1d2733;
+  --mhop-text-sub: #66778a;
+
+  /* ---- 品牌青绿：仅用于品牌标识与主行动按钮，降低覆盖率 ---- */
   --mhop-teal: #2f8f83;
   --mhop-teal-dark: #227067;
-  --mhop-teal-light: #e7f3f1;
-  --mhop-sand: #faf7f1;
-  --mhop-text: #263a37;
-  --mhop-text-sub: #6b7f7b;
+  --mhop-teal-light: #e8f3f1;
+
+  /* ---- 链接 / 信息 / 导航激活：蓝灰 ---- */
+  --mhop-link: #3f6991;
+  --mhop-link-dark: #32557a;
+  --mhop-link-light: #eaf1f8;
+
+  /* ---- 功能场景色板（按语义分配，避免单色贯穿） ---- */
+  --mhop-ocean: #3a78c2;        /* 漂流瓶 / 海洋 */
+  --mhop-ocean-light: #e8f1fb;
+  --mhop-violet: #6d5ce0;       /* AI 相关：评估、AI 回复、AI 徽章 */
+  --mhop-violet-light: #efecfd;
+  --mhop-amber: #c9852a;        /* 警示待办 / 点赞 */
+  --mhop-amber-light: #fbf2e3;
+  --mhop-rose: #c8547a;         /* 人际 / 玫红点缀 */
+  --mhop-rose-light: #fceef3;
+  --mhop-leaf: #3f9d63;         /* 成功 / 康复 / 在线 */
+  --mhop-leaf-light: #e9f6ee;
+
   --mhop-danger: #d83a2e;
   --mhop-danger-2: #f4713f;
+
+  /* ---- 圆角 / 阴影：利落与柔和折中 ---- */
+  --mhop-radius: 10px;
+  --mhop-radius-sm: 7px;
+  --mhop-shadow: 0 1px 2px rgba(29, 39, 51, 0.04), 0 4px 14px rgba(29, 39, 51, 0.05);
+  --mhop-shadow-hover: 0 2px 6px rgba(29, 39, 51, 0.06), 0 10px 24px rgba(29, 39, 51, 0.09);
 
   --el-color-primary: #2f8f83;
   --el-color-primary-light-3: #5eaaa1;
@@ -17,7 +48,11 @@
   --el-color-primary-light-8: #d4eae8;
   --el-color-primary-light-9: #e7f3f1;
   --el-color-primary-dark-2: #227067;
-  --el-border-radius-base: 10px;
+  --el-border-radius-base: 8px;
+  --el-border-color: #e3e8ef;
+  --el-border-color-light: #e9edf3;
+  --el-border-color-lighter: #f0f3f7;
+  --el-text-color-regular: #46556a;
 }
 
 * {
@@ -78,8 +113,9 @@ img {
 
 .mhop-card {
   background: var(--mhop-card);
-  border-radius: 16px;
-  box-shadow: 0 2px 14px rgba(38, 58, 55, 0.06);
+  border: 1px solid var(--mhop-border);
+  border-radius: var(--mhop-radius);
+  box-shadow: var(--mhop-shadow);
 }
 
 .text-sub {
@@ -213,11 +249,11 @@ img {
   line-height: 1.6;
 }
 
-/* ---------- AI 回复卡片 ---------- */
+/* ---------- AI 回复卡片（AI 统一为紫罗兰语义色） ---------- */
 .ai-reply-card {
-  background: linear-gradient(180deg, #f0f8f7 0%, #ffffff 100%);
-  border: 1px solid #bfe0db;
-  border-radius: 14px;
+  background: linear-gradient(180deg, #f3f0fe 0%, #ffffff 100%);
+  border: 1px solid #d9d1f8;
+  border-radius: var(--mhop-radius);
   padding: 16px 18px;
 }
 
@@ -225,7 +261,7 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  background: var(--mhop-teal);
+  background: var(--mhop-violet);
   color: #fff;
   font-size: 12px;
   padding: 2px 10px;
@@ -281,14 +317,14 @@ img {
 .md-body .md-quote {
   margin: 10px 0;
   padding: 8px 14px;
-  border-left: 3px solid var(--mhop-teal);
-  background: var(--mhop-teal-light);
+  border-left: 3px solid var(--mhop-link);
+  background: var(--mhop-link-light);
   border-radius: 0 8px 8px 0;
-  color: #35554f;
+  color: #3a4d63;
 }
 .md-body .md-hr {
   border: none;
-  border-top: 1px solid #e3e8e6;
+  border-top: 1px solid var(--mhop-border);
   margin: 14px 0;
 }
 .md-body .md-code {
@@ -300,8 +336,8 @@ img {
   color: #b05a44;
 }
 .md-body .md-pre {
-  background: #2b3432;
-  color: #e6eeec;
+  background: #1d2630;
+  color: #e6edf3;
   padding: 12px 14px;
   border-radius: 10px;
   overflow-x: auto;
@@ -313,7 +349,7 @@ img {
   font-family: Consolas, 'Courier New', monospace;
 }
 .md-body a {
-  color: var(--mhop-teal-dark);
+  color: var(--mhop-link);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -350,7 +386,7 @@ img {
 .stat-grid strong {
   display: block;
   font-size: 19px;
-  color: var(--mhop-teal-dark);
+  color: var(--mhop-link);
 }
 .stat-grid span {
   font-size: 12px;
@@ -366,7 +402,7 @@ img {
   height: 44px;
   font-size: 15px;
   font-weight: 600;
-  border-radius: 12px;
+  border-radius: 8px;
 }
 .board-nav {
   padding: 8px 0;
@@ -382,13 +418,13 @@ img {
   transition: background 0.15s;
 }
 .board-nav a:hover {
-  background: #f4f8f7;
+  background: var(--mhop-sand);
 }
 .board-nav a.active {
-  background: var(--mhop-teal-light);
-  color: var(--mhop-teal-dark);
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
   font-weight: 600;
-  border-left-color: var(--mhop-teal);
+  border-left-color: var(--mhop-link);
 }
 .board-nav .dot {
   width: 9px;
@@ -455,7 +491,7 @@ img {
 
   /* 卡片/字体基础收紧 */
   .mhop-card {
-    border-radius: 12px;
+    border-radius: 9px;
   }
   .md-body {
     font-size: 14px;
@@ -586,7 +622,7 @@ img {
   gap: 8px;
   margin-top: 12px;
   padding-top: 12px;
-  border-top: 1px dashed #e6e1d7;
+  border-top: 1px dashed var(--mhop-border);
 }
 .am-actions .el-button {
   margin: 0;
@@ -605,47 +641,69 @@ img {
 
 /* ==================== 黑夜模式 ==================== */
 /* 激活方式：<html class="dark">；同时覆盖自定义令牌与 Element Plus 中性色变量，
-   保证卡片、弹窗、表格、输入框等 el-* 组件与手写界面统一为带青绿倾向的深色。 */
+   保证卡片、弹窗、表格、输入框等 el-* 组件与手写界面统一为中性深蓝灰深色。 */
 html.dark {
   color-scheme: dark;
 
-  --mhop-bg: #111817;
-  --mhop-card: #1b2422;
-  --mhop-sand: #18211f;
-  --mhop-teal: #41a89b;
-  --mhop-teal-dark: #7cc9bf;
-  --mhop-teal-light: #223330;
-  --mhop-text: #dce7e4;
-  --mhop-text-sub: #93a7a2;
+  --mhop-bg: #0f141a;
+  --mhop-card: #181f28;
+  --mhop-sand: #141b23;
+  --mhop-border: #2a343f;
+  --mhop-border-strong: #394655;
+  --mhop-text: #dde4ec;
+  --mhop-text-sub: #90a0b4;
+
+  --mhop-teal: #46b0a3;
+  --mhop-teal-dark: #84d0c6;
+  --mhop-teal-light: #1f3330;
+
+  --mhop-link: #7fa6cf;
+  --mhop-link-dark: #a3c0de;
+  --mhop-link-light: #1d2c3d;
+
+  --mhop-ocean: #5d9bd6;
+  --mhop-ocean-light: #172a3e;
+  --mhop-violet: #9d8df1;
+  --mhop-violet-light: #27233f;
+  --mhop-amber: #ddaa5c;
+  --mhop-amber-light: #332917;
+  --mhop-rose: #df83a3;
+  --mhop-rose-light: #3a202b;
+  --mhop-leaf: #65bd87;
+  --mhop-leaf-light: #173023;
+
   --mhop-danger: #ef6a5e;
   --mhop-danger-2: #f08058;
 
-  --el-color-primary: #41a89b;
-  --el-color-primary-light-3: #2f857b;
-  --el-color-primary-light-5: #376b64;
-  --el-color-primary-light-7: #2e504b;
-  --el-color-primary-light-8: #2a4440;
-  --el-color-primary-light-9: #243a37;
-  --el-color-primary-dark-2: #6cbfb4;
+  --mhop-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 14px rgba(0, 0, 0, 0.28);
+  --mhop-shadow-hover: 0 2px 6px rgba(0, 0, 0, 0.35), 0 10px 24px rgba(0, 0, 0, 0.4);
 
-  --el-bg-color: #1b2422;
-  --el-bg-color-page: #111817;
-  --el-bg-color-overlay: #232e2b;
-  --el-text-color-primary: #dce7e4;
-  --el-text-color-regular: #a8bbb5;
-  --el-text-color-secondary: #8fa49f;
-  --el-text-color-placeholder: #6f837e;
-  --el-border-color: #34403d;
-  --el-border-color-light: #2d3836;
-  --el-border-color-lighter: #28322f;
-  --el-border-color-extra-light: #242e2c;
-  --el-border-color-dark: #3d4b48;
-  --el-border-color-darker: #475551;
-  --el-fill-color: #232e2b;
-  --el-fill-color-light: #202a28;
-  --el-fill-color-lighter: #1d2624;
+  --el-color-primary: #46b0a3;
+  --el-color-primary-light-3: #35817a;
+  --el-color-primary-light-5: #2f625c;
+  --el-color-primary-light-7: #284a46;
+  --el-color-primary-light-8: #243d3a;
+  --el-color-primary-light-9: #1f3330;
+  --el-color-primary-dark-2: #74c6ba;
+
+  --el-bg-color: #181f28;
+  --el-bg-color-page: #0f141a;
+  --el-bg-color-overlay: #202934;
+  --el-text-color-primary: #dde4ec;
+  --el-text-color-regular: #aab9c9;
+  --el-text-color-secondary: #90a0b4;
+  --el-text-color-placeholder: #72839a;
+  --el-border-color: #2a343f;
+  --el-border-color-light: #252f3a;
+  --el-border-color-lighter: #202a34;
+  --el-border-color-extra-light: #1d262f;
+  --el-border-color-dark: #34414f;
+  --el-border-color-darker: #404e5e;
+  --el-fill-color: #202934;
+  --el-fill-color-light: #1c252f;
+  --el-fill-color-lighter: #19222c;
   --el-fill-color-blank: transparent;
-  --el-mask-color: rgba(10, 15, 14, 0.75);
+  --el-mask-color: rgba(8, 11, 15, 0.75);
 }
 
 html.dark body {
@@ -658,8 +716,8 @@ html.dark .mhop-card {
 
 /* ---------- 通用组件 / 排版 ---------- */
 html.dark .ai-reply-card {
-  background: linear-gradient(180deg, #1d2a28 0%, #1b2422 100%);
-  border-color: #314540;
+  background: linear-gradient(180deg, #211d38 0%, #181f28 100%);
+  border-color: #3a3463;
 }
 
 html.dark .crisis-tag {
@@ -669,70 +727,70 @@ html.dark .crisis-tag {
 }
 
 html.dark .md-body .md-quote {
-  background: var(--mhop-teal-light);
-  color: #b8d2cb;
+  background: var(--mhop-link-light);
+  color: #b3c8de;
 }
 
 html.dark .md-body .md-hr {
-  border-top-color: #2e3936;
+  border-top-color: #25303c;
 }
 
 html.dark .md-body .md-code {
-  background: #2a3432;
+  background: #232d39;
   color: #e2a58e;
 }
 
 html.dark .board-nav a:hover {
-  background: #232e2b;
+  background: #1d262f;
 }
 
 html.dark .am-actions {
-  border-top-color: #35403d;
+  border-top-color: #2c3744;
 }
 
 /* Markdown 编辑预览面板（MdComposer） */
 html.dark .md-preview {
-  background: #161e1c;
+  background: #121921;
 }
 
 /* ---------- 用户站导航 / 页脚（UserLayout scoped 选择器，以更高优先级覆盖） ---------- */
 html.dark .nav-header {
-  background: rgba(17, 24, 23, 0.9);
-  border-bottom-color: #28322f;
+  background: rgba(15, 20, 26, 0.9);
+  border-bottom-color: #25303c;
 }
 
 html.dark .site-footer {
-  background: #161e1c;
-  border-top-color: #28322f;
+  background: #121921;
+  border-top-color: #25303c;
 }
 
 html.dark .drawer-online {
-  border-bottom-color: #2a3432;
+  border-bottom-color: #28333f;
 }
 
 html.dark .mobile-tabbar {
-  background: rgba(17, 24, 23, 0.96);
-  border-top-color: #28322f;
+  background: rgba(15, 20, 26, 0.96);
+  border-top-color: #25303c;
 }
 
 /* ---------- 首页 ---------- */
 html.dark .hero {
-  background: linear-gradient(120deg, #1b2422 0%, #1d2c29 100%);
+  background: linear-gradient(120deg, #181f28 0%, #1b2735 100%);
 }
 
 html.dark .hero-badge {
-  background: var(--mhop-teal-light);
-  color: #8fd3c9;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
 }
 
-/* hero 插画是浅色水印，深色下改为深青剪影 */
+/* hero 插画是浅色水印，深色下改为深蓝灰剪影 */
 html.dark .hero-illu {
-  color: #2c443f;
+  color: #2b3a4b;
 }
 
 /* 四个功能图标的底色为内联浅色，统一压暗（保留各自彩色图标） */
 html.dark .feature-icon {
-  background: #223330 !important;
+  background: #232d39 !important;
 }
 
 /* ---------- 漂流瓶海洋页 ---------- */
@@ -754,18 +812,18 @@ html.dark .crisis-banner {
 }
 
 html.dark .bottle-card.mine {
-  background: linear-gradient(135deg, #23524b, #1d443e);
-  color: #cfe8e2;
+  background: linear-gradient(135deg, #21466b, #1a3a5c);
+  color: #d5e5f5;
 }
 
 html.dark .bottle-card.other {
   background: var(--mhop-card);
-  border-color: #34403d;
+  border-color: var(--mhop-border);
 }
 
 html.dark .bubble-row.other .bubble {
   background: var(--mhop-card);
-  border-color: #34403d;
+  border-color: var(--mhop-border);
 }
 
 html.dark .bubble-row.other .bubble-crisis {
@@ -773,22 +831,22 @@ html.dark .bubble-row.other .bubble-crisis {
 }
 
 html.dark .ended-strip {
-  background: #1a2321;
-  border-color: #3b4744;
+  background: #161e27;
+  border-color: #34414f;
 }
 
 /* ---------- 论坛 ---------- */
 html.dark .topic-row {
-  border-bottom-color: #27312e;
+  border-bottom-color: #242e39;
 }
 
 html.dark .topic-row:hover {
-  background: #1f2927;
+  background: #1c252f;
 }
 
 html.dark .t-avatar {
-  background: var(--mhop-teal-light);
-  color: #8fd3c9;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
 }
 
 html.dark .like-btn:hover {
@@ -797,25 +855,25 @@ html.dark .like-btn:hover {
 }
 
 html.dark .img-add {
-  background: #202a28;
-  border-color: #3d4946;
-  color: #8fa49f;
+  background: #1c252f;
+  border-color: #394655;
+  color: #90a0b4;
 }
 
 /* ---------- 帖子详情 ---------- */
 html.dark .ai-floor {
-  background: linear-gradient(180deg, #1d2a28 0%, #1b2422 100%);
-  border-color: #314540;
+  background: linear-gradient(180deg, #211d38 0%, #181f28 100%);
+  border-color: #3a3463;
 }
 
 html.dark .f-avatar {
-  background: var(--mhop-teal-light);
-  color: #8fd3c9;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
 }
 
 html.dark .act-like {
   background: var(--mhop-card);
-  border-color: #34403d;
+  border-color: var(--mhop-border);
 }
 
 html.dark .act-like:hover {
@@ -831,41 +889,46 @@ html.dark .act-like.on {
 }
 
 html.dark .floor.recalled {
-  background: #1c2422;
-  border-color: #424c48;
+  background: #18202a;
+  border-color: #3a4654;
 }
 
 /* ---------- AI 评估 ---------- */
+html.dark .more-scales-link {
+  background: linear-gradient(180deg, #211d38 0%, #181f28 100%);
+  border-color: #3a3463;
+}
+
 html.dark .history-item {
-  border-bottom-color: #2c3633;
+  border-bottom-color: #28333f;
 }
 
 html.dark .history-item:hover {
-  background: #1c2624;
+  background: #1a232d;
 }
 
 /* ---------- 管理后台框架 ---------- */
 html.dark .admin-header {
-  background: #1b2422;
-  border-bottom-color: #2a3432;
+  background: #181f28;
+  border-bottom-color: #25303c;
 }
 
 html.dark .admin-main {
-  background: #121918;
+  background: #10161d;
 }
 
 /* 后台登录卡片 */
 html.dark .login-card {
-  background: #1b2422;
+  background: #181f28;
 }
 
 html.dark .login-brand {
-  color: #8fd3c9;
+  color: var(--mhop-link-dark);
 }
 
 /* Dashboard / BottleReview 统计卡（Dashboard 底色为内联样式，需 !important） */
 html.dark .stat-card {
-  background: #1f2927 !important;
+  background: #1c252f !important;
   color: var(--mhop-text);
 }
 
@@ -878,33 +941,25 @@ html.dark .stat-card.stat-hidden { color: #b08cf8; }
 html.dark .stat-card.stat-reported { color: #d983a1; }
 
 html.dark .todo-list li {
-  border-bottom-color: #2c3633;
+  border-bottom-color: #28333f;
 }
 
-/* 瓶子审核详情抽屉里的米底说明块 */
+/* 瓶子审核详情抽屉里的说明块 */
 html.dark .detail-bottle {
-  background: #1f2927;
+  background: #1c252f;
 }
 
 html.dark .dm-item {
-  border-color: #34403d;
+  border-color: var(--mhop-border);
 }
 
 html.dark .dm-item.is-hidden {
-  background: #18201e;
+  background: #131a22;
 }
 
-/* 米底棕字的 AI 备注在深色底上提亮 */
-html.dark .detail-ai,
-html.dark .dm-ai,
-html.dark .am-report,
-html.dark .row-report,
-html.dark .ai-note,
-html.dark .report-line {
-  color: #d99a6c;
-}
+/* AI 审核备注统一使用 --mhop-violet，深色下令牌自动提亮 */
 
 /* 用户管理弹窗中内联 #606266 灰字（内联样式只能用 !important 覆盖） */
 html.dark [style*="#606266"] {
-  color: #a8bbb5 !important;
+  color: #aab9c9 !important;
 }

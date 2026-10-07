@@ -54,7 +54,7 @@ const rendered = computed(() => renderMarkdown(props.modelValue) || '<span class
   padding: 12px 14px;
   border: 1px solid var(--el-border-color);
   border-radius: 10px;
-  background: #fafaf8;
+  background: var(--mhop-sand);
 }
 @media (max-width: 640px) {
   .md-hint {

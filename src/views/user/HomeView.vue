@@ -35,17 +35,17 @@
     <!-- 服务入口（登录后可见） -->
     <section v-if="auth.isLoggedIn" class="feature-grid">
       <router-link to="/forum" class="feature-card mhop-card">
-        <span class="feature-icon" style="background: #e7f3f1; color: #2f8f83"><el-icon :size="26"><ChatLineSquare /></el-icon></span>
+        <span class="feature-icon" style="background: var(--mhop-link-light); color: var(--mhop-link)"><el-icon :size="26"><ChatLineSquare /></el-icon></span>
         <h3>互助论坛</h3>
         <p class="text-sub">匿名说出困扰，AI 即时回应，社区温暖陪伴，管理员持续巡检。</p>
       </router-link>
       <router-link to="/bottles" class="feature-card mhop-card">
-        <span class="feature-icon" style="background: #e8f1fb; color: #3a78c2"><el-icon :size="26"><Promotion /></el-icon></span>
+        <span class="feature-icon" style="background: var(--mhop-ocean-light); color: var(--mhop-ocean)"><el-icon :size="26"><Promotion /></el-icon></span>
         <h3>漂流瓶</h3>
         <p class="text-sub">把心事封进瓶子投入大海，被一位陌生人捞起后，开始一段匿名的持续对话。</p>
       </router-link>
       <router-link to="/assessment" class="feature-card mhop-card">
-        <span class="feature-icon" style="background: #fdf3e7; color: #d98a2b"><el-icon :size="26"><DocumentChecked /></el-icon></span>
+        <span class="feature-icon" style="background: var(--mhop-violet-light); color: var(--mhop-violet)"><el-icon :size="26"><DocumentChecked /></el-icon></span>
         <h3>AI 心理评估</h3>
         <p class="text-sub">PHQ-9 / GAD-7 标准量表 + 自由倾诉，生成个性化解读与求助指引。</p>
       </router-link>
@@ -127,7 +127,7 @@ function goHotline() {
 .hero {
   margin-top: 22px;
   padding: 44px 48px;
-  background: linear-gradient(120deg, #ffffff 0%, #eef7f5 100%);
+  background: linear-gradient(120deg, #ffffff 0%, #edf2f8 100%);
   display: flex;
   align-items: center;
   gap: 30px;
@@ -137,8 +137,8 @@ function goHotline() {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background: #e7f3f1;
-  color: #227067;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
   font-size: 13px;
   padding: 5px 14px;
   border-radius: 999px;
@@ -176,7 +176,7 @@ function goHotline() {
 }
 .hero-illu {
   margin-left: auto;
-  color: #c9e4e0;
+  color: #d6dee8;
   animation: floaty 4s ease-in-out infinite;
 }
 @keyframes floaty {
@@ -197,7 +197,7 @@ function goHotline() {
 }
 .feature-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 22px rgba(38, 58, 55, 0.1);
+  box-shadow: var(--mhop-shadow-hover);
 }
 .feature-icon {
   width: 52px;
@@ -237,7 +237,7 @@ function goHotline() {
   transition: box-shadow 0.15s;
 }
 .post-item:hover {
-  box-shadow: 0 6px 18px rgba(38, 58, 55, 0.1);
+  box-shadow: var(--mhop-shadow-hover);
 }
 .post-meta {
   display: flex;

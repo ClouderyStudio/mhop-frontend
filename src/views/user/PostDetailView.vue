@@ -480,8 +480,8 @@ onBeforeUnmount(stopPolling)
   gap: 16px;
 }
 .ai-floor {
-  background: linear-gradient(180deg, #f0f8f7 0%, #ffffff 100%);
-  border: 1px solid #bfe0db;
+  background: linear-gradient(180deg, #f3f0fe 0%, #ffffff 100%);
+  border: 1px solid #d9d1f8;
   border-radius: 14px;
   padding: 18px 22px;
   margin-bottom: 12px;
@@ -500,15 +500,15 @@ onBeforeUnmount(stopPolling)
   width: 42px;
   height: 42px;
   border-radius: 50%;
-  background: #e7f3f1;
-  color: #2f8f83;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 17px;
 }
 .f-avatar.ai {
-  background: linear-gradient(135deg, #2f8f83, #5eaaa1);
+  background: linear-gradient(135deg, #7d6de8, #6d5ce0);
   color: #fff;
 }
 .f-avatar.recalled {
@@ -541,8 +541,8 @@ onBeforeUnmount(stopPolling)
   gap: 10px;
 }
 .act-like {
-  border: 1px solid #e2e8e6;
-  background: #fff;
+  border: 1px solid var(--mhop-border);
+  background: var(--mhop-card);
   border-radius: 999px;
   padding: 5px 14px;
   font-size: 13px;
@@ -568,8 +568,8 @@ onBeforeUnmount(stopPolling)
   padding: 4px 10px;
 }
 .floor.recalled {
-  background: #f6f7f9;
-  border: 1px dashed #c6cad2;
+  background: var(--mhop-sand);
+  border: 1px dashed var(--mhop-border-strong);
 }
 .recalled-text {
   color: #8a8f99;
@@ -625,7 +625,7 @@ onBeforeUnmount(stopPolling)
   margin: 12px 0;
 }
 .rail-floors {
-  border-top: 1px solid #eef1f0;
+  border-top: 1px solid var(--mhop-border);
   padding-top: 10px;
   display: flex;
   flex-direction: column;
@@ -718,10 +718,10 @@ onBeforeUnmount(stopPolling)
 }
 .img-add {
   width: 64px; height: 64px;
-  border: 1.5px dashed #c0c6cc; border-radius: 8px;
-  background: #fafafa; cursor: pointer;
+  border: 1.5px dashed var(--mhop-border-strong); border-radius: 8px;
+  background: var(--mhop-sand); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: #909399; font-size: 20px;
+  color: var(--mhop-text-sub); font-size: 20px;
 }
-.img-add:hover { border-color: var(--mhop-primary, #5b8def); color: var(--mhop-primary, #5b8def); }
+.img-add:hover { border-color: var(--mhop-link); color: var(--mhop-link); }
 </style>

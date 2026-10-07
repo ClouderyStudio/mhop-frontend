@@ -20,7 +20,7 @@
 
       <nav class="mhop-card board-nav">
         <a :class="{ active: board === '' }" @click="selectBoard('')">
-          <span class="dot" style="background: #2f8f83" /> 全部主题
+          <span class="dot" style="background: var(--mhop-link)" /> 全部主题
           <span class="cnt">{{ stats.posts }}</span>
         </a>
         <a v-for="b in boards" :key="b.slug" :class="{ active: board === b.slug }" @click="selectBoard(b.slug)">
@@ -379,21 +379,21 @@ onMounted(() => {
   padding: 16px 14px;
   border-radius: 12px;
   cursor: pointer;
-  border-bottom: 1px solid #f0f2f1;
+  border-bottom: 1px solid var(--mhop-border);
   transition: background 0.15s;
 }
 .topic-row:last-child {
   border-bottom: none;
 }
 .topic-row:hover {
-  background: #f7fbfa;
+  background: var(--mhop-sand);
 }
 .t-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: #e7f3f1;
-  color: #2f8f83;
+  background: var(--mhop-link-light);
+  color: var(--mhop-link);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -653,18 +653,18 @@ onMounted(() => {
 }
 .img-add {
   width: 72px; height: 72px;
-  border: 1.5px dashed #c0c6cc;
+  border: 1.5px dashed var(--mhop-border-strong);
   border-radius: 8px;
-  background: #fafafa;
+  background: var(--mhop-sand);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  color: #909399; font-size: 22px;
+  color: var(--mhop-text-sub); font-size: 22px;
 }
-.img-add:hover { border-color: var(--mhop-primary, #5b8def); color: var(--mhop-primary, #5b8def); }
+.img-add:hover { border-color: var(--mhop-link); color: var(--mhop-link); }
 
 /* 帖子列表缩略图 */
 .t-avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .t-thumbs { display: flex; gap: 6px; margin: 6px 0; }
 .t-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; }
-.t-thumb-more { font-size: 12px; color: #909399; line-height: 56px; }
+.t-thumb-more { font-size: 12px; color: var(--mhop-text-sub); line-height: 56px; }
 </style>

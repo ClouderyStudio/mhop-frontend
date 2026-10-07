@@ -244,7 +244,7 @@ function onCommand(cmd) {
 .nav-header {
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
-  border-bottom: 1px solid #e9e4da;
+  border-bottom: 1px solid var(--mhop-border);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -263,7 +263,7 @@ function onCommand(cmd) {
 .brand-mark {
   width: 38px;
   height: 38px;
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -291,9 +291,9 @@ function onCommand(cmd) {
   transition: all 0.15s;
 }
 .nav-links a.router-link-exact-active {
-  color: var(--mhop-teal);
+  color: var(--mhop-link);
   font-weight: 600;
-  border-bottom-color: var(--mhop-teal);
+  border-bottom-color: var(--mhop-link);
 }
 .bottle-link {
   position: relative;
@@ -347,8 +347,8 @@ function onCommand(cmd) {
   transition: background 0.15s, color 0.15s;
 }
 .theme-toggle:hover {
-  background: var(--mhop-teal-light);
-  color: var(--mhop-teal);
+  background: var(--mhop-sand);
+  color: var(--mhop-link);
 }
 .user-trigger {
   display: inline-flex;
@@ -365,8 +365,8 @@ function onCommand(cmd) {
   object-fit: cover;
 }
 .site-footer {
-  background: #efebe2;
-  border-top: 1px solid #e3ddd1;
+  background: var(--mhop-sand);
+  border-top: 1px solid var(--mhop-border);
   padding: 22px 0;
   text-align: center;
   font-size: 13.5px;
@@ -403,7 +403,7 @@ function onCommand(cmd) {
   font-size: 13.5px;
   color: var(--mhop-text-sub);
   padding: 0 4px 14px;
-  border-bottom: 1px solid #eee9df;
+  border-bottom: 1px solid var(--mhop-border);
 }
 .drawer-links {
   display: flex;
@@ -421,8 +421,8 @@ function onCommand(cmd) {
 }
 .drawer-links a:active,
 .drawer-links a.router-link-exact-active {
-  background: var(--mhop-teal-light);
-  color: var(--mhop-teal-dark);
+  background: var(--mhop-link-light);
+  color: var(--mhop-link-dark);
   font-weight: 600;
 }
 .drawer-actions {
@@ -515,7 +515,7 @@ function onCommand(cmd) {
     padding-bottom: env(safe-area-inset-bottom);
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(8px);
-    border-top: 1px solid #e9e4da;
+    border-top: 1px solid var(--mhop-border);
   }
   .tb-item {
     flex: 1;
@@ -529,7 +529,7 @@ function onCommand(cmd) {
     -webkit-tap-highlight-color: transparent;
   }
   .tb-item.active {
-    color: var(--mhop-teal);
+    color: var(--mhop-link);
     font-weight: 600;
   }
 }
