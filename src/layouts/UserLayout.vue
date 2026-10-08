@@ -21,15 +21,42 @@
           <router-link v-if="auth.isLoggedIn" to="/assessment">AI 心理评估</router-link>
         </nav>
         <div class="nav-right">
-          <button
-            class="theme-toggle"
-            type="button"
-            :title="isDark ? '切换到白天模式' : '切换到黑夜模式'"
-            :aria-label="isDark ? '切换到白天模式' : '切换到黑夜模式'"
-            @click="toggleTheme"
-          >
-            <el-icon :size="20"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
-          </button>
+          <el-dropdown trigger="click" class="theme-dropdown" @command="onDisplayCommand">
+            <button
+              class="theme-toggle"
+              type="button"
+              :title="`外观与显示：${themeLabel}`"
+              :aria-label="`外观与显示：${themeLabel}`"
+            >
+              <el-icon :size="20"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
+            </button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  v-for="opt in THEME_OPTIONS"
+                  :key="opt.value"
+                  :command="opt.value"
+                  :class="{ 'theme-opt-on': mode === opt.value }"
+                >
+                  <el-icon><component :is="opt.icon" /></el-icon>{{ opt.label }}
+                  <el-icon v-if="mode === opt.value" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <!-- 显示偏好：与日夜模式同处一个菜单，选项太多容易找不到入口 -->
+                <el-dropdown-item
+                  divided
+                  command="toggle-motion"
+                  :class="{ 'theme-opt-on': reduceMotion }"
+                >
+                  <el-icon><VideoPause /></el-icon>减弱动效
+                  <el-icon v-if="reduceMotion" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <el-dropdown-item command="toggle-contrast" :class="{ 'theme-opt-on': highContrast }">
+                  <el-icon><View /></el-icon>高对比度
+                  <el-icon v-if="highContrast" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
           <el-tag type="success" effect="light" round class="online-tag">
             <el-icon style="vertical-align: -2px"><Connection /></el-icon>
             {{ online.count }} 人在线
@@ -91,11 +118,35 @@
         <router-link v-if="auth.isLoggedIn" to="/assessment"><el-icon><DataAnalysis /></el-icon> AI 心理评估</router-link>
         <router-link v-if="auth.isLoggedIn" to="/profile"><el-icon><User /></el-icon> 个人主页</router-link>
       </nav>
+      <div class="drawer-theme">
+        <span class="drawer-theme-label">外观</span>
+        <el-segmented
+          block
+          size="small"
+          :model-value="mode"
+          :options="THEME_OPTIONS"
+          @change="setTheme"
+        />
+        <div class="drawer-prefs">
+          <label class="drawer-pref">
+            <span>减弱动效</span>
+            <el-switch
+              size="small"
+              :model-value="reduceMotion"
+              @change="toggleReduceMotion"
+            />
+          </label>
+          <label class="drawer-pref">
+            <span>高对比度</span>
+            <el-switch
+              size="small"
+              :model-value="highContrast"
+              @change="toggleHighContrast"
+            />
+          </label>
+        </div>
+      </div>
       <div class="drawer-actions">
-        <el-button round @click="toggleTheme">
-          <el-icon><Sunny v-if="isDark" /><Moon v-else /></el-icon>
-          {{ isDark ? '切换到白天模式' : '切换到黑夜模式' }}
-        </el-button>
         <template v-if="auth.isLoggedIn">
           <el-button v-if="auth.isAdmin" round @click="go('/admin/dashboard')">
             <el-icon><Setting /></el-icon> 管理后台
@@ -170,7 +221,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
@@ -179,14 +230,27 @@ import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
-import { useTheme } from '../utils/theme'
+import { useA11y } from '../utils/a11y'
+import { THEME_OPTIONS, useTheme } from '../utils/theme'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
 const bottleStore = useBottleStore()
-const { isDark, toggleTheme } = useTheme()
+const { mode, isDark, setTheme } = useTheme()
+const { reduceMotion, highContrast, toggleReduceMotion, toggleHighContrast } = useA11y()
+// 当前外观的中文名，用于圆钮的 title / aria-label
+const themeLabel = computed(
+  () => THEME_OPTIONS.find((opt) => opt.value === mode.value)?.label ?? '跟随系统'
+)
+
+// 一个下拉承载两组设置：外观三态 + 显示偏好开关，用 command 前缀区分
+function onDisplayCommand(cmd) {
+  if (cmd === 'toggle-motion') return toggleReduceMotion()
+  if (cmd === 'toggle-contrast') return toggleHighContrast()
+  return setTheme(cmd)
+}
 const drawer = ref(false)
 let bottleTimer = null
 
@@ -331,6 +395,11 @@ function onCommand(cmd) {
   align-items: center;
   gap: 14px;
 }
+/* 外观三选一：圆钮作为 el-dropdown 的触发器，保持原有圆形按钮外观 */
+.theme-dropdown {
+  display: inline-flex;
+  flex: none;
+}
 /* 日夜模式切换按钮（桌面顶栏 + 移动端均可见） */
 .theme-toggle {
   display: inline-flex;
@@ -349,6 +418,23 @@ function onCommand(cmd) {
 .theme-toggle:hover {
   background: var(--mhop-sand);
   color: var(--mhop-link);
+}
+/* 抽屉内的显示偏好开关：两行右对齐 */
+.drawer-prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+.drawer-pref {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: var(--mhop-text);
+  cursor: pointer;
 }
 .user-trigger {
   display: inline-flex;

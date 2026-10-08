@@ -639,6 +639,30 @@ img {
   }
 }
 
+/* ==================== 外观（日夜模式）三选一 ==================== */
+/* 下拉菜单里「当前生效」的那个外观项：染主色并加粗 */
+.theme-opt-on {
+  color: var(--mhop-link);
+  font-weight: 600;
+}
+/* 生效项的勾选标记，右对齐到菜单项末尾 */
+.theme-opt-check {
+  margin-left: auto;
+  color: var(--mhop-link);
+}
+
+/* 移动端抽屉里的外观分段控件；抽屉被 teleport 到 body，只能用全局样式 */
+.drawer-theme {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 8px 4px;
+}
+.drawer-theme-label {
+  font-size: 13px;
+  color: var(--mhop-text-sub);
+}
+
 /* ==================== 黑夜模式 ==================== */
 /* 激活方式：<html class="dark">；同时覆盖自定义令牌与 Element Plus 中性色变量，
    保证卡片、弹窗、表格、输入框等 el-* 组件与手写界面统一为中性深蓝灰深色。 */
@@ -962,4 +986,82 @@ html.dark .dm-item.is-hidden {
 /* 用户管理弹窗中内联 #606266 灰字（内联样式只能用 !important 覆盖） */
 html.dark [style*="#606266"] {
   color: #aab9c9 !important;
+}
+
+/* ==================== 显示偏好：减弱动效 / 高对比 ==================== */
+/* 类由 src/utils/a11y.js 切在 <html> 上；下面另用媒体查询兜底，
+   使系统级「减弱动效」即便在 JS 未执行时（首屏引导脚本失败等）也生效。 */
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-delay: 0ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  transition-delay: 0ms !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
+}
+
+/* 高对比：正文压深、弱化文字提级、边框做实、去掉轻阴影，提升弱视与强光下的可读性。
+   阴影置为 none 而不是加描边环，避免与卡片自带的 1px 边框叠成双线。 */
+html.high-contrast {
+  --mhop-bg: #ffffff;
+  --mhop-card: #ffffff;
+  --mhop-sand: #f2f4f7;
+  --mhop-border: #8d99a8;
+  --mhop-border-strong: #5d6979;
+  --mhop-text: #0b1119;
+  --mhop-text-sub: #3f4c5c;
+  --mhop-link: #1c4b78;
+  --mhop-link-dark: #143a5d;
+  --mhop-link-light: #e3edf7;
+  --mhop-shadow: none;
+  --mhop-shadow-hover: 0 0 0 3px rgba(11, 17, 25, 0.25);
+  /* Element Plus 中性色同步做实，避免「白底浅灰字」 */
+  --el-text-color-regular: #1f2a37;
+  --el-text-color-secondary: #3f4c5c;
+  --el-text-color-placeholder: #5c6b7d;
+  --el-border-color: #8d99a8;
+  --el-border-color-light: #98a4b3;
+  --el-border-color-lighter: #a8b3c0;
+}
+
+html.dark.high-contrast {
+  --mhop-bg: #05080b;
+  --mhop-card: #0d1319;
+  --mhop-sand: #101720;
+  --mhop-border: #7f8d9e;
+  --mhop-border-strong: #a4b2c2;
+  --mhop-text: #ffffff;
+  --mhop-text-sub: #d3dbe4;
+  --mhop-link: #a9cbf0;
+  --mhop-link-dark: #cfe0f5;
+  --mhop-link-light: #16304a;
+  --mhop-shadow: none;
+  --mhop-shadow-hover: 0 0 0 3px rgba(255, 255, 255, 0.4);
+  --el-text-color-regular: #e6ebf1;
+  --el-text-color-secondary: #cdd6df;
+  --el-text-color-placeholder: #b3bdc8;
+  --el-border-color: #7f8d9e;
+  --el-border-color-light: #8b99a9;
+  --el-border-color-lighter: #98a5b4;
+}
+
+/* 高对比下去掉纯装饰件，避免与正文抢注意力 */
+html.high-contrast .hero {
+  background: var(--mhop-card);
+}
+html.high-contrast .hero-illu {
+  display: none;
 }

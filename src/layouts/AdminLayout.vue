@@ -29,15 +29,42 @@
           </span>
           <strong class="brand-mini">心光 MHOP 后台</strong>
           <router-link to="/" class="back-site"><el-icon><Monitor /></el-icon> 访问前台</router-link>
-          <button
-            class="admin-theme"
-            type="button"
-            :title="isDark ? '切换到白天模式' : '切换到黑夜模式'"
-            :aria-label="isDark ? '切换到白天模式' : '切换到黑夜模式'"
-            @click="toggleTheme"
-          >
-            <el-icon :size="18"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
-          </button>
+          <el-dropdown trigger="click" class="theme-dropdown" @command="onDisplayCommand">
+            <button
+              class="admin-theme"
+              type="button"
+              :title="`外观与显示：${themeLabel}`"
+              :aria-label="`外观与显示：${themeLabel}`"
+            >
+              <el-icon :size="18"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
+            </button>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item
+                  v-for="opt in THEME_OPTIONS"
+                  :key="opt.value"
+                  :command="opt.value"
+                  :class="{ 'theme-opt-on': mode === opt.value }"
+                >
+                  <el-icon><component :is="opt.icon" /></el-icon>{{ opt.label }}
+                  <el-icon v-if="mode === opt.value" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <!-- 显示偏好：与日夜模式同处一个菜单，选项太多容易找不到入口 -->
+                <el-dropdown-item
+                  divided
+                  command="toggle-motion"
+                  :class="{ 'theme-opt-on': reduceMotion }"
+                >
+                  <el-icon><VideoPause /></el-icon>减弱动效
+                  <el-icon v-if="reduceMotion" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <el-dropdown-item command="toggle-contrast" :class="{ 'theme-opt-on': highContrast }">
+                  <el-icon><View /></el-icon>高对比度
+                  <el-icon v-if="highContrast" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
+          </el-dropdown>
         </div>
         <el-dropdown @command="onCommand">
           <span class="user-trigger">
@@ -75,6 +102,26 @@
           <span>{{ item.name }}</span>
         </a>
       </nav>
+      <div class="drawer-theme">
+        <span class="drawer-theme-label">外观</span>
+        <el-segmented
+          block
+          size="small"
+          :model-value="mode"
+          :options="THEME_OPTIONS"
+          @change="setTheme"
+        />
+        <div class="drawer-prefs">
+          <label class="drawer-pref">
+            <span>减弱动效</span>
+            <el-switch size="small" :model-value="reduceMotion" @change="toggleReduceMotion" />
+          </label>
+          <label class="drawer-pref">
+            <span>高对比度</span>
+            <el-switch size="small" :model-value="highContrast" @change="toggleHighContrast" />
+          </label>
+        </div>
+      </div>
     </el-drawer>
   </el-container>
 </template>
@@ -84,14 +131,27 @@ import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ADMIN_PERMS } from '../utils/permissions'
-import { useTheme } from '../utils/theme'
+import { useA11y } from '../utils/a11y'
+import { THEME_OPTIONS, useTheme } from '../utils/theme'
 import BrandMark from '../components/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { isDark, toggleTheme } = useTheme()
+const { mode, isDark, setTheme } = useTheme()
+const { reduceMotion, highContrast, toggleReduceMotion, toggleHighContrast } = useA11y()
+// 当前外观的中文名，用于圆钮的 title / aria-label
+const themeLabel = computed(
+  () => THEME_OPTIONS.find((opt) => opt.value === mode.value)?.label ?? '跟随系统'
+)
 const drawer = ref(false)
+
+// 一个下拉承载两组设置：外观三态 + 显示偏好开关，用 command 前缀区分
+function onDisplayCommand(cmd) {
+  if (cmd === 'toggle-motion') return toggleReduceMotion()
+  if (cmd === 'toggle-contrast') return toggleHighContrast()
+  return setTheme(cmd)
+}
 
 // 菜单按被授予的模块权限过滤（超管拥有全部）
 const iconOf = {
@@ -192,6 +252,11 @@ function onCommand(cmd) {
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+/* 外观三选一：圆钮作为 el-dropdown 的触发器，保持原有圆形按钮外观 */
+.theme-dropdown {
+  display: inline-flex;
+  flex: none;
 }
 .admin-theme {
   display: inline-flex;
@@ -302,5 +367,42 @@ function onCommand(cmd) {
   background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
   font-weight: 600;
+}
+
+/* 后台抽屉底色固定为深蓝灰（不随日夜模式变），外观分段控件需单独配成深色描边风格 */
+.admin-drawer .drawer-theme {
+  padding: 16px 12px 0;
+}
+.admin-drawer .drawer-theme-label {
+  color: #8fa3b6;
+}
+.admin-drawer .el-segmented {
+  --el-segmented-bg-color: rgba(255, 255, 255, 0.08);
+  --el-segmented-color: #c2cedb;
+  --el-segmented-item-hover-bg-color: rgba(255, 255, 255, 0.14);
+  --el-segmented-item-hover-color: #ffffff;
+  --el-segmented-item-selected-bg-color: rgba(255, 255, 255, 0.2);
+  --el-segmented-item-selected-color: #ffffff;
+}
+/* 显示偏好开关：抽屉底色固定深蓝灰，文字与描边单独配 */
+.admin-drawer .drawer-prefs {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+.admin-drawer .drawer-pref {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  font-size: 14px;
+  color: #c2cedb;
+  cursor: pointer;
+}
+/* 关闭态的开关在深底上默认太暗，抬一档描边与滑块 */
+.admin-drawer .el-switch {
+  --el-switch-off-color: rgba(255, 255, 255, 0.24);
 }
 </style>
