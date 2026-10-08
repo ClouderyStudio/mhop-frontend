@@ -239,7 +239,7 @@ function statusText(b) {
 /* 海洋场景卡 */
 .sea-card {
   position: relative;
-  border-radius: 18px;
+  border-radius: var(--mhop-r18);
   overflow: hidden;
   background: linear-gradient(180deg, #8ec7e4 0%, #4f9cc4 46%, #2f75a3 100%);
   color: #fff;
@@ -275,7 +275,7 @@ function statusText(b) {
 .sea-stat {
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.28);
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   padding: 10px 22px;
   min-width: 118px;
   backdrop-filter: blur(4px);
@@ -381,7 +381,7 @@ function statusText(b) {
   line-height: 19px;
   text-align: center;
   padding: 0 5px;
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
 }
 .conv-preview {
   margin: 9px 0 4px;

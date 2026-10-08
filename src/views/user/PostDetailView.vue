@@ -446,7 +446,7 @@ onBeforeUnmount(stopPolling)
   top: 12px;
 }
 .board-hero {
-  border-radius: 16px 16px 4px 4px;
+  border-radius: var(--mhop-r16) var(--mhop-r16) var(--mhop-r4) var(--mhop-r4);
   padding: 26px 28px 22px;
   color: #fff;
   margin-bottom: 14px;
@@ -482,7 +482,7 @@ onBeforeUnmount(stopPolling)
 .ai-floor {
   background: linear-gradient(180deg, #f3f0fe 0%, #ffffff 100%);
   border: 1px solid #d9d1f8;
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   padding: 18px 22px;
   margin-bottom: 12px;
   display: flex;
@@ -651,7 +651,7 @@ onBeforeUnmount(stopPolling)
 @media (max-width: 640px) {
   .board-hero {
     padding: 18px 16px 16px;
-    border-radius: 12px 12px 4px 4px;
+    border-radius: var(--mhop-r12) var(--mhop-r12) var(--mhop-r4) var(--mhop-r4);
   }
   .board-hero h1 {
     font-size: 18px;
@@ -701,7 +701,7 @@ onBeforeUnmount(stopPolling)
 .floor-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
 .floor-img {
   width: 120px; height: 120px;
-  border-radius: 8px; object-fit: cover;
+  border-radius: var(--mhop-r8); object-fit: cover;
   cursor: pointer; transition: opacity 0.2s;
 }
 .floor-img:hover { opacity: 0.85; }
@@ -709,7 +709,7 @@ onBeforeUnmount(stopPolling)
 /* 回复图片上传 */
 .reply-images { margin-top: 10px; }
 .img-thumbs { display: flex; flex-wrap: wrap; gap: 8px; }
-.img-thumb { position: relative; width: 64px; height: 64px; border-radius: 8px; overflow: hidden; }
+.img-thumb { position: relative; width: 64px; height: 64px; border-radius: var(--mhop-r8); overflow: hidden; }
 .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
 .img-remove {
   position: absolute; top: 2px; right: 4px;
@@ -718,7 +718,7 @@ onBeforeUnmount(stopPolling)
 }
 .img-add {
   width: 64px; height: 64px;
-  border: 1.5px dashed var(--mhop-border-strong); border-radius: 8px;
+  border: 1.5px dashed var(--mhop-border-strong); border-radius: var(--mhop-r8);
   background: var(--mhop-sand); cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   color: var(--mhop-text-sub); font-size: 20px;

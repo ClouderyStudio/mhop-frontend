@@ -211,7 +211,7 @@ function goHotline() {
   flex: none;
   width: 46px;
   height: 46px;
-  border-radius: 13px;
+  border-radius: var(--mhop-r13);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -251,7 +251,7 @@ function goHotline() {
 .feature-icon {
   width: 52px;
   height: 52px;
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -342,7 +342,7 @@ onUnmounted(() => {
   background: #fdecea;
   color: #b83227;
   border: 1px solid #f5c6c0;
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   padding: 10px 14px;
   font-size: 13px;
   line-height: 1.6;
@@ -353,7 +353,7 @@ onUnmounted(() => {
 
 /* 瓶身 */
 .bottle-card {
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   padding: 14px 16px;
   max-width: 82%;
   position: relative;
@@ -407,7 +407,7 @@ onUnmounted(() => {
 }
 .bubble {
   max-width: 78%;
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   padding: 9px 13px 6px;
   position: relative;
 }
@@ -442,7 +442,7 @@ onUnmounted(() => {
   font-size: 11.5px;
   color: #c05a4b;
   background: rgba(226, 109, 90, 0.12);
-  border-radius: 6px;
+  border-radius: var(--mhop-r6);
   padding: 1px 7px;
 }
 .bubble-row.mine .bubble-crisis {
@@ -472,7 +472,7 @@ onUnmounted(() => {
   background: var(--mhop-sand);
   color: var(--mhop-text-sub);
   border: 1px dashed var(--mhop-border-strong);
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   padding: 12px;
   font-size: 13px;
   text-align: center;

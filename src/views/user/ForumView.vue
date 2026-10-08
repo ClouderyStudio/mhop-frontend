@@ -377,7 +377,7 @@ onMounted(() => {
   display: flex;
   gap: 13px;
   padding: 16px 14px;
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   cursor: pointer;
   border-bottom: 1px solid var(--mhop-border);
   transition: background 0.15s;
@@ -619,10 +619,12 @@ onMounted(() => {
     height: 54px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2f8f83, #5eaaa1);
+    background: linear-gradient(135deg, var(--mhop-teal), var(--el-color-primary-light-3));
     color: #fff;
     font-size: 24px;
-    box-shadow: 0 6px 18px rgba(34, 112, 103, 0.42);
+    /* 先给中性阴影兜底：不支持 color-mix() 的浏览器会丢掉后一条，不至于没有投影 */
+    box-shadow: 0 6px 18px rgba(15, 20, 26, 0.3);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--mhop-teal) 40%, transparent);
     z-index: 90;
     cursor: pointer;
   }
@@ -642,7 +644,7 @@ onMounted(() => {
 .img-thumb {
   position: relative;
   width: 72px; height: 72px;
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   overflow: hidden;
 }
 .img-thumb img { width: 100%; height: 100%; object-fit: cover; }
@@ -654,7 +656,7 @@ onMounted(() => {
 .img-add {
   width: 72px; height: 72px;
   border: 1.5px dashed var(--mhop-border-strong);
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   background: var(--mhop-sand);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
@@ -665,6 +667,6 @@ onMounted(() => {
 /* 帖子列表缩略图 */
 .t-avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
 .t-thumbs { display: flex; gap: 6px; margin: 6px 0; }
-.t-thumb { width: 56px; height: 56px; border-radius: 6px; object-fit: cover; }
+.t-thumb { width: 56px; height: 56px; border-radius: var(--mhop-r6); object-fit: cover; }
 .t-thumb-more { font-size: 12px; color: var(--mhop-text-sub); line-height: 56px; }
 </style>

@@ -26,8 +26,8 @@
             <button
               class="theme-toggle"
               type="button"
-              :title="`外观与显示：${themeLabel}`"
-              :aria-label="`外观与显示：${themeLabel}`"
+              :title="`外观与显示：${displayLabel}`"
+              :aria-label="`外观与显示：${displayLabel}`"
             >
               <el-icon :size="20"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
             </button>
@@ -54,6 +54,28 @@
                 <el-dropdown-item command="toggle-contrast" :class="{ 'theme-opt-on': highContrast }">
                   <el-icon><View /></el-icon>高对比度
                   <el-icon v-if="highContrast" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <!-- 主题色：单独隔一段，避免和上面两组开关混在一起看不清归属 -->
+                <el-dropdown-item
+                  v-for="opt in ACCENT_OPTIONS"
+                  :key="opt.value"
+                  :divided="opt.value === ACCENT_OPTIONS[0].value"
+                  :command="`accent:${opt.value}`"
+                  :class="{ 'theme-opt-on': accent === opt.value }"
+                >
+                  <span class="accent-dot" :style="{ background: opt.color }"></span>{{ opt.label }}
+                  <el-icon v-if="accent === opt.value" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <!-- 界面风格：中性色阶 / 圆角 / 阴影 / 字体，与上面的主题色互相独立 -->
+                <el-dropdown-item
+                  v-for="opt in STYLE_OPTIONS"
+                  :key="opt.value"
+                  :divided="opt.value === STYLE_OPTIONS[0].value"
+                  :command="`style:${opt.value}`"
+                  :class="{ 'theme-opt-on': style === opt.value }"
+                >
+                  <el-icon><component :is="opt.icon" /></el-icon>{{ opt.label }}
+                  <el-icon v-if="style === opt.value" class="theme-opt-check"><Check /></el-icon>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -129,6 +151,15 @@
           :options="THEME_OPTIONS"
           @change="setTheme"
         />
+        <!-- 界面风格：中性色阶 / 圆角 / 阴影 / 字体，独立于上面的日夜与下面的主题色 -->
+        <span class="drawer-theme-label">风格</span>
+        <el-segmented
+          block
+          size="small"
+          :model-value="style"
+          :options="STYLE_OPTIONS"
+          @change="setStyle"
+        />
         <div class="drawer-prefs">
           <label class="drawer-pref">
             <span>减弱动效</span>
@@ -146,6 +177,22 @@
               @change="toggleHighContrast"
             />
           </label>
+        </div>
+        <!-- 主题色：色块本身即预览，只给标题说明分组 -->
+        <span class="drawer-theme-label">主题色</span>
+        <div class="drawer-accents" role="group" aria-label="主题色">
+          <button
+            v-for="opt in ACCENT_OPTIONS"
+            :key="opt.value"
+            class="drawer-accent"
+            :class="{ on: accent === opt.value }"
+            type="button"
+            :style="{ background: opt.color }"
+            :title="opt.label"
+            :aria-label="`主题色：${opt.label}`"
+            :aria-pressed="accent === opt.value"
+            @click="setAccent(opt.value)"
+          ></button>
         </div>
       </div>
       <div class="drawer-actions">
@@ -233,24 +280,38 @@ import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
 import { useA11y } from '../utils/a11y'
-import { THEME_OPTIONS, useTheme } from '../utils/theme'
+import { ACCENT_OPTIONS, STYLE_OPTIONS, THEME_OPTIONS, useTheme } from '../utils/theme'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
 const bottleStore = useBottleStore()
-const { mode, isDark, setTheme } = useTheme()
+const { mode, isDark, accent, style, setTheme, setAccent, setStyle } = useTheme()
 const { reduceMotion, highContrast, toggleReduceMotion, toggleHighContrast } = useA11y()
 // 当前外观的中文名，用于圆钮的 title / aria-label
 const themeLabel = computed(
   () => THEME_OPTIONS.find((opt) => opt.value === mode.value)?.label ?? '跟随系统'
 )
+const accentLabel = computed(
+  () => ACCENT_OPTIONS.find((opt) => opt.value === accent.value)?.label ?? '青绿'
+)
+const styleLabel = computed(
+  () => STYLE_OPTIONS.find((opt) => opt.value === style.value)?.label ?? '默认'
+)
+// 默认风格不写进标签，免得圆钮的提示语无谓变长
+const displayLabel = computed(() =>
+  [themeLabel.value, accentLabel.value, style.value === 'default' ? '' : styleLabel.value]
+    .filter(Boolean)
+    .join(' · ')
+)
 
-// 一个下拉承载两组设置：外观三态 + 显示偏好开关，用 command 前缀区分
+// 一个下拉承载四组设置：外观三态、显示偏好开关、主题色预设、界面风格，用 command 前缀区分
 function onDisplayCommand(cmd) {
   if (cmd === 'toggle-motion') return toggleReduceMotion()
   if (cmd === 'toggle-contrast') return toggleHighContrast()
+  if (typeof cmd === 'string' && cmd.startsWith('accent:')) return setAccent(cmd.slice(7))
+  if (typeof cmd === 'string' && cmd.startsWith('style:')) return setStyle(cmd.slice(6))
   return setTheme(cmd)
 }
 const drawer = ref(false)
@@ -329,7 +390,7 @@ function onCommand(cmd) {
 .brand-mark {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -371,7 +432,7 @@ function onCommand(cmd) {
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  border-radius: 9px;
+  border-radius: var(--mhop-r9);
   background: #e26d5a;
   color: #fff;
   font-size: 10.5px;
@@ -384,7 +445,7 @@ function onCommand(cmd) {
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   background: #e26d5a;
   color: #fff;
   font-size: 11.5px;
@@ -505,7 +566,7 @@ function onCommand(cmd) {
   padding: 14px 8px;
   font-size: 16px;
   color: var(--mhop-text);
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
 }
 .drawer-links a:active,
 .drawer-links a.router-link-exact-active {
@@ -542,7 +603,7 @@ function onCommand(cmd) {
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   background: #e26d5a;
   color: #fff;
   font-size: 10px;
