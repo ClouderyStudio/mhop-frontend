@@ -26,8 +26,8 @@
             <button
               class="theme-toggle"
               type="button"
-              :title="`外观与显示：${themeLabel}`"
-              :aria-label="`外观与显示：${themeLabel}`"
+              :title="`外观与显示：${displayLabel}`"
+              :aria-label="`外观与显示：${displayLabel}`"
             >
               <el-icon :size="20"><Moon v-if="!isDark" /><Sunny v-else /></el-icon>
             </button>
@@ -54,6 +54,17 @@
                 <el-dropdown-item command="toggle-contrast" :class="{ 'theme-opt-on': highContrast }">
                   <el-icon><View /></el-icon>高对比度
                   <el-icon v-if="highContrast" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
+                <!-- 主题色：单独隔一段，避免和上面两组开关混在一起看不清归属 -->
+                <el-dropdown-item
+                  v-for="opt in ACCENT_OPTIONS"
+                  :key="opt.value"
+                  :divided="opt.value === ACCENT_OPTIONS[0].value"
+                  :command="`accent:${opt.value}`"
+                  :class="{ 'theme-opt-on': accent === opt.value }"
+                >
+                  <span class="accent-dot" :style="{ background: opt.color }"></span>{{ opt.label }}
+                  <el-icon v-if="accent === opt.value" class="theme-opt-check"><Check /></el-icon>
                 </el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -147,6 +158,20 @@
             />
           </label>
         </div>
+        <div class="drawer-accents" role="group" aria-label="主题色">
+          <button
+            v-for="opt in ACCENT_OPTIONS"
+            :key="opt.value"
+            class="drawer-accent"
+            :class="{ on: accent === opt.value }"
+            type="button"
+            :style="{ background: opt.color }"
+            :title="opt.label"
+            :aria-label="`主题色：${opt.label}`"
+            :aria-pressed="accent === opt.value"
+            @click="setAccent(opt.value)"
+          ></button>
+        </div>
       </div>
       <div class="drawer-actions">
         <template v-if="auth.isLoggedIn">
@@ -233,24 +258,29 @@ import { useOnlineStore } from '../stores/online'
 import { useBottleStore } from '../stores/bottles'
 import { assetUrl } from '../utils/asset'
 import { useA11y } from '../utils/a11y'
-import { THEME_OPTIONS, useTheme } from '../utils/theme'
+import { ACCENT_OPTIONS, THEME_OPTIONS, useTheme } from '../utils/theme'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 const online = useOnlineStore()
 const bottleStore = useBottleStore()
-const { mode, isDark, setTheme } = useTheme()
+const { mode, isDark, accent, setTheme, setAccent } = useTheme()
 const { reduceMotion, highContrast, toggleReduceMotion, toggleHighContrast } = useA11y()
 // 当前外观的中文名，用于圆钮的 title / aria-label
 const themeLabel = computed(
   () => THEME_OPTIONS.find((opt) => opt.value === mode.value)?.label ?? '跟随系统'
 )
+const accentLabel = computed(
+  () => ACCENT_OPTIONS.find((opt) => opt.value === accent.value)?.label ?? '青绿'
+)
+const displayLabel = computed(() => `${themeLabel.value} · ${accentLabel.value}`)
 
-// 一个下拉承载两组设置：外观三态 + 显示偏好开关，用 command 前缀区分
+// 一个下拉承载三组设置：外观三态、显示偏好开关、主题色预设，用 command 前缀区分
 function onDisplayCommand(cmd) {
   if (cmd === 'toggle-motion') return toggleReduceMotion()
   if (cmd === 'toggle-contrast') return toggleHighContrast()
+  if (typeof cmd === 'string' && cmd.startsWith('accent:')) return setAccent(cmd.slice(7))
   return setTheme(cmd)
 }
 const drawer = ref(false)

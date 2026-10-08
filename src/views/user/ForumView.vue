@@ -619,10 +619,12 @@ onMounted(() => {
     height: 54px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2f8f83, #5eaaa1);
+    background: linear-gradient(135deg, var(--mhop-teal), var(--el-color-primary-light-3));
     color: #fff;
     font-size: 24px;
-    box-shadow: 0 6px 18px rgba(34, 112, 103, 0.42);
+    /* 先给中性阴影兜底：不支持 color-mix() 的浏览器会丢掉后一条，不至于没有投影 */
+    box-shadow: 0 6px 18px rgba(15, 20, 26, 0.3);
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--mhop-teal) 40%, transparent);
     z-index: 90;
     cursor: pointer;
   }

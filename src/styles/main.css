@@ -1065,3 +1065,130 @@ html.high-contrast .hero {
 html.high-contrast .hero-illu {
   display: none;
 }
+
+/* ==================== 主题色（强调色）预设 ==================== */
+/* 由 <html data-accent="…"> 驱动。品牌色只有一个源：--mhop-teal。
+   改它 + Element Plus 主色色阶，就换掉了整套观感（主按钮、主色标签、导航激活态、
+   链接、色块）。
+
+   刻意不动的东西：危机红 --mhop-danger，以及语义色 --mhop-ocean / --mhop-violet /
+   --mhop-amber / --mhop-rose / --mhop-leaf。它们的含义与品牌无关，跟着主题乱变会让
+   「危机提示」「AI 回复」「点赞」这类信号失去稳定性。
+
+   默认 teal **不写覆盖块**，沿用 :root 与 html.dark 里手调的色阶，保证没主动选过主题色的
+   用户观感零变化（包括首屏那一帧）。其余四套的 Element Plus 7 档色阶由主色按比例
+   混白（浅色）/ 混黑（深色）派生，这也正是 Element Plus 自己的生成方式，
+   因此几套主题彼此观感一致，不会出现「这套主题的 hover 比那套脏」。
+   注：不支持 color-mix() 的浏览器会丢弃整条声明，主色与链接色仍然会切，
+   只有 el-* 的浅色档位停留在默认青绿——可接受的降级。 */
+html {
+  --accent-mix: #ffffff;
+}
+html.dark {
+  --accent-mix: #000000;
+}
+
+/* 0,2,1 的权重压得过 html.dark(0,1,1) 与 Element Plus 的暗色样式表，
+   所以这段必须写在 html.dark 之后，且选择器要带 html 前缀 */
+html[data-accent]:not([data-accent='teal']) {
+  /* 链接与导航激活态一并跟随主题色，否则会出现「按钮是玫瑰、链接还是蓝灰」的割裂。
+     四套主色在白底上作正文链接的对比度分别为 6.95 / 5.65 / 4.90 / 4.93，均过 AA，
+     所以与「高对比」叠加时也不会把可读性拉下来。 */
+  --mhop-link: var(--mhop-teal);
+  --mhop-link-dark: var(--mhop-teal-dark);
+  --mhop-link-light: var(--mhop-teal-light);
+
+  --el-color-primary: var(--mhop-teal);
+  --el-color-primary-light-3: color-mix(in srgb, var(--mhop-teal) 70%, var(--accent-mix));
+  --el-color-primary-light-5: color-mix(in srgb, var(--mhop-teal) 50%, var(--accent-mix));
+  --el-color-primary-light-7: color-mix(in srgb, var(--mhop-teal) 30%, var(--accent-mix));
+  --el-color-primary-light-8: color-mix(in srgb, var(--mhop-teal) 20%, var(--accent-mix));
+  --el-color-primary-light-9: color-mix(in srgb, var(--mhop-teal) 10%, var(--accent-mix));
+  --el-color-primary-dark-2: color-mix(in srgb, var(--mhop-teal) 80%, var(--accent-mix));
+}
+
+/* ---- 靛蓝 ---- */
+html[data-accent='indigo'] {
+  --mhop-teal: #3f4fb8;
+  --mhop-teal-dark: #2f3c93;
+  --mhop-teal-light: #eceffb;
+}
+html.dark[data-accent='indigo'] {
+  --mhop-teal: #93a2f2;
+  --mhop-teal-dark: #b4bff7;
+  --mhop-teal-light: #1e2340;
+}
+
+/* ---- 玫瑰 ---- */
+html[data-accent='rose'] {
+  --mhop-teal: #b03e63;
+  --mhop-teal-dark: #8d2f4e;
+  --mhop-teal-light: #fbeaf0;
+}
+html.dark[data-accent='rose'] {
+  --mhop-teal: #eb9ab4;
+  --mhop-teal-dark: #f3b8cb;
+  --mhop-teal-light: #3a2029;
+}
+
+/* ---- 琥珀 ---- */
+html[data-accent='amber'] {
+  --mhop-teal: #9c6510;
+  --mhop-teal-dark: #7d5009;
+  --mhop-teal-light: #faf1e0;
+}
+html.dark[data-accent='amber'] {
+  --mhop-teal: #e0b267;
+  --mhop-teal-dark: #eccb95;
+  --mhop-teal-light: #33280f;
+}
+
+/* ---- 松绿 ---- */
+html[data-accent='leaf'] {
+  --mhop-teal: #2f7f4d;
+  --mhop-teal-dark: #236139;
+  --mhop-teal-light: #e7f4ec;
+}
+html.dark[data-accent='leaf'] {
+  --mhop-teal: #6cc78e;
+  --mhop-teal-dark: #94d8ae;
+  --mhop-teal-light: #16301f;
+}
+
+/* ---------- 主题色选择器 ---------- */
+/* 色点：真实颜色由内联 style 给出（见 utils/theme.js 的 ACCENT_OPTIONS.color），
+   这里只负责尺寸与描边，否则浅色主题的色点在白底上会「看不见边界」 */
+.accent-dot {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  /* el-dropdown-menu__item 是 flex 布局，色点不像 el-icon 那样自带右间距，手动补 */
+  margin-right: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+}
+html.dark .accent-dot {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.26);
+}
+/* 抽屉里的一行主题色色块；选中项加一圈描边（比改边框更稳，不改变尺寸） */
+.drawer-accents {
+  display: flex;
+  gap: 10px;
+  padding: 8px 2px 0;
+}
+.drawer-accent {
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.12s;
+}
+.drawer-accent:hover {
+  transform: scale(1.08);
+}
+.drawer-accent.on {
+  outline: 2px solid var(--mhop-text);
+  outline-offset: 2px;
+}

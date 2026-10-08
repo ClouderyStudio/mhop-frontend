@@ -8,28 +8,43 @@
     <title>心光 MHOP · 公益心理辅助平台</title>
     <!-- 运行时环境配置：部署后可直接改 dist/env.js，无需重新构建（建议对该文件关闭缓存） -->
     <script src="/env.js"></script>
-    <!-- 首屏引导：在样式解析前同步写入 dark 类、显示偏好与地址栏底色，避免刷新时闪动 -->
+    <!-- 首屏引导：在样式解析前同步写入 dark / data-accent / 显示偏好与地址栏底色，避免刷新时闪动 -->
     <script>
       (function () {
         try {
+          var root = document.documentElement
           var saved = localStorage.getItem('mhop-theme')
           // 仅 'light' / 'dark' 是用户显式选择；无记录（含旧版异常值）与 'system' 一律跟随系统偏好
           var dark = saved === 'light' || saved === 'dark'
             ? saved === 'dark'
             : window.matchMedia('(prefers-color-scheme: dark)').matches
-          if (dark) document.documentElement.classList.add('dark')
+          if (dark) root.classList.add('dark')
+
+          // 主题色：此刻样式表还没解析，取不到 CSS 变量，只能内置一份
+          // 与 src/utils/theme.js 的 ACCENT_OPTIONS 及 main.css 的品牌色保持一致
+          var ACCENT_COLOR = {
+            teal: '#2f8f83',
+            indigo: '#3f4fb8',
+            rose: '#b03e63',
+            amber: '#9c6510',
+            leaf: '#2f7f4d'
+          }
+          var accent = localStorage.getItem('mhop-accent')
+          if (!ACCENT_COLOR[accent]) accent = 'teal'
+          root.dataset.accent = accent
+
           var meta = document.querySelector('meta[name="theme-color"]')
-          if (meta) meta.setAttribute('content', dark ? '#0f141a' : '#2f8f83')
+          if (meta) meta.setAttribute('content', dark ? '#0f141a' : ACCENT_COLOR[accent])
 
           // 显示偏好：减弱动效未记录时跟随系统，高对比默认关闭
           var motion = localStorage.getItem('mhop-reduce-motion')
           var reduce = motion === 'on' || (motion === null &&
             window.matchMedia('(prefers-reduced-motion: reduce)').matches)
-          if (reduce) document.documentElement.classList.add('reduce-motion')
+          if (reduce) root.classList.add('reduce-motion')
           if (localStorage.getItem('mhop-high-contrast') === 'on') {
-            document.documentElement.classList.add('high-contrast')
+            root.classList.add('high-contrast')
           }
-        } catch (e) { /* 忽略，交由应用内默认浅色 + 全动效 */ }
+        } catch (e) { /* 忽略，交由应用内默认浅色 + 全动效 + 默认主题色 */ }
       })()
     </script>
   </head>

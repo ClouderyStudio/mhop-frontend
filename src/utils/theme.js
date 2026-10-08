@@ -1,9 +1,11 @@
 import { computed, ref } from 'vue'
 
-// 全站日夜模式：三态 'system' | 'light' | 'dark'。
-// <html class="dark"> 同时驱动 Element Plus 官方暗色变量与自定义 CSS 变量。
-// 持久化 key 与 index.html 中的首屏引导脚本保持一致，避免刷新时白屏闪烁。
+// 全站外观：日夜模式三态 'system' | 'light' | 'dark' + 主题色（强调色）预设。
+// <html class="dark"> 驱动 Element Plus 官方暗色变量与自定义令牌；
+// <html data-accent="…"> 驱动品牌色与主色色阶。
+// 两个持久化 key 都要与 index.html 中的首屏引导脚本保持一致，避免刷新时闪烁。
 const STORAGE_KEY = 'mhop-theme'
+const ACCENT_KEY = 'mhop-accent'
 
 /** 三种外观选项，顺序即下拉菜单与分段控件的展示顺序 */
 export const THEME_OPTIONS = [
@@ -14,13 +16,38 @@ export const THEME_OPTIONS = [
 
 const VALUES = THEME_OPTIONS.map((option) => option.value)
 
-/** 浏览器地址栏 / 状态栏底色：浅色沿用既有青绿，深色取 --mhop-bg */
-const THEME_COLOR = { light: '#2f8f83', dark: '#0f141a' }
+/**
+ * 主题色预设。
+ * `color` 只用于下拉菜单里的色点，取值须与 main.css 中对应 `html[data-accent=…]`
+ * 段落的品牌色一致——改一处要顺手改另一处。
+ */
+export const ACCENT_OPTIONS = [
+  { value: 'teal', label: '青绿', color: '#2f8f83' },
+  { value: 'indigo', label: '靛蓝', color: '#3f4fb8' },
+  { value: 'rose', label: '玫瑰', color: '#b03e63' },
+  { value: 'amber', label: '琥珀', color: '#9c6510' },
+  { value: 'leaf', label: '松绿', color: '#2f7f4d' },
+]
+
+const ACCENT_VALUES = ACCENT_OPTIONS.map((option) => option.value)
+const DEFAULT_ACCENT = ACCENT_OPTIONS[0].value
+
+/** 深色下地址栏取页面底色；浅色取当前主题色（运行时回读 CSS，见 applyTheme） */
+const DARK_BAR = '#0f141a'
+
+function accentColor(value) {
+  return (
+    ACCENT_OPTIONS.find((option) => option.value === value)?.color ??
+    ACCENT_OPTIONS[0].color
+  )
+}
 
 /** 用户的选择（持久化）；'system' 表示交给系统偏好决定 */
 const mode = ref('system')
 /** 系统当前偏好，仅在 mode 为 'system' 时决定最终外观 */
 const systemDark = ref(false)
+/** 主题色预设 */
+const accent = ref(DEFAULT_ACCENT)
 
 let mediaQuery = null
 let initialized = false
@@ -40,17 +67,33 @@ function readStored() {
   }
 }
 
+function readStoredAccent() {
+  try {
+    const saved = localStorage.getItem(ACCENT_KEY)
+    return ACCENT_VALUES.includes(saved) ? saved : DEFAULT_ACCENT
+  } catch {
+    return DEFAULT_ACCENT
+  }
+}
+
 function systemPrefersDark() {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
 }
 
 function applyTheme() {
   const dark = isDark.value
-  document.documentElement.classList.toggle('dark', dark)
-  // 移动端地址栏/状态栏底色跟随外观；index.html 里的静态值只作首屏兜底
+  const root = document.documentElement
+  root.classList.toggle('dark', dark)
+  root.dataset.accent = accent.value
+  // 主题色只维护在 CSS 里，这里回读真实生效值，避免在 JS 里再存一份色板。
+  // 必须在写完 data-accent 之后再读，且 getComputedStyle 会强制一次样式重算。
+  // 样式表尚未就绪时（首屏 link 还没应用）拿到空串，退化为该预设的色值。
+  const primary =
+    getComputedStyle(root).getPropertyValue('--mhop-teal').trim() ||
+    accentColor(accent.value)
   document
     .querySelector('meta[name="theme-color"]')
-    ?.setAttribute('content', dark ? THEME_COLOR.dark : THEME_COLOR.light)
+    ?.setAttribute('content', dark ? DARK_BAR : primary)
 }
 
 /** 系统偏好变化：处于「跟随系统」时需要立刻反映到页面上 */
@@ -65,6 +108,7 @@ export function initTheme() {
   initialized = true
 
   mode.value = readStored()
+  accent.value = readStoredAccent()
   systemDark.value = systemPrefersDark()
 
   if (window.matchMedia) {
@@ -94,6 +138,18 @@ export function toggleTheme() {
   setTheme(isDark.value ? 'light' : 'dark')
 }
 
+/** 指定主题色预设，取值见 ACCENT_OPTIONS */
+export function setAccent(next) {
+  if (!ACCENT_VALUES.includes(next)) return
+  accent.value = next
+  try {
+    localStorage.setItem(ACCENT_KEY, next)
+  } catch {
+    // 忽略持久化失败，本次会话内仍然生效
+  }
+  applyTheme()
+}
+
 export function useTheme() {
-  return { mode, isDark, setTheme, toggleTheme }
+  return { mode, isDark, accent, setTheme, toggleTheme, setAccent }
 }
