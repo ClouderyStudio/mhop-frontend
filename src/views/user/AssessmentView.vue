@@ -24,6 +24,17 @@
       </div>
     </a>
 
+    <!-- 分数变化趋势：横跨整宽，放在作答区之前，先看走向再决定做哪张量表。
+         max / bands 都取自后端量表目录，等它加载完再画，避免纵轴先按错的满分渲染一帧 -->
+    <AssessmentTrend
+      v-if="type === 'free' || currentScale"
+      :records="trendRecords"
+      :scale="type"
+      :scale-name="typeName(type)"
+      :max-score="currentScale?.max ?? 27"
+      :bands="currentScale?.bands ?? []"
+    />
+
     <div class="assess-layout">
       <!-- 作答区 -->
       <section class="mhop-card form-card">
@@ -139,6 +150,7 @@ import { computed, onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Link } from '@element-plus/icons-vue'
 import http from '../../api'
+import AssessmentTrend from '../../components/AssessmentTrend.vue'
 import { useAuthStore } from '../../stores/auth'
 import { hasCrisisHint } from '../../utils/crisis'
 import { fmtTime } from '../../utils/format'
@@ -158,6 +170,8 @@ const detail = ref(null)
 const detailVisible = ref(false)
 
 const currentScale = computed(() => scales.value.find((s) => s.key === type.value))
+// 趋势图同时看本地与云端的记录；同一次评估两边各存一条的情况由组件内部去重
+const trendRecords = computed(() => [...localHistory.value, ...cloudHistory.value])
 const crisisHint = computed(() => hasCrisisHint(freeText.value) || (type.value === 'phq9' && (answers.value[8] ?? 0) > 0))
 
 function levelType(code) {
