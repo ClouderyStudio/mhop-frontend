@@ -1,11 +1,13 @@
 import { computed, ref } from 'vue'
 
-// 全站外观：日夜模式三态 'system' | 'light' | 'dark' + 主题色（强调色）预设。
-// <html class="dark"> 驱动 Element Plus 官方暗色变量与自定义令牌；
-// <html data-accent="…"> 驱动品牌色与主色色阶。
-// 两个持久化 key 都要与 index.html 中的首屏引导脚本保持一致，避免刷新时闪烁。
+// 全站外观分三个互相独立的维度（可任意叠加）：
+//   1. 日夜模式 mode   → <html class="dark">
+//   2. 主题色   accent → <html data-accent="…">   品牌色与主色色阶
+//   3. 界面风格 style  → <html data-style="…">    中性色阶 / 圆角 / 阴影 / 字体
+// 三个持久化 key 都要与 index.html 中的首屏引导脚本保持一致，避免刷新时闪烁。
 const STORAGE_KEY = 'mhop-theme'
 const ACCENT_KEY = 'mhop-accent'
+const STYLE_KEY = 'mhop-style'
 
 /** 三种外观选项，顺序即下拉菜单与分段控件的展示顺序 */
 export const THEME_OPTIONS = [
@@ -15,6 +17,15 @@ export const THEME_OPTIONS = [
 ]
 
 const VALUES = THEME_OPTIONS.map((option) => option.value)
+
+/** 两种界面风格，顺序即下拉菜单与分段控件的展示顺序 */
+export const STYLE_OPTIONS = [
+  { value: 'default', label: '默认', icon: 'Brush' },
+  { value: 'win11', label: 'Windows 11', icon: 'Monitor' },
+]
+
+const STYLE_VALUES = STYLE_OPTIONS.map((option) => option.value)
+const DEFAULT_STYLE = STYLE_OPTIONS[0].value
 
 /**
  * 主题色预设。
@@ -27,6 +38,9 @@ export const ACCENT_OPTIONS = [
   { value: 'rose', label: '玫瑰', color: '#b03e63' },
   { value: 'amber', label: '琥珀', color: '#9c6510' },
   { value: 'leaf', label: '松绿', color: '#2f7f4d' },
+  // 取值来自 Fluent 的 brand blue，给「Windows 11」风格配套用。
+  // 但没有做成「选风格就自动切色」——那会覆盖用户自己选过的主题色，宁可让他自己挑。
+  { value: 'winblue', label: 'Windows 蓝', color: '#0f6cbd' },
 ]
 
 const ACCENT_VALUES = ACCENT_OPTIONS.map((option) => option.value)
@@ -48,6 +62,8 @@ const mode = ref('system')
 const systemDark = ref(false)
 /** 主题色预设 */
 const accent = ref(DEFAULT_ACCENT)
+/** 界面风格 */
+const style = ref(DEFAULT_STYLE)
 
 let mediaQuery = null
 let initialized = false
@@ -76,6 +92,15 @@ function readStoredAccent() {
   }
 }
 
+function readStoredStyle() {
+  try {
+    const saved = localStorage.getItem(STYLE_KEY)
+    return STYLE_VALUES.includes(saved) ? saved : DEFAULT_STYLE
+  } catch {
+    return DEFAULT_STYLE
+  }
+}
+
 function systemPrefersDark() {
   return window.matchMedia?.('(prefers-color-scheme: dark)').matches ?? false
 }
@@ -85,6 +110,7 @@ function applyTheme() {
   const root = document.documentElement
   root.classList.toggle('dark', dark)
   root.dataset.accent = accent.value
+  root.dataset.style = style.value
   // 主题色只维护在 CSS 里，这里回读真实生效值，避免在 JS 里再存一份色板。
   // 必须在写完 data-accent 之后再读，且 getComputedStyle 会强制一次样式重算。
   // 样式表尚未就绪时（首屏 link 还没应用）拿到空串，退化为该预设的色值。
@@ -109,6 +135,7 @@ export function initTheme() {
 
   mode.value = readStored()
   accent.value = readStoredAccent()
+  style.value = readStoredStyle()
   systemDark.value = systemPrefersDark()
 
   if (window.matchMedia) {
@@ -150,6 +177,18 @@ export function setAccent(next) {
   applyTheme()
 }
 
+/** 指定界面风格，取值见 STYLE_OPTIONS */
+export function setStyle(next) {
+  if (!STYLE_VALUES.includes(next)) return
+  style.value = next
+  try {
+    localStorage.setItem(STYLE_KEY, next)
+  } catch {
+    // 忽略持久化失败，本次会话内仍然生效
+  }
+  applyTheme()
+}
+
 export function useTheme() {
-  return { mode, isDark, accent, setTheme, toggleTheme, setAccent }
+  return { mode, isDark, accent, style, setTheme, toggleTheme, setAccent, setStyle }
 }

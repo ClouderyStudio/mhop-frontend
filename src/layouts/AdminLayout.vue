@@ -73,6 +73,17 @@
                   <span class="accent-dot" :style="{ background: opt.color }"></span>{{ opt.label }}
                   <el-icon v-if="accent === opt.value" class="theme-opt-check"><Check /></el-icon>
                 </el-dropdown-item>
+                <!-- 界面风格：中性色阶 / 圆角 / 阴影 / 字体，与上面的主题色互相独立 -->
+                <el-dropdown-item
+                  v-for="opt in STYLE_OPTIONS"
+                  :key="opt.value"
+                  :divided="opt.value === STYLE_OPTIONS[0].value"
+                  :command="`style:${opt.value}`"
+                  :class="{ 'theme-opt-on': style === opt.value }"
+                >
+                  <el-icon><component :is="opt.icon" /></el-icon>{{ opt.label }}
+                  <el-icon v-if="style === opt.value" class="theme-opt-check"><Check /></el-icon>
+                </el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
@@ -122,6 +133,15 @@
           :options="THEME_OPTIONS"
           @change="setTheme"
         />
+        <!-- 界面风格：中性色阶 / 圆角 / 阴影 / 字体，独立于上面的日夜与下面的主题色 -->
+        <span class="drawer-theme-label">风格</span>
+        <el-segmented
+          block
+          size="small"
+          :model-value="style"
+          :options="STYLE_OPTIONS"
+          @change="setStyle"
+        />
         <div class="drawer-prefs">
           <label class="drawer-pref">
             <span>减弱动效</span>
@@ -132,6 +152,8 @@
             <el-switch size="small" :model-value="highContrast" @change="toggleHighContrast" />
           </label>
         </div>
+        <!-- 主题色：色块本身即预览，只给标题说明分组 -->
+        <span class="drawer-theme-label">主题色</span>
         <div class="drawer-accents" role="group" aria-label="主题色">
           <button
             v-for="opt in ACCENT_OPTIONS"
@@ -157,13 +179,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { ADMIN_PERMS } from '../utils/permissions'
 import { useA11y } from '../utils/a11y'
-import { ACCENT_OPTIONS, THEME_OPTIONS, useTheme } from '../utils/theme'
+import { ACCENT_OPTIONS, STYLE_OPTIONS, THEME_OPTIONS, useTheme } from '../utils/theme'
 import BrandMark from '../components/BrandMark.vue'
 
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
-const { mode, isDark, accent, setTheme, setAccent } = useTheme()
+const { mode, isDark, accent, style, setTheme, setAccent, setStyle } = useTheme()
 const { reduceMotion, highContrast, toggleReduceMotion, toggleHighContrast } = useA11y()
 // 当前外观的中文名，用于圆钮的 title / aria-label
 const themeLabel = computed(
@@ -172,14 +194,23 @@ const themeLabel = computed(
 const accentLabel = computed(
   () => ACCENT_OPTIONS.find((opt) => opt.value === accent.value)?.label ?? '青绿'
 )
-const displayLabel = computed(() => `${themeLabel.value} · ${accentLabel.value}`)
+const styleLabel = computed(
+  () => STYLE_OPTIONS.find((opt) => opt.value === style.value)?.label ?? '默认'
+)
+// 默认风格不写进标签，免得圆钮的提示语无谓变长
+const displayLabel = computed(() =>
+  [themeLabel.value, accentLabel.value, style.value === 'default' ? '' : styleLabel.value]
+    .filter(Boolean)
+    .join(' · ')
+)
 const drawer = ref(false)
 
-// 一个下拉承载三组设置：外观三态、显示偏好开关、主题色预设，用 command 前缀区分
+// 一个下拉承载四组设置：外观三态、显示偏好开关、主题色预设、界面风格，用 command 前缀区分
 function onDisplayCommand(cmd) {
   if (cmd === 'toggle-motion') return toggleReduceMotion()
   if (cmd === 'toggle-contrast') return toggleHighContrast()
   if (typeof cmd === 'string' && cmd.startsWith('accent:')) return setAccent(cmd.slice(7))
+  if (typeof cmd === 'string' && cmd.startsWith('style:')) return setStyle(cmd.slice(6))
   return setTheme(cmd)
 }
 

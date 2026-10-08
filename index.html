@@ -27,7 +27,8 @@
             indigo: '#3f4fb8',
             rose: '#b03e63',
             amber: '#9c6510',
-            leaf: '#2f7f4d'
+            leaf: '#2f7f4d',
+            winblue: '#0f6cbd'
           }
           var accent = localStorage.getItem('mhop-accent')
           if (!ACCENT_COLOR[accent]) accent = 'teal'
@@ -35,6 +36,10 @@
 
           var meta = document.querySelector('meta[name="theme-color"]')
           if (meta) meta.setAttribute('content', dark ? '#0f141a' : ACCENT_COLOR[accent])
+
+          // 界面风格：只切 <html> 上的属性，色值全交给 CSS
+          root.dataset.style =
+            localStorage.getItem('mhop-style') === 'win11' ? 'win11' : 'default'
 
           // 显示偏好：减弱动效未记录时跟随系统，高对比默认关闭
           var motion = localStorage.getItem('mhop-reduce-motion')
