@@ -1227,42 +1227,46 @@ html.dark .accent-dot {
 /* 由 <html data-style="win11"> 驱动，与日夜模式、主题色、高对比互相独立、可任意叠加。
 
    与「主题色」的分工：主题色管品牌色（--mhop-teal / --el-color-primary），
-   风格管中性色阶（底 / 卡 / 边 / 字）、圆角、阴影与字体。两者正交，
-   所以「Windows 11 风格 + 玫瑰主题色」也是成立的组合——
-   想让整体最像 Windows，再叠一个「Windows 蓝」主题色即可（没有自动切，见 utils/theme.js）。
+   风格管中性色阶（底 / 卡 / 边 / 字）、圆角、阴影、字体与控件细节。两者正交，
+   所以「Windows 11 风格 + 玫瑰主题色」也是成立的组合 ——
+   想让整体最像 Windows，把主题色一并选成「蓝色」即可（没有自动切，见 utils/theme.js）。
 
-   数值取自 Fluent：
-     - Mica 底色        浅 #f3f3f3 / 深 #202020
-     - 内容层（卡片）   浅 #ffffff / 深 #2b2b2b
-     - 圆角             控件 4px，卡片与弹层 8px
-     - 字体             优先微软雅黑（见下方注释）
-     - 阴影             两层「贴地小阴影 + 极淡大扩散」，而不是单层大阴影
+   对齐 Fluent 的几个要点，也是「像不像」的关键：
+     - Mica 底色         浅 #f3f3f3 / 深 #202020
+     - 内容层（卡片）    浅 #ffffff / 深 #2b2b2b；靠「白卡压在灰底上 + 极淡描边」分层，
+                         **不投阴影** —— Fluent 的 Card 只有填充和描边
+     - 圆角              近乎直角：控件与卡片 4px，只有浮层 / 大容器 8px
+                         （Win11 是方正的设计，圆角一大就立刻不像）
+     - 控件描边          四边 1px 极淡 + 底边 1px 深一档，Fluent 控件的招牌细节
+     - 焦点              控件内侧画 2px 实色环，留 1px 间隙，而不是发光描边
+     - 浮层              亚克力：半透明 + backdrop-filter 模糊
+     - 滚动条            12px 细条，滑块内缩
+     - 字体              拉丁走 Segoe UI Variable，中文落微软雅黑（见下方注释）
    颜色类令牌一律带 :not(.high-contrast)：高对比的色板是刻意为可读性调过的，
    风格不该把它顶掉。圆角与字体不涉及对比度，在高对比下照常生效。 */
 
 /* ---------- 字体 ---------- */
-/* 微软雅黑是 Windows 自带字体，Windows 上直接命中；macOS / Linux / 移动端没有它，
-   会依次退到苹方、Helvetica。也就是说这套字体栈的真实效果是
-   「Windows 用雅黑，其它平台用各自最合适的中文黑体」，而不是「所有平台都变雅黑」——
-   后者做不到：雅黑是微软的有版权字体，不能随包分发，也不能凭空 fallback 出来。
+/* Win11 原生的字体栈是「拉丁 Segoe UI Variable + 中文微软雅黑」。浏览器是**按字符逐个回退**的，
+   所以把 Segoe 放前面并不会让中文变样 —— 中文照样落微软雅黑，只是拉丁字母和数字不再用雅黑。
+   这一点很影响「像不像」：雅黑的拉丁字母偏窄、字重只有 Regular/Bold 两档，
+   整屏英文与数字换回 Segoe 才立刻有 Windows 的样子。
 
-   这里把雅黑排在 Segoe UI 之前，让 Windows 上的拉丁字符也走雅黑。
-   若想完全还原 Win11 原生的中文渲染（拉丁 Segoe UI + 中文雅黑混排），
-   把 'Segoe UI Variable Text', 'Segoe UI' 移到最前面即可。 */
+   微软雅黑是 Windows 自带字体，Windows 上直接命中；macOS / Linux / 移动端没有它，
+   会依次退到苹方、Helvetica —— 即「Windows 用雅黑，其它平台用各自最合适的中文黑体」。
+   雅黑是微软的有版权字体，不能随包分发，也无法凭空 fallback 出来。
+   'Microsoft YaHei UI' 是 shell 用的 UI 变体（字距更紧），排在普通版之前。 */
 html[data-style='win11'] body {
-  font-family: 'Microsoft YaHei', '微软雅黑', 'PingFang SC', 'Segoe UI Variable Text',
-    'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Segoe UI Variable Text', 'Segoe UI', 'Microsoft YaHei UI', 'Microsoft YaHei',
+    '微软雅黑', 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ---------- 圆角（不涉及对比度，高对比下也生效）----------
    全站形状由「圆角阶梯 --mhop-r*」统一驱动（阶梯表在 :root，每一级等于原先的硬编码值），
    这里只做重映射，所以「换个风格 = 全站形状一起换」。
-   取值对齐 Fluent 的圆角刻度 2 / 4 / 8 / 12：
 
-     --mhop-r4           → 2px    极小（气泡尖角）
-     --mhop-r5 … r8      → 4px    控件、缩略图、小方块
-     --mhop-r9 … r14     → 8px    卡片、列表项、浮层
-     --mhop-r16 / r18    → 12px   大容器
+   Win11 是**方正**的设计：除了窗口和浮层，几乎一切都是 4px。
+   所以这里把 r5–r14 全部压到 4px，只有整块大容器（r16 / r18）留 8px。
+   早先版本给卡片 8px、大容器 12px，那更接近 iOS / Material 的观感 —— 正是「不太像」的主因。
 
    刻意不动的两处，是形状语言而不是「大小」，跟着缩会失去意义：
      · 圆形 border-radius: 50% —— 头像、圆点、呼吸球，变方就不成其为圆形；
@@ -1277,33 +1281,37 @@ html[data-style='win11'] {
   --mhop-r6: 4px;
   --mhop-r7: 4px;
   --mhop-r8: 4px;
-  --mhop-r9: 8px;
-  --mhop-r10: 8px;
-  --mhop-r12: 8px;
-  --mhop-r13: 8px;
-  --mhop-r14: 8px;
-  --mhop-r16: 12px;
-  --mhop-r18: 12px;
+  --mhop-r9: 4px;
+  --mhop-r10: 4px;
+  --mhop-r12: 4px;
+  --mhop-r13: 4px;
+  --mhop-r14: 4px;
+  --mhop-r16: 8px;
+  --mhop-r18: 8px;
 
   --el-border-radius-base: 4px;
-  --el-border-radius-small: 2px;
-  --el-card-border-radius: 8px;
+  --el-border-radius-small: 4px;
+  --el-card-border-radius: 4px;
   --el-dialog-border-radius: 8px;
   --el-messagebox-border-radius: 8px;
   --el-popover-border-radius: 8px;
 }
 
 /* ---------- 浅色 ---------- */
+/* 描边取 Fluent 的 ControlStrokeColorDefault ≈ rgba(0,0,0,.058) ≈ #f0f0f0，
+   比原先的 #e5e5e5 淡一档 —— 卡片靠「白底压在灰底上」分层，不靠描边划线。
+   阴影设为 none：Fluent 的 Card 只有填充 + 描边，不投阴影；加了反而立刻不像。
+   --el-input-bg-color 显式给值，EP 的输入框默认走 --el-fill-color-blank。 */
 html[data-style='win11']:not(.high-contrast) {
   --mhop-bg: #f3f3f3;
   --mhop-card: #ffffff;
   --mhop-sand: #f7f7f7;
-  --mhop-border: #e5e5e5;
+  --mhop-border: #ececec;
   --mhop-border-strong: #d6d6d6;
   --mhop-text: #1b1b1b;
   --mhop-text-sub: #616161;
-  --mhop-shadow: 0 1px 2px rgba(0, 0, 0, 0.05), 0 2px 6px rgba(0, 0, 0, 0.04);
-  --mhop-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.07), 0 8px 18px rgba(0, 0, 0, 0.09);
+  --mhop-shadow: none;
+  --mhop-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.06), 0 6px 14px rgba(0, 0, 0, 0.07);
 
   /* Element Plus 中性色同步换成中性灰，否则弹窗 / 表格 / 输入框仍偏蓝灰 */
   --el-bg-color: #ffffff;
@@ -1313,16 +1321,17 @@ html[data-style='win11']:not(.high-contrast) {
   --el-text-color-regular: #444444;
   --el-text-color-secondary: #616161;
   --el-text-color-placeholder: #8a8a8a;
-  --el-border-color: #e5e5e5;
-  --el-border-color-light: #ebebeb;
-  --el-border-color-lighter: #f0f0f0;
-  --el-border-color-extra-light: #f5f5f5;
-  --el-border-color-dark: #d9d9d9;
-  --el-border-color-darker: #cccccc;
+  --el-border-color: #ececec;
+  --el-border-color-light: #f0f0f0;
+  --el-border-color-lighter: #f4f4f4;
+  --el-border-color-extra-light: #f7f7f7;
+  --el-border-color-dark: #dedede;
+  --el-border-color-darker: #d0d0d0;
   --el-fill-color: #f5f5f5;
   --el-fill-color-light: #f9f9f9;
   --el-fill-color-lighter: #fcfcfc;
   --el-fill-color-blank: #ffffff;
+  --el-input-bg-color: #ffffff;
   --el-mask-color: rgba(0, 0, 0, 0.4);
 }
 
@@ -1335,8 +1344,8 @@ html.dark[data-style='win11']:not(.high-contrast) {
   --mhop-border-strong: #4a4a4a;
   --mhop-text: #ffffff;
   --mhop-text-sub: #c8c8c8;
-  --mhop-shadow: 0 1px 2px rgba(0, 0, 0, 0.28), 0 2px 6px rgba(0, 0, 0, 0.22);
-  --mhop-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.34), 0 10px 22px rgba(0, 0, 0, 0.4);
+  --mhop-shadow: none;
+  --mhop-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.4), 0 6px 14px rgba(0, 0, 0, 0.4);
 
   --el-bg-color: #2b2b2b;
   --el-bg-color-page: #202020;
@@ -1355,7 +1364,135 @@ html.dark[data-style='win11']:not(.high-contrast) {
   --el-fill-color-light: #2a2a2a;
   --el-fill-color-lighter: #262626;
   --el-fill-color-blank: transparent;
+  --el-input-bg-color: #2b2b2b;
   --el-mask-color: rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- 控件描边：Fluent 的招牌细节 ----------
+   四边 1px 极淡、**底边 1px 深一档**，让控件下缘看起来「实」一点 ——
+   就是 Win11 控件那层若隐若现的立体感。取 Fluent 的两个描边色：
+     ControlStrokeColorDefault   = #000000 5.78%
+     ControlStrokeColorSecondary = #000000 16.22%
+
+   :not() 里逐个列出 EP 的按钮类型：实心填充按钮在 Fluent 里不描边，
+   而且这些类型的 border-color 等于填充色，改掉会露出一圈浅色描边。
+   逐个列出而不是用 [class*=…] 是刻意的 —— 不依赖 EP 是否给无类型按钮加
+   el-button--default 这个实现细节。 */
+html[data-style='win11']:not(.high-contrast) .el-button:not(.is-text):not(.is-link):not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info) {
+  border-color: rgba(0, 0, 0, 0.0578);
+  border-bottom-color: rgba(0, 0, 0, 0.1622);
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-button:not(.is-text):not(.is-link):not(.el-button--primary):not(.el-button--success):not(.el-button--warning):not(.el-button--danger):not(.el-button--info) {
+  border-color: rgba(255, 255, 255, 0.0698);
+  border-bottom-color: rgba(255, 255, 255, 0.093);
+}
+
+/* 输入框 / 多行文本：EP 用 inset box-shadow 画边框，所以改 box-shadow 而不是 border */
+html[data-style='win11']:not(.high-contrast) .el-input__wrapper,
+html[data-style='win11']:not(.high-contrast) .el-textarea__inner {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.0578), inset 0 -1px 0 0 rgba(0, 0, 0, 0.1622);
+}
+html[data-style='win11']:not(.high-contrast) .el-input__wrapper:hover,
+html[data-style='win11']:not(.high-contrast) .el-textarea__inner:hover {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1622), inset 0 -1px 0 0 rgba(0, 0, 0, 0.1622);
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-input__wrapper,
+html.dark[data-style='win11']:not(.high-contrast) .el-textarea__inner {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.0698), inset 0 -1px 0 0 rgba(255, 255, 255, 0.093);
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-input__wrapper:hover,
+html.dark[data-style='win11']:not(.high-contrast) .el-textarea__inner:hover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.093), inset 0 -1px 0 0 rgba(255, 255, 255, 0.093);
+}
+
+/* ---------- 焦点环 ----------
+   Win11 的焦点不是发光的彩色描边，而是在控件**内侧**画一圈 2px 实色环、外面留 1px 间隙。
+   outline 配负的 outline-offset 正好能把它压进控件里；同时把 EP 默认那圈主色
+   focus shadow 换掉 —— 焦点色固定用黑/白，不跟主题色走，这也是 Win11 的做法。 */
+html[data-style='win11'] .el-input__wrapper.is-focus,
+html[data-style='win11'] .el-textarea__inner:focus,
+html[data-style='win11'] .el-button:focus-visible {
+  outline: 2px solid #1b1b1b;
+  outline-offset: -3px;
+}
+html[data-style='win11']:not(.high-contrast) .el-input__wrapper.is-focus,
+html[data-style='win11']:not(.high-contrast) .el-textarea__inner:focus {
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1622);
+}
+html.dark[data-style='win11'] .el-input__wrapper.is-focus,
+html.dark[data-style='win11'] .el-textarea__inner:focus,
+html.dark[data-style='win11'] .el-button:focus-visible {
+  outline-color: #ffffff;
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-input__wrapper.is-focus,
+html.dark[data-style='win11']:not(.high-contrast) .el-textarea__inner:focus {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.093);
+}
+
+/* ---------- 亚克力浮层 ----------
+   Win11 的菜单 / 下拉 / 气泡是亚克力材质：半透明底 + 背景模糊，而不是纯色块。
+   EP 的下拉菜单自己带不透明底色（.el-dropdown-menu 走 --el-bg-color-overlay），
+   所以容器和菜单本体都要点名，否则模糊被菜单自己的底色盖掉。 */
+html[data-style='win11']:not(.high-contrast) .el-dropdown__popper,
+html[data-style='win11']:not(.high-contrast) .el-select__popper,
+html[data-style='win11']:not(.high-contrast) .el-popper.is-light {
+  background: rgba(252, 252, 252, 0.85);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  border-color: rgba(0, 0, 0, 0.0578);
+}
+html[data-style='win11']:not(.high-contrast) .el-dropdown-menu,
+html[data-style='win11']:not(.high-contrast) .el-select-dropdown {
+  background-color: transparent;
+}
+html[data-style='win11']:not(.high-contrast) .el-popper.is-light > .el-popper__arrow::before {
+  background: rgba(252, 252, 252, 0.85);
+  border-color: rgba(0, 0, 0, 0.0578);
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-dropdown__popper,
+html.dark[data-style='win11']:not(.high-contrast) .el-select__popper,
+html.dark[data-style='win11']:not(.high-contrast) .el-popper.is-light {
+  background: rgba(43, 43, 43, 0.85);
+  border-color: rgba(255, 255, 255, 0.0698);
+}
+html.dark[data-style='win11']:not(.high-contrast) .el-popper.is-light > .el-popper__arrow::before {
+  background: rgba(43, 43, 43, 0.85);
+  border-color: rgba(255, 255, 255, 0.0698);
+}
+
+/* ---------- 滚动条 ----------
+   Win11 的细滚动条：轨道 12px，滑块用透明边框 + content-box 内缩，
+   视觉上只有 4px 粗，hover 时再变粗 —— 平时几乎不抢视线。 */
+html[data-style='win11']::-webkit-scrollbar,
+html[data-style='win11'] ::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+html[data-style='win11']::-webkit-scrollbar-track,
+html[data-style='win11'] ::-webkit-scrollbar-track,
+html[data-style='win11']::-webkit-scrollbar-corner,
+html[data-style='win11'] ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+html[data-style='win11']::-webkit-scrollbar-thumb,
+html[data-style='win11'] ::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.28);
+  background-clip: content-box;
+  border: 4px solid transparent;
+  border-radius: 999px;
+}
+html[data-style='win11']::-webkit-scrollbar-thumb:hover,
+html[data-style='win11'] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.45);
+  border-width: 2px;
+}
+html.dark[data-style='win11']::-webkit-scrollbar-thumb,
+html.dark[data-style='win11'] ::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.32);
+}
+html.dark[data-style='win11']::-webkit-scrollbar-thumb:hover,
+html.dark[data-style='win11'] ::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 /* ---------- 结构性底色 ----------

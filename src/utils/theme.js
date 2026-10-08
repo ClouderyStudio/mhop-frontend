@@ -38,9 +38,11 @@ export const ACCENT_OPTIONS = [
   { value: 'rose', label: '玫瑰', color: '#b03e63' },
   { value: 'amber', label: '琥珀', color: '#9c6510' },
   { value: 'leaf', label: '松绿', color: '#2f7f4d' },
-  // 取值来自 Fluent 的 brand blue，给「Windows 11」风格配套用。
-  // 但没有做成「选风格就自动切色」——那会覆盖用户自己选过的主题色，宁可让他自己挑。
-  { value: 'winblue', label: 'Windows 蓝', color: '#0f6cbd' },
+  // 配合「Windows 11」风格最搭，但**没有**做成「选风格就自动切色」——
+  // 那会覆盖用户自己选过的主题色，宁可让他自己挑。
+  // label 只叫「蓝色」：它首先是色板里的一个蓝，不该绑死在某个风格名上。
+  // value 仍保留 `winblue` —— 改名会让已存过 localStorage['mhop-accent'] 的用户被回落到默认青绿。
+  { value: 'winblue', label: '蓝色', color: '#0f6cbd' },
 ]
 
 const ACCENT_VALUES = ACCENT_OPTIONS.map((option) => option.value)
