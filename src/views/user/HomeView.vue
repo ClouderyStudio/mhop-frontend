@@ -32,6 +32,22 @@
         </div>
     </section>
 
+    <!-- 呼吸放松练习：公开入口，未登录也能用，故放在登录后功能区之前 -->
+    <section class="breathe-entry mhop-card">
+      <span class="breathe-ico"><el-icon :size="24"><WindPower /></el-icon></span>
+      <div class="breathe-copy">
+        <h3>呼吸放松练习</h3>
+        <p class="text-sub">
+          4-7-8 助眠、方块呼吸、舒缓呼吸三套节律，跟着圆圈吸、屏、呼，三分钟就能让心跳慢下来。
+        </p>
+      </div>
+      <router-link to="/breathe">
+        <el-button type="primary" round>
+          <el-icon><WindPower /></el-icon>开始练习
+        </el-button>
+      </router-link>
+    </section>
+
     <!-- 服务入口（登录后可见） -->
     <section v-if="auth.isLoggedIn" class="feature-grid">
       <router-link to="/forum" class="feature-card mhop-card">
@@ -183,6 +199,39 @@ function goHotline() {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+/* 呼吸练习入口：横条卡片，比功能区轻，不抢 hero 的注意力 */
+.breathe-entry {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 22px;
+  margin-top: 22px;
+}
+.breathe-ico {
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mhop-teal-light);
+  color: var(--mhop-teal);
+}
+.breathe-copy {
+  flex: 1;
+  min-width: 0;
+}
+.breathe-copy h3 {
+  margin: 0 0 4px;
+  font-size: 16.5px;
+}
+.breathe-copy p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.7;
+}
+
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
@@ -302,6 +351,21 @@ function goHotline() {
   }
   .feature-card {
     padding: 20px;
+  }
+  /* 呼吸入口窄屏改为：图标 + 文案一行，按钮独占一行 */
+  .breathe-entry {
+    flex-wrap: wrap;
+    padding: 15px 16px;
+    gap: 12px;
+  }
+  .breathe-copy {
+    flex-basis: calc(100% - 58px);
+  }
+  .breathe-entry > a {
+    flex: 1 1 100%;
+  }
+  .breathe-entry .el-button {
+    width: 100%;
   }
 }
 </style>

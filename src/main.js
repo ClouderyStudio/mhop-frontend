@@ -9,11 +9,13 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 
 import App from './App.vue'
 import router from './router'
+import { initA11y } from './utils/a11y'
 import { initTheme } from './utils/theme'
 import './styles/main.css'
 
-// 挂载前恢复日夜模式，避免暗色用户首屏闪白
+// 挂载前恢复日夜模式与显示偏好，避免暗色/减弱动效用户首屏闪动
 initTheme()
+initA11y()
 
 const app = createApp(App)
 
