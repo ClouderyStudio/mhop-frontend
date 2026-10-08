@@ -11,6 +11,7 @@
         </router-link>
         <nav class="nav-links">
           <router-link to="/">首页</router-link>
+          <router-link to="/breathe">呼吸练习</router-link>
           <router-link v-if="auth.isLoggedIn" to="/forum">互助论坛</router-link>
           <router-link v-if="auth.isLoggedIn" to="/bottles" class="bottle-link">
             漂流瓶
@@ -108,6 +109,7 @@
       </div>
       <nav class="drawer-links" @click="drawer = false">
         <router-link to="/"><el-icon><HomeFilled /></el-icon> 首页</router-link>
+        <router-link to="/breathe"><el-icon><WindPower /></el-icon> 呼吸放松练习</router-link>
         <router-link v-if="auth.isLoggedIn" to="/forum"><el-icon><ChatLineSquare /></el-icon> 互助论坛</router-link>
         <router-link v-if="auth.isLoggedIn" to="/bottles">
           <el-icon><Promotion /></el-icon> 漂流瓶
