@@ -274,11 +274,11 @@ function onCommand(cmd) {
 }
 .admin-aside :deep(.el-menu-item.is-active) {
   background: rgba(255, 255, 255, 0.14);
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   margin: 4px 10px;
 }
 .admin-aside :deep(.el-menu-item) {
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   margin: 4px 10px;
 }
 .admin-header {
@@ -419,7 +419,7 @@ function onCommand(cmd) {
   gap: 12px;
   padding: 13px 12px;
   margin: 3px 0;
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   color: #c2cedb;
   font-size: 15.5px;
   cursor: pointer;

@@ -53,7 +53,7 @@ const rendered = computed(() => renderMarkdown(props.modelValue) || '<span class
   min-height: 110px;
   padding: 12px 14px;
   border: 1px solid var(--el-border-color);
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   background: var(--mhop-sand);
 }
 @media (max-width: 640px) {

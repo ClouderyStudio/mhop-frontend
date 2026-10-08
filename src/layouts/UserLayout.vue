@@ -390,7 +390,7 @@ function onCommand(cmd) {
 .brand-mark {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -432,7 +432,7 @@ function onCommand(cmd) {
   min-width: 17px;
   height: 17px;
   padding: 0 4px;
-  border-radius: 9px;
+  border-radius: var(--mhop-r9);
   background: #e26d5a;
   color: #fff;
   font-size: 10.5px;
@@ -445,7 +445,7 @@ function onCommand(cmd) {
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   background: #e26d5a;
   color: #fff;
   font-size: 11.5px;
@@ -566,7 +566,7 @@ function onCommand(cmd) {
   padding: 14px 8px;
   font-size: 16px;
   color: var(--mhop-text);
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
 }
 .drawer-links a:active,
 .drawer-links a.router-link-exact-active {
@@ -603,7 +603,7 @@ function onCommand(cmd) {
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   background: #e26d5a;
   color: #fff;
   font-size: 10px;

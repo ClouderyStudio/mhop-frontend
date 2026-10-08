@@ -383,7 +383,7 @@ onUnmounted(pause)
 .crisis {
   margin: 16px 0 0;
   padding: 12px 14px;
-  border-radius: var(--mhop-radius-sm);
+  border-radius: var(--mhop-r7);
   background: var(--mhop-sand);
   font-size: 13px;
   line-height: 1.8;

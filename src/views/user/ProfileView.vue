@@ -693,7 +693,7 @@ async function logout() {
 }
 .manage-item {
   border: 1px solid var(--mhop-border, #e8e8e8);
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   padding: 12px 14px;
   margin-bottom: 12px;
 }
@@ -720,7 +720,7 @@ async function logout() {
   font-size: 12.5px;
   color: var(--el-color-danger);
   background: var(--el-color-danger-light-9);
-  border-radius: 6px;
+  border-radius: var(--mhop-r6);
   padding: 6px 10px;
 }
 .manage-meta {
@@ -743,7 +743,7 @@ async function logout() {
   width: 54px;
   height: 54px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: var(--mhop-r6);
 }
 .img-grid {
   display: flex;
@@ -759,7 +759,7 @@ async function logout() {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
 }
 .img-del {
   position: absolute;
@@ -779,7 +779,7 @@ async function logout() {
   width: 72px;
   height: 72px;
   border: 1px dashed var(--el-border-color);
-  border-radius: 8px;
+  border-radius: var(--mhop-r8);
   display: flex;
   align-items: center;
   justify-content: center;

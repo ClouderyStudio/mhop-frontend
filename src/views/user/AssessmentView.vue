@@ -273,7 +273,7 @@ onMounted(async () => {
   gap: 12px;
   padding: 14px 18px;
   margin-bottom: 16px;
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   background: linear-gradient(180deg, #f6f4fe 0%, var(--mhop-card) 100%);
   border: 1px solid #d9d1f8;
   text-decoration: none;

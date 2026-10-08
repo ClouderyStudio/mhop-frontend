@@ -118,7 +118,7 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   font-size: 20px;
 }
 .stat-card {
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
   padding: 18px;
   color: var(--mhop-text);
   margin-bottom: 16px;
@@ -134,7 +134,7 @@ onBeforeUnmount(() => timer && clearInterval(timer))
   color: var(--mhop-text-sub);
 }
 .panel {
-  border-radius: 14px;
+  border-radius: var(--mhop-r14);
 }
 .todo-list {
   list-style: none;

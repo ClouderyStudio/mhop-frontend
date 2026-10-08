@@ -605,7 +605,7 @@ onMounted(() => {
   align-items: center;
   gap: 12px;
   background: var(--mhop-card);
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   padding: 16px 18px;
   border-left: 4px solid #909399;
 }
@@ -718,7 +718,7 @@ onMounted(() => {
 }
 .detail-bottle {
   background: var(--mhop-sand);
-  border-radius: 12px;
+  border-radius: var(--mhop-r12);
   padding: 14px 16px;
 }
 .detail-bottle p {
@@ -756,7 +756,7 @@ onMounted(() => {
 }
 .dm-item {
   border: 1px solid var(--mhop-border);
-  border-radius: 10px;
+  border-radius: var(--mhop-r10);
   padding: 10px 12px;
 }
 .dm-item.is-hidden {
