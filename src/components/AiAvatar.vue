@@ -49,7 +49,7 @@ const props = defineProps({
   glow: { type: Boolean, default: false },
   /** hover 微动效（浮动 + 心跳） */
   hoverAnimate: { type: Boolean, default: true },
-  alt: { type: String, default: '心光 AI 心理助手' },
+  alt: { type: String, default: '小心光 · AI 陪伴者' },
 })
 
 const sizeNum = computed(() => Number(props.size) || 32)

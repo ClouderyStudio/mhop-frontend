@@ -70,7 +70,7 @@
               :closable="false"
               show-icon
               style="margin-bottom: 12px"
-              title="AI 心理助手正在组织回应，请稍候…"
+              title="小心光正在组织回应，请稍候…"
             />
 
             <div v-for="(r, idx) in post.replies" :key="r.id"
@@ -107,7 +107,7 @@
                   <div class="floor-head">
                     <strong>{{ r.author }}</strong>
                     <el-tag v-if="r.author_badge" size="small" type="success" effect="dark">{{ r.author_badge }}</el-tag>
-                    <span v-if="r.is_ai" class="ai-badge"><AiAvatar :size="16" /> AI 即时陪伴</span>
+                    <span v-if="r.is_ai" class="ai-badge"><AiAvatar :size="16" /> 小心光陪你</span>
                     <el-tag v-if="r.crisis" size="small" type="danger" effect="light">含安全提示</el-tag>
                     <el-button v-if="auth.isAdmin && r.is_ai" size="small" type="danger" plain
                       class="recall-btn" @click="recall(r)">

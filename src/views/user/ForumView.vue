@@ -121,7 +121,7 @@
         v-model="form.content"
         :rows="5"
         :maxlength="2000"
-        placeholder="我在这里，你可以放心说。发布后 AI 心理助手会立刻回应你……"
+        placeholder="我在这里，你可以放心说。发布后小心光会立刻来陪你……"
       />
       <p class="text-sub" style="font-size: 12.5px; margin-top: 6px">登录后可发帖，提交后先由 AI 审核，通过后自动公开；未通过将转人工复核。</p>
       <!-- 图片上传 -->
