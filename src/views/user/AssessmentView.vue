@@ -64,7 +64,7 @@
           <el-checkbox v-if="auth.isLoggedIn" v-model="saveCloud">加密保存到云端（可跨设备查看）</el-checkbox>
           <span v-else class="text-sub" style="font-size: 12.5px">未登录：结果仅保存在本浏览器</span>
           <el-button type="primary" size="large" round :loading="loading" @click="submit">
-            <el-icon><MagicStick /></el-icon> 生成 AI 评估
+            <AiAvatar :size="18" /> 生成 AI 评估
           </el-button>
         </div>
       </section>
@@ -142,6 +142,7 @@ import http from '../../api'
 import { useAuthStore } from '../../stores/auth'
 import { hasCrisisHint } from '../../utils/crisis'
 import { fmtTime } from '../../utils/format'
+import AiAvatar from '../../components/AiAvatar.vue'
 
 const auth = useAuthStore()
 const scales = ref([])

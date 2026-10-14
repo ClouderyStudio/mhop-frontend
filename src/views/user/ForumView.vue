@@ -68,7 +68,7 @@
               <span class="board-chip" :style="chipStyle(p.board)">{{ boardOf(p.board).name }}</span>
               <el-tag v-if="p.crisis" size="small" type="danger" effect="light">危机</el-tag>
               <el-tag v-if="p.ai_replied" size="small" type="success" effect="light">
-                <el-icon><MagicStick /></el-icon> AI 已回应
+                <AiAvatar :size="14" /> AI 已回应
               </el-tag>
               <el-tag v-if="p.status === 0" size="small" type="warning" effect="plain">AI 审核中</el-tag>
               <span class="t-author">
@@ -169,6 +169,7 @@ import { hasCrisisHint } from '../../utils/crisis'
 import { fromNow } from '../../utils/format'
 import { BOARDS, boardOf } from '../../utils/boards'
 import MdComposer from '../../components/MdComposer.vue'
+import AiAvatar from '../../components/AiAvatar.vue'
 import { assetUrl } from '../../utils/asset'
 
 const router = useRouter()
@@ -619,10 +620,10 @@ onMounted(() => {
     height: 54px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, #2f8f83, #5eaaa1);
+    background: linear-gradient(135deg, #3F6991, #6D8AA8);
     color: #fff;
     font-size: 24px;
-    box-shadow: 0 6px 18px rgba(34, 112, 103, 0.42);
+    box-shadow: 0 6px 18px rgba(63, 105, 145, 0.35);
     z-index: 90;
     cursor: pointer;
   }

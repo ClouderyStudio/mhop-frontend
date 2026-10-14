@@ -78,7 +78,8 @@
               <div class="floor-side">
                 <span class="f-avatar" :class="{ ai: r.is_ai, recalled: r.recalled }">
                   <img v-if="r.author_avatar && !r.is_ai" :src="assetUrl(r.author_avatar)" class="f-avatar-img" />
-                  <el-icon v-else><component :is="r.is_ai ? 'MagicStick' : 'User'" /></el-icon>
+                  <AiAvatar v-else-if="r.is_ai" :size="42" />
+                  <el-icon v-else><User /></el-icon>
                 </span>
                 <span class="floor-no">#{{ idx + 1 }}</span>
               </div>
@@ -106,7 +107,7 @@
                   <div class="floor-head">
                     <strong>{{ r.author }}</strong>
                     <el-tag v-if="r.author_badge" size="small" type="success" effect="dark">{{ r.author_badge }}</el-tag>
-                    <span v-if="r.is_ai" class="ai-badge"><el-icon><MagicStick /></el-icon> AI 即时陪伴</span>
+                    <span v-if="r.is_ai" class="ai-badge"><AiAvatar :size="16" /> AI 即时陪伴</span>
                     <el-tag v-if="r.crisis" size="small" type="danger" effect="light">含安全提示</el-tag>
                     <el-button v-if="auth.isAdmin && r.is_ai" size="small" type="danger" plain
                       class="recall-btn" @click="recall(r)">
@@ -222,6 +223,7 @@ import { fmtTime, fromNow } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { renderMarkdown } from '../../utils/markdown'
 import MdComposer from '../../components/MdComposer.vue'
+import AiAvatar from '../../components/AiAvatar.vue'
 import { assetUrl } from '../../utils/asset'
 
 const route = useRoute()
@@ -508,8 +510,9 @@ onBeforeUnmount(stopPolling)
   font-size: 17px;
 }
 .f-avatar.ai {
-  background: linear-gradient(135deg, #7d6de8, #6d5ce0);
-  color: #fff;
+  background: transparent;
+  padding: 0;
+  border: none;
 }
 .f-avatar.recalled {
   background: #b6bbc4;

@@ -98,7 +98,7 @@ const iconOf = {
   dashboard: 'DataBoard',
   review: 'Checked',
   users: 'UserFilled',
-  ai_logs: 'MagicStick',
+  ai_logs: 'Cpu',
   bottles: 'Promotion',
 }
 const menus = computed(() =>

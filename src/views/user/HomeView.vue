@@ -4,7 +4,7 @@
     <section class="hero mhop-card">
       <div class="hero-text">
         <div class="hero-badge">
-          <el-icon><MagicStick /></el-icon> 全国性 · 匿名优先 · 免费公益
+          <AiAvatar :size="20" /> 全国性 · 匿名优先 · 免费公益
         </div>
         <h1>在这里，你不必独自承受</h1>
         <p class="hero-sub">
@@ -92,6 +92,7 @@ import { fromNow } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { useAuthStore } from '../../stores/auth'
 import BrandMark from '../../components/BrandMark.vue'
+import AiAvatar from '../../components/AiAvatar.vue'
 
 const auth = useAuthStore()
 const posts = ref([])
