@@ -5,7 +5,7 @@
     class="ai-avatar"
     :class="[
       shape,
-      { 'is-full': isFull, 'is-glow': glowMode, 'animate-hover': hoverAnimate }
+      { 'is-full': isFull, 'is-glow': effectiveGlow, 'animate-hover': hoverAnimate }
     ]"
     :style="computedStyle"
     draggable="false"
@@ -45,8 +45,8 @@ const props = defineProps({
   shape: { type: String, default: 'circle', validator: v => ['circle', 'rounded'].includes(v) },
   /** 强制使用完整少女形象（覆盖 expression 逻辑） */
   full: { type: Boolean, default: false },
-  /** 深色模式自动发光 */
-  glow: { type: Boolean, default: true },
+  /** 深色模式自动发光（小尺寸默认关，防外溢） */
+  glow: { type: Boolean, default: false },
   /** hover 微动效（浮动 + 心跳） */
   hoverAnimate: { type: Boolean, default: true },
   alt: { type: String, default: '心光 AI 心理助手' },
@@ -77,11 +77,22 @@ const resolvedSrc = computed(() => {
 const computedStyle = computed(() => {
   const s = sizeNum.value
   const objFit = props.full || s > 64 ? 'contain' : 'cover'
+  // 圆形用 clip-path 真裁切（切住 filter/hover 的外溢）
+  const clip = props.shape === 'circle' ? 'clip-path: circle(50% at 50% 50%);' : ''
+  const overflow = props.shape === 'circle' || props.shape === 'rounded' ? 'overflow: hidden;' : ''
   return {
     width: s + 'px',
     height: s + 'px',
     objectFit: objFit,
+    ...(props.shape === 'circle' ? {} : {}),
   }
+})
+
+// ===== 智能 glow：大尺寸（≥48px）自动开，小尺寸靠调用方显式传 =====
+const effectiveGlow = computed(() => {
+  if (props.glow) return true              // 显式传 true 尊重
+  if (props.full || sizeNum.value >= 48) return true  // 大尺寸自动开
+  return false                             // 小尺寸默认关
 })
 </script>
 
@@ -90,14 +101,28 @@ const computedStyle = computed(() => {
   display: block;
   user-select: none;
   -webkit-user-drag: none;
-  pointer-events: auto;
   background: transparent;
   transition: transform .25s cubic-bezier(.2,.9,.3,1.4), filter .25s ease;
+  /* isolation + overflow 双保险：clip-path 切住 filter/hover 外溢 */
+  isolation: isolate;
 }
-.ai-avatar.circle   { border-radius: 50%; }
-.ai-avatar.rounded  { border-radius: 8px; }
+.ai-avatar.circle {
+  border-radius: 50%;
+  overflow: hidden;
+  clip-path: circle(50% at 50% 50%);
+}
+.ai-avatar.rounded {
+  border-radius: 8px;
+  overflow: hidden;
+  clip-path: inset(0 round 8px);
+}
+/* 完整立绘：不裁切 */
+.ai-avatar.is-full.circle {
+  clip-path: none;
+  border-radius: 0;
+}
 
-/* 深色模式发光（项目用 html.dark 切换） */
+/* 发光：只在大尺寸/显式开启时生效，避免小尺寸外溢 */
 .ai-avatar.is-glow {
   filter: drop-shadow(0 0 3px rgba(246, 166, 187, .35))
           drop-shadow(0 2px 6px rgba(109, 92, 224, .20));
@@ -107,10 +132,6 @@ const computedStyle = computed(() => {
           drop-shadow(0 0 14px rgba(109, 92, 224, .35))
           drop-shadow(0 2px 8px rgba(0, 0, 0, .5));
 }
-
-/* 完整形象：去掉圆形裁切，自然立绘 */
-.ai-avatar.is-full,
-.ai-avatar.circle:has(~ .ai-avatar.is-full) { /* 不影响 */ }
 
 /* Hover 微动效 */
 .ai-avatar.animate-hover:hover {
