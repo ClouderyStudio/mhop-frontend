@@ -18,7 +18,7 @@ export const useAuthStore = defineStore('auth', {
     permissions: (s) => (s.user?.role === 'superadmin'
       ? ADMIN_PERMS.map((p) => p.code)
       : s.user?.permissions || []),
-    displayName: (s) => s.user?.username || '',
+    displayName: (s) => s.user?.nickname || s.user?.username || '',
     // 登录后第一个可进入的后台模块路径；一个权限都没有时为 null
     firstAdminPath() {
       const hit = ADMIN_PERMS.find((p) => this.permissions.includes(p.code))

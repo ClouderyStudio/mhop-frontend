@@ -222,7 +222,12 @@ import { assetUrl } from '../../utils/asset'
 const router = useRouter()
 const auth = useAuthStore()
 const form = ref({ username: '', nickname: '' })
-const userNo = computed(() => auth.user?.user_no || '加载中…')
+// 编号来自后端 /auth/me；后端尚未生成时显示提示而不是误导性的"加载中"
+const userNo = computed(() => {
+  const no = auth.user?.user_no
+  if (no) return no
+  return '（尚未生成，请退出后重新登录）'
+})
 const avatarUrl = ref('')
 const email = ref('')
 const emailVerified = ref(false)
