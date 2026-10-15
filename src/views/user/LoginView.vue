@@ -11,8 +11,8 @@
 
       <!-- 密码登录 -->
       <el-form v-if="mode === 'password'" :model="form" :rules="rules" ref="formRef" label-position="top" @submit.prevent>
-        <el-form-item label="用户名" prop="username">
-          <el-input v-model="form.username" size="large" placeholder="请输入用户名" :prefix-icon="User" />
+        <el-form-item label="登录名" prop="username">
+          <el-input v-model="form.username" size="large" placeholder="用户名 / 编号 / 邮箱" :prefix-icon="User" />
         </el-form-item>
         <el-form-item label="密码" prop="password">
           <el-input v-model="form.password" size="large" type="password" show-password placeholder="请输入密码"

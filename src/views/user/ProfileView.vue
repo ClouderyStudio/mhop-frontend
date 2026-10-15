@@ -13,8 +13,17 @@
         </div>
         <div class="info-section">
           <el-form label-position="top" @submit.prevent>
-            <el-form-item label="用户名">
+            <el-form-item label="用户名（登录标识）">
               <el-input v-model="form.username" placeholder="用户名" maxlength="32" show-word-limit />
+            </el-form-item>
+            <el-form-item label="昵称（展示名）">
+              <el-input v-model="form.nickname" placeholder="留空则与用户名相同" maxlength="64" show-word-limit />
+            </el-form-item>
+            <el-form-item label="我的编号">
+              <div class="user-no-row">
+                <el-tag type="success" effect="dark" round>{{ userNo }}</el-tag>
+                <span class="text-sub" style="font-size:12px;margin-left:8px">平台自动生成，不可修改，可用编号登录</span>
+              </div>
             </el-form-item>
             <el-form-item label="邮箱">
               <div v-if="!emailEditing" class="phone-row">
@@ -212,7 +221,8 @@ import { assetUrl } from '../../utils/asset'
 
 const router = useRouter()
 const auth = useAuthStore()
-const form = ref({ username: '' })
+const form = ref({ username: '', nickname: '' })
+const userNo = computed(() => auth.user?.user_no || '加载中…')
 const avatarUrl = ref('')
 const email = ref('')
 const emailVerified = ref(false)
@@ -264,6 +274,7 @@ function fmtTime(t) { return t ? new Date(t).toLocaleString('zh-CN') : '' }
 
 onMounted(async () => {
   form.value.username = auth.user?.username || ''
+  form.value.nickname = auth.user?.nickname || ''
   avatarUrl.value = auth.user?.avatar || ''
   email.value = auth.user?.email || ''
   emailVerified.value = !!auth.user?.email_verified
@@ -559,6 +570,7 @@ async function save() {
   try {
     const updated = await http.put('/auth/profile', {
       username: form.value.username.trim(),
+      nickname: form.value.nickname.trim() || null,
       avatar: avatarUrl.value,
     })
     auth.user = updated
