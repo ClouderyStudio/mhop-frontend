@@ -12,6 +12,8 @@ const routes = [
       { path: 'bottles', name: 'bottles', component: () => import('../views/user/BottleView.vue'), meta: { requiresAuth: true, guestRedirect: 'home' } },
       { path: 'bottles/:id', name: 'bottle-chat', component: () => import('../views/user/BottleChatView.vue'), meta: { requiresAuth: true, guestRedirect: 'home' } },
       { path: 'assessment', name: 'assessment', component: () => import('../views/user/AssessmentView.vue'), meta: { requiresAuth: true, guestRedirect: 'home' } },
+      // 呼吸放松练习对外开放：不适时才需要求助，不该先让 TA 注册
+      { path: 'breathe', name: 'breathe', component: () => import('../views/user/BreatheView.vue') },
       { path: 'login', name: 'login', component: () => import('../views/user/LoginView.vue') },
       { path: 'register', name: 'register', component: () => import('../views/user/RegisterView.vue') },
       { path: 'auth/casdoor/callback', name: 'casdoor-callback', component: () => import('../views/user/CasdoorCallbackView.vue') },
