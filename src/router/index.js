@@ -14,7 +14,7 @@ const routes = [
       { path: 'assessment', name: 'assessment', component: () => import('../views/user/AssessmentView.vue'), meta: { requiresAuth: true, guestRedirect: 'home' } },
       { path: 'login', name: 'login', component: () => import('../views/user/LoginView.vue') },
       { path: 'register', name: 'register', component: () => import('../views/user/RegisterView.vue') },
-      { path: 'auth/casdoor/callback', name: 'casdoor-callback', component: () => import('../views/user/CasdoorCallbackView.vue') },
+      { path: 'auth/identity/callback', name: 'identity-callback', component: () => import('../views/user/IdentityCallbackView.vue') },
       { path: 'profile', name: 'profile', component: () => import('../views/user/ProfileView.vue'), meta: { requiresAuth: true } },
     ],
   },

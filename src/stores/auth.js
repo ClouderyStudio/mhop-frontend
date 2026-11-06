@@ -60,16 +60,16 @@ export const useAuthStore = defineStore('auth', {
       this.setAuth(data.access_token, data.user)
       return data.user
     },
-    async casdoorConfig() {
-      return await http.get('/auth/casdoor/config')
+    async identityConfig() {
+      return await http.get('/auth/identity/config')
     },
-    // 跳转 Casdoor 统一身份认证（OAuth2 授权码 + OIDC）
-    async loginWithCasdoor(redirectUri) {
-      const cfg = await this.casdoorConfig()
+    // 跳转云术统一身份认证（自建身份中心，OAuth2 授权码）
+    async loginWithIdentity(redirectUri) {
+      const cfg = await this.identityConfig()
       if (!cfg.enabled) throw new Error('统一身份认证未启用')
-      const state = (await http.get('/auth/casdoor/state')).state
+      const state = (await http.get('/auth/identity/state')).state
       const target = redirectUri || cfg.redirect_uri
-      sessionStorage.setItem('mhop_casdoor_redirect', target)
+      sessionStorage.setItem('mhop_identity_redirect', target)
       const params = new URLSearchParams({
         client_id: cfg.client_id || '',
         response_type: 'code',
@@ -80,17 +80,17 @@ export const useAuthStore = defineStore('auth', {
       const endpoint = String(cfg.endpoint || '').replace(/\/+$/, '')
       window.location.href = endpoint + '/login/oauth/authorize?' + params.toString()
     },
-    // Casdoor 回调：用授权码换 MHOP 自己的 JWT，后续请求方式与密码登录完全一致
-    async completeCasdoorLogin(code, state) {
-      const redirectUri = sessionStorage.getItem('mhop_casdoor_redirect') ||
-        window.location.origin + '/auth/casdoor/callback'
-      const data = await http.post('/auth/casdoor/callback', {
+    // 身份中心回调：用授权码换 MHOP 自己的 JWT，后续请求方式与密码登录完全一致
+    async completeIdentityLogin(code, state) {
+      const redirectUri = sessionStorage.getItem('mhop_identity_redirect') ||
+        window.location.origin + '/auth/identity/callback'
+      const data = await http.post('/auth/identity/callback', {
         code,
         state,
         redirect_uri: redirectUri,
       })
       this.setAuth(data.access_token, data.user)
-      sessionStorage.removeItem('mhop_casdoor_redirect')
+      sessionStorage.removeItem('mhop_identity_redirect')
       return data.user
     },
     async restore() {

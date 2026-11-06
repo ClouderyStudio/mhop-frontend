@@ -46,9 +46,9 @@
         <p class="mail-note">未注册过的邮箱验证通过后将自动创建账号</p>
       </el-form>
 
-      <template v-if="casdoorEnabled">
-        <div class="casdoor-sep"><span>或</span></div>
-        <el-button size="large" round style="width: 100%" :loading="casdoorLoading" @click="submitCasdoor">
+      <template v-if="identityEnabled">
+        <div class="identity-sep"><span>或</span></div>
+        <el-button size="large" round style="width: 100%" :loading="identityLoading" @click="submitIdentity">
           使用统一身份认证登录
         </el-button>
       </template>
@@ -74,26 +74,26 @@ const route = useRoute()
 const auth = useAuthStore()
 
 const mode = ref('password')
-const casdoorEnabled = ref(false)
-const casdoorLoading = ref(false)
+const identityEnabled = ref(false)
+const identityLoading = ref(false)
 
 onMounted(async () => {
   try {
-    const cfg = await auth.casdoorConfig()
-    casdoorEnabled.value = !!cfg.enabled
+    const cfg = await auth.identityConfig()
+    identityEnabled.value = !!cfg.enabled
   } catch {
-    casdoorEnabled.value = false
+    identityEnabled.value = false
   }
 })
 
-async function submitCasdoor() {
-  casdoorLoading.value = true
+async function submitIdentity() {
+  identityLoading.value = true
   try {
-    await auth.loginWithCasdoor(window.location.origin + '/auth/casdoor/callback')
+    await auth.loginWithIdentity(window.location.origin + '/auth/identity/callback')
   } catch (e) {
     // 无响应时 axios 的 message 是英文（Network Error 等），这里统一回退到中文提示。
     ElMessage.error(e?.response?.data?.detail || (e?.response ? e?.message : '') || '统一身份认证暂不可用')
-    casdoorLoading.value = false
+    identityLoading.value = false
   }
 }
 const loading = ref(false)
@@ -222,7 +222,7 @@ async function submitEmail() {
   color: var(--el-text-color-secondary);
   text-align: center;
 }
-.casdoor-sep {
+.identity-sep {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -230,8 +230,8 @@ async function submitEmail() {
   color: var(--el-text-color-secondary);
   font-size: 12.5px;
 }
-.casdoor-sep::before,
-.casdoor-sep::after {
+.identity-sep::before,
+.identity-sep::after {
   content: '';
   flex: 1;
   height: 1px;

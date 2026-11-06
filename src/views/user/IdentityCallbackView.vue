@@ -32,7 +32,7 @@ onMounted(async () => {
     return
   }
   try {
-    const user = await auth.completeCasdoorLogin(String(code), String(route.query.state || ''))
+    const user = await auth.completeIdentityLogin(String(code), String(route.query.state || ''))
     ElMessage.success('统一身份认证登录成功')
     router.replace(user?.role === 'admin' ? '/admin/dashboard' : (route.query.redirect || '/forum'))
   } catch (e) {
