@@ -181,7 +181,7 @@
         </el-form-item>
         <el-form-item label="内容">
           <el-input v-model="editForm.content" type="textarea" :rows="7"
-            :maxlength="editKind === 'post' ? 2000 : 1000" show-word-limit />
+            :maxlength="editKind === 'post' ? 10000 : 1000" show-word-limit />
         </el-form-item>
         <el-form-item :label="'图片（最多 9 张，已选 ' + editForm.images.length + '）'">
           <div class="img-grid">
@@ -379,6 +379,10 @@ async function onEditImage(e) {
 async function saveEdit() {
   if (!editForm.value.content.trim()) {
     ElMessage.warning('内容不能为空')
+    return
+  }
+  if (editKind.value === 'post' && editForm.value.content.trim().length > 10000) {
+    ElMessage.warning('帖子内容不能超过 10000 字')
     return
   }
   editSaving.value = true

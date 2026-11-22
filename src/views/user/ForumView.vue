@@ -120,7 +120,7 @@
       <MdComposer
         v-model="form.content"
         :rows="5"
-        :maxlength="2000"
+        :maxlength="10000"
         placeholder="我在这里，你可以放心说。发布后小心光会立刻来陪你……"
       />
       <p class="text-sub" style="font-size: 12.5px; margin-top: 6px">登录后可发帖，提交后先由 AI 审核，通过后自动公开；未通过将转人工复核。</p>
@@ -301,6 +301,10 @@ async function submit() {
   const content = form.value.content.trim()
   if (!content) {
     ElMessage.warning('先写点什么吧')
+    return
+  }
+  if (content.length > 10000) {
+    ElMessage.warning('帖子内容不能超过 10000 字')
     return
   }
   submitting.value = true
