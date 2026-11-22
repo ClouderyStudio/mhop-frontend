@@ -5,6 +5,7 @@ export const ADMIN_PERMS = [
   { code: 'users', name: '用户管理', desc: '管理用户状态、标识、密码，以及管理员角色与权限', path: '/admin/users' },
   { code: 'ai_logs', name: 'AI 交互日志', desc: '查看 AI 调用记录、撤回/恢复论坛 AI 回复', path: '/admin/ai-logs' },
   { code: 'bottles', name: '漂流瓶审核', desc: '审核漂流瓶瓶身与匿名对话、处置举报、下架/恢复内容', path: '/admin/bottles' },
+  { code: 'announcements', name: '公告管理', desc: '发布、编辑、上下架与删除全站公告', path: '/admin/announcements' },
 ]
 
 export function permName(code) {

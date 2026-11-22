@@ -30,6 +30,7 @@ const routes = [
       { path: 'users', name: 'admin-users', component: () => import('../views/admin/Users.vue'), meta: { perm: 'users' } },
       { path: 'ai-logs', name: 'admin-logs', component: () => import('../views/admin/AiLogs.vue'), meta: { perm: 'ai_logs' } },
       { path: 'bottles', name: 'admin-bottles', component: () => import('../views/admin/BottleReview.vue'), meta: { perm: 'bottles' } },
+      { path: 'announcements', name: 'admin-announcements', component: () => import('../views/admin/Announcements.vue'), meta: { perm: 'announcements' } },
     ],
   },
   { path: '/:pathMatch(.*)*', redirect: '/' },

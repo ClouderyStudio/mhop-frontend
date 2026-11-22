@@ -1,5 +1,19 @@
 <template>
   <div>
+    <!-- 公告条（公开，无需登录） -->
+    <section v-if="announcements.length" class="announce-bar mhop-card">
+      <div class="announce-inner" @click="openDetail">
+        <span class="announce-icon"><el-icon><Bell /></el-icon></span>
+        <span class="announce-title">{{ announcements[current].title }}</span>
+        <span class="announce-more">查看详情</span>
+      </div>
+      <div v-if="announcements.length > 1" class="announce-nav">
+        <el-button text size="small" @click.stop="prevAnnouncement"><el-icon><ArrowLeft /></el-icon></el-button>
+        <span class="announce-count">{{ current + 1 }}/{{ announcements.length }}</span>
+        <el-button text size="small" @click.stop="nextAnnouncement"><el-icon><ArrowRight /></el-icon></el-button>
+      </div>
+    </section>
+
     <!-- 主视觉 -->
     <section class="hero mhop-card">
       <div class="hero-text">
@@ -81,6 +95,14 @@
         <el-empty v-if="!loading && posts.length === 0" description="还没有帖子，来发出第一份倾诉吧" />
       </div>
     </section>
+
+    <!-- 公告详情弹窗 -->
+    <el-dialog v-model="detailVisible" :title="announcements[current]?.title" width="560px" align-center>
+      <p class="announce-detail">{{ announcements[current]?.content }}</p>
+      <template #footer>
+        <el-button type="primary" @click="detailVisible = false">知道了</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -88,6 +110,7 @@
 import { onMounted, ref } from 'vue'
 import { ElMessage } from 'element-plus'
 import http from '../../api'
+import { listAnnouncements } from '../../api/announcements'
 import { fromNow } from '../../utils/format'
 import { boardOf } from '../../utils/boards'
 import { useAuthStore } from '../../stores/auth'
@@ -97,6 +120,28 @@ import AiAvatar from '../../components/AiAvatar.vue'
 const auth = useAuthStore()
 const posts = ref([])
 const loading = ref(false)
+
+// 公告（公开，无需登录）
+const announcements = ref([])
+const current = ref(0)
+const detailVisible = ref(false)
+
+function prevAnnouncement() {
+  current.value = (current.value - 1 + announcements.value.length) % announcements.value.length
+}
+function nextAnnouncement() {
+  current.value = (current.value + 1) % announcements.value.length
+}
+function openDetail() {
+  detailVisible.value = true
+}
+async function loadAnnouncements() {
+  try {
+    announcements.value = await listAnnouncements()
+  } catch (e) {
+    // 公告加载失败不影响首页其余内容
+  }
+}
 
 function chipStyle(slug) {
   const b = boardOf(slug || 'mood')
@@ -108,6 +153,7 @@ function chipStyle(slug) {
 }
 
 onMounted(async () => {
+  loadAnnouncements()
   if (!auth.isLoggedIn) return
   loading.value = true
   try {
@@ -125,6 +171,65 @@ function goHotline() {
 </script>
 
 <style scoped>
+.announce-bar {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: linear-gradient(90deg, #fff7e6 0%, #ffffff 100%);
+  border-left: 3px solid var(--mhop-link);
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.announce-bar:hover {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+.announce-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+.announce-icon {
+  color: var(--mhop-link);
+  display: inline-flex;
+  flex-shrink: 0;
+}
+.announce-title {
+  font-weight: 600;
+  font-size: 14.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.announce-more {
+  color: var(--mhop-link);
+  font-size: 13px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+.announce-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+.announce-count {
+  font-size: 12px;
+  color: var(--el-text-color-secondary);
+  min-width: 34px;
+  text-align: center;
+}
+.announce-detail {
+  white-space: pre-wrap;
+  line-height: 1.9;
+  font-size: 14.5px;
+  color: var(--el-text-color-primary);
+  margin: 0;
+}
 .hero {
   margin-top: 22px;
   padding: 44px 48px;

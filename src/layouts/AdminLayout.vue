@@ -100,6 +100,7 @@ const iconOf = {
   users: 'UserFilled',
   ai_logs: 'Cpu',
   bottles: 'Promotion',
+  announcements: 'Bell',
 }
 const menus = computed(() =>
   ADMIN_PERMS.filter((p) => auth.can(p.code)).map((p) => ({
