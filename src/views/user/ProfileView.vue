@@ -50,7 +50,7 @@
                 <el-button type="primary" link @click="startEditPhone">{{ phone ? '换绑' : '绑定' }}</el-button>
               </div>
               <div v-else class="phone-row">
-                <el-input v-model="phoneInput" placeholder="请输入 11 位手机号" maxlength="11" />
+                <el-input v-model="phoneInput" placeholder="请输入手机号（支持大陆/港澳台）" maxlength="11" />
                 <el-button type="primary" :loading="phoneSaving" @click="savePhone">保存</el-button>
                 <el-button @click="cancelEditPhone">取消</el-button>
               </div>
@@ -445,8 +445,10 @@ async function removeReply(r) {
   refreshAll()
 }
 
+// 手机号脱敏：保留前 3 位和后 2 位，中间用 * 代替（兼容大陆/港澳台不同长度）
 function maskPhone(p) {
-  return p.length === 11 ? p.slice(0, 3) + '****' + p.slice(7) : p
+  if (!p || p.length < 6) return p
+  return p.slice(0, 3) + '*'.repeat(p.length - 5) + p.slice(-2)
 }
 function startEditPhone() {
   phoneInput.value = phone.value || ''
@@ -458,8 +460,9 @@ function cancelEditPhone() {
 }
 async function savePhone() {
   const p = phoneInput.value.trim()
-  if (!/^1[3-9]\d{9}$/.test(p)) {
-    ElMessage.warning('请输入正确的 11 位手机号')
+  // 支持大陆（11位）+ 港澳台（香港/澳门8位、台湾10位），不含国际区号
+  if (!/^(1[3-9]\d{9}|[5-9]\d{7}|09\d{8})$/.test(p)) {
+    ElMessage.warning('请输入正确的手机号（支持大陆/港澳台）')
     return
   }
   phoneSaving.value = true
