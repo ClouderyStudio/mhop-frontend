@@ -78,7 +78,7 @@
           <div v-if="result.score !== null" class="score-box">
             <div>
               <div class="score-num" :class="result.level_code">{{ result.score }}</div>
-              <div class="text-sub" style="font-size: 12px">量表得分</div>
+              <div class="text-sub" style="font-size: 12px">{{ resultScoreLabel }}</div>
             </div>
             <el-tag :type="levelType(result.level_code)" size="large" effect="light">{{ result.level }}</el-tag>
           </div>
@@ -173,13 +173,17 @@ const detail = ref(null)
 const detailVisible = ref(false)
 
 const currentScale = computed(() => scales.value.find((s) => s.key === type.value))
+const resultScoreLabel = computed(() => {
+  const scale = scales.value.find((s) => s.key === result.value?.assessment_type)
+  return scale?.score_label || '量表得分'
+})
 const crisisHint = computed(() => hasCrisisHint(freeText.value))
 
 function levelType(code) {
   return { normal: 'info', mild: 'success', moderate: 'warning', severe: 'danger', danger: 'danger' }[code] || 'info'
 }
 function typeName(key) {
-  return { dass21: 'DASS-21 抑郁焦虑压力评估', phq9: 'PHQ-9 抑郁筛查', gad7: 'GAD-7 焦虑筛查', free: '自由倾诉评估' }[key] || key
+  return { dass21: 'DASS-21 抑郁焦虑压力评估', panas: 'PANAS 正负性情绪量表', phq9: 'PHQ-9 抑郁筛查', gad7: 'GAD-7 焦虑筛查', free: '自由倾诉评估' }[key] || key
 }
 function onTypeChange() {
   answers.value = {}
