@@ -11,7 +11,7 @@
     <!-- 类型选择 -->
     <el-radio-group v-model="type" class="type-group" @change="onTypeChange">
       <el-radio-button v-for="s in scales" :key="s.key" :value="s.key">
-        {{ s.key === 'phq9' ? 'PHQ-9 抑郁筛查' : s.key === 'gad7' ? 'GAD-7 焦虑筛查' : '自由倾诉评估' }}
+        {{ s.key === 'free' ? '自由倾诉评估' : s.name }}
       </el-radio-button>
     </el-radio-group>
 
@@ -82,6 +82,13 @@
             </div>
             <el-tag :type="levelType(result.level_code)" size="large" effect="light">{{ result.level }}</el-tag>
           </div>
+          <div v-if="result.subscales?.length" class="subscale-list">
+            <div v-for="s in result.subscales" :key="s.key" class="subscale-item">
+              <span class="subscale-name">{{ s.name }}</span>
+              <span class="text-sub">{{ s.score }}/{{ s.max }} 分</span>
+              <el-tag size="small" :type="levelType(s.level_code)" effect="plain">{{ s.level }}</el-tag>
+            </div>
+          </div>
           <el-divider style="margin: 14px 0" />
           <p class="pre-wrap ai-text">{{ result.ai_result }}</p>
           <el-tag v-if="result.saved_cloud" type="success" size="small" effect="plain" style="margin-top: 10px">
@@ -128,6 +135,13 @@
           </el-tag>
           <span class="text-sub" style="margin-left: 10px; font-size: 12.5px">{{ fmtTime(detail.created_at) }}</span>
         </div>
+        <div v-if="detail.subscales?.length" class="subscale-list" style="margin-bottom: 12px">
+          <div v-for="s in detail.subscales" :key="s.key" class="subscale-item">
+            <span class="subscale-name">{{ s.name }}</span>
+            <span class="text-sub">{{ s.score }}/{{ s.max }} 分</span>
+            <el-tag size="small" :type="levelType(s.level_code)" effect="plain">{{ s.level }}</el-tag>
+          </div>
+        </div>
         <p class="pre-wrap">{{ detail.ai_result }}</p>
       </div>
     </el-dialog>
@@ -146,7 +160,7 @@ import AiAvatar from '../../components/AiAvatar.vue'
 
 const auth = useAuthStore()
 const scales = ref([])
-const type = ref('phq9')
+const type = ref('dass21')
 const answers = ref({})
 const freeText = ref('')
 const saveCloud = ref(false)
@@ -159,13 +173,13 @@ const detail = ref(null)
 const detailVisible = ref(false)
 
 const currentScale = computed(() => scales.value.find((s) => s.key === type.value))
-const crisisHint = computed(() => hasCrisisHint(freeText.value) || (type.value === 'phq9' && (answers.value[8] ?? 0) > 0))
+const crisisHint = computed(() => hasCrisisHint(freeText.value))
 
 function levelType(code) {
   return { normal: 'info', mild: 'success', moderate: 'warning', severe: 'danger', danger: 'danger' }[code] || 'info'
 }
 function typeName(key) {
-  return { phq9: 'PHQ-9 抑郁筛查', gad7: 'GAD-7 焦虑筛查', free: '自由倾诉评估' }[key] || key
+  return { dass21: 'DASS-21 抑郁焦虑压力评估', phq9: 'PHQ-9 抑郁筛查', gad7: 'GAD-7 焦虑筛查', free: '自由倾诉评估' }[key] || key
 }
 function onTypeChange() {
   answers.value = {}
@@ -210,6 +224,7 @@ function saveLocal(r) {
     score: r.score,
     level: r.level,
     level_code: r.level_code,
+    subscales: r.subscales,
     ai_result: r.ai_result,
     created_at: new Date().toISOString(),
   })
@@ -338,6 +353,25 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.subscale-list {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--mhop-border);
+  display: grid;
+  gap: 8px;
+}
+.subscale-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.subscale-name {
+  color: var(--mhop-text);
+}
+.subscale-item .text-sub {
+  margin-left: auto;
 }
 .score-num {
   font-size: 40px;

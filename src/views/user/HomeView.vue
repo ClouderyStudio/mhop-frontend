@@ -61,7 +61,7 @@
       <router-link to="/assessment" class="feature-card mhop-card">
         <span class="feature-icon" style="background: var(--mhop-violet-light); color: var(--mhop-violet)"><el-icon :size="26"><DocumentChecked /></el-icon></span>
         <h3>AI 心理评估</h3>
-        <p class="text-sub">PHQ-9 / GAD-7 标准量表 + 自由倾诉，生成个性化解读与求助指引。</p>
+        <p class="text-sub">DASS-21 标准量表（抑郁 / 焦虑 / 压力）+ 自由倾诉，生成个性化解读与求助指引。</p>
       </router-link>
       <div class="feature-card mhop-card" @click="goHotline">
         <span class="feature-icon" style="background: #fdecea; color: #d83a2e"><el-icon :size="26"><PhoneFilled /></el-icon></span>
