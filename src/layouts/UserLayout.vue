@@ -11,14 +11,21 @@
         </router-link>
         <nav class="nav-links">
           <router-link to="/">首页</router-link>
-          <router-link v-if="auth.isLoggedIn" to="/forum">互助论坛</router-link>
-          <router-link v-if="auth.isLoggedIn" to="/bottles" class="bottle-link">
-            漂流瓶
+          <router-link
+            v-if="auth.isLoggedIn"
+            to="/companion"
+            class="bottle-link"
+            :class="{ active: isCompanion }"
+          >
+            陪伴
             <span v-if="bottleStore.unreadTotal > 0" class="bottle-badge">
               {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
             </span>
           </router-link>
-          <router-link v-if="auth.isLoggedIn" to="/assessment">AI 心理评估</router-link>
+          <router-link v-if="auth.isLoggedIn" to="/assessment">测评</router-link>
+          <router-link v-if="auth.isLoggedIn" to="/regulate">调节</router-link>
+          <router-link v-if="auth.isLoggedIn" to="/journal">记录</router-link>
+          <router-link to="/rescue" class="rescue-link">求助</router-link>
         </nav>
         <div class="nav-right">
           <button
@@ -81,15 +88,17 @@
       </div>
       <nav class="drawer-links" @click="drawer = false">
         <router-link to="/"><el-icon><HomeFilled /></el-icon> 首页</router-link>
-        <router-link v-if="auth.isLoggedIn" to="/forum"><el-icon><ChatLineSquare /></el-icon> 互助论坛</router-link>
-        <router-link v-if="auth.isLoggedIn" to="/bottles">
-          <el-icon><Promotion /></el-icon> 漂流瓶
+        <router-link v-if="auth.isLoggedIn" to="/companion">
+          <el-icon><ChatLineSquare /></el-icon> 陪伴
           <span v-if="bottleStore.unreadTotal > 0" class="drawer-badge">
             {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
           </span>
         </router-link>
-        <router-link v-if="auth.isLoggedIn" to="/assessment"><el-icon><DataAnalysis /></el-icon> AI 心理评估</router-link>
-        <router-link v-if="auth.isLoggedIn" to="/profile"><el-icon><User /></el-icon> 个人主页</router-link>
+        <router-link v-if="auth.isLoggedIn" to="/assessment"><el-icon><DataAnalysis /></el-icon> 测评</router-link>
+        <router-link v-if="auth.isLoggedIn" to="/regulate"><el-icon><WindPower /></el-icon> 调节</router-link>
+        <router-link v-if="auth.isLoggedIn" to="/journal"><el-icon><Notebook /></el-icon> 记录</router-link>
+        <router-link to="/rescue" class="drawer-rescue"><el-icon><PhoneFilled /></el-icon> 求助</router-link>
+        <router-link v-if="auth.isLoggedIn" to="/profile"><el-icon><User /></el-icon> 我的</router-link>
       </nav>
       <div class="drawer-actions">
         <el-button round @click="toggleTheme">
@@ -138,31 +147,35 @@
     <!-- 移动端底部导航：≤760px 且已登录时显示；未登录移动端靠顶栏/汉堡 -->
     <nav class="mobile-tabbar" v-if="auth.isLoggedIn" aria-label="主导航">
       <router-link to="/" class="tb-item" :class="{ active: tabActive('/') }">
-        <el-icon :size="22"><HomeFilled /></el-icon>
+        <el-icon :size="21"><HomeFilled /></el-icon>
         <span>首页</span>
       </router-link>
-      <router-link to="/forum" class="tb-item" :class="{ active: tabActive('/forum') }"
-        @click="(e) => goAuthTab(e, '/forum')">
-        <el-icon :size="22"><ChatLineSquare /></el-icon>
-        <span>论坛</span>
-      </router-link>
-      <router-link to="/bottles" class="tb-item" :class="{ active: tabActive('/bottles') }"
-        @click="(e) => goAuthTab(e, '/bottles')">
+      <router-link to="/companion" class="tb-item" :class="{ active: tabActive('/companion') }"
+        @click="(e) => goAuthTab(e, '/companion')">
         <span class="tb-icon">
-          <el-icon :size="22"><Promotion /></el-icon>
+          <el-icon :size="21"><ChatDotSquare /></el-icon>
           <span v-if="bottleStore.unreadTotal > 0" class="tb-badge">
             {{ bottleStore.unreadTotal > 99 ? '99+' : bottleStore.unreadTotal }}
           </span>
         </span>
-        <span>漂流瓶</span>
+        <span>陪伴</span>
       </router-link>
       <router-link to="/assessment" class="tb-item" :class="{ active: tabActive('/assessment') }"
         @click="(e) => goAuthTab(e, '/assessment')">
-        <el-icon :size="22"><DataAnalysis /></el-icon>
-        <span>评估</span>
+        <el-icon :size="21"><DataAnalysis /></el-icon>
+        <span>测评</span>
+      </router-link>
+      <router-link to="/journal" class="tb-item" :class="{ active: tabActive('/journal') }"
+        @click="(e) => goAuthTab(e, '/journal')">
+        <el-icon :size="21"><Notebook /></el-icon>
+        <span>记录</span>
+      </router-link>
+      <router-link to="/rescue" class="tb-item tb-rescue" :class="{ active: tabActive('/rescue') }">
+        <el-icon :size="21"><PhoneFilled /></el-icon>
+        <span>求助</span>
       </router-link>
       <router-link to="/profile" class="tb-item" :class="{ active: tabActive('/profile') }">
-        <el-icon :size="22"><User /></el-icon>
+        <el-icon :size="21"><User /></el-icon>
         <span>我的</span>
       </router-link>
     </nav>
@@ -170,7 +183,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
@@ -190,11 +203,16 @@ const { isDark, toggleTheme } = useTheme()
 const drawer = ref(false)
 let bottleTimer = null
 
-// 底部 tab 激活态：首页精确匹配，其余前缀匹配（如 /bottles/12 仍高亮漂流瓶）
+// tab 激活态：首页精确匹配，其余前缀匹配；陪伴聚合了论坛/漂流瓶/陪伴页
 function tabActive(prefix) {
   if (prefix === '/') return route.path === '/'
+  if (prefix === '/companion') {
+    return ['/companion', '/forum', '/bottles'].some((p) => route.path.startsWith(p))
+  }
   return route.path.startsWith(prefix)
 }
+
+const isCompanion = computed(() => tabActive('/companion'))
 
 // 论坛/漂流瓶/评估的路由守卫对未登录是弹回首页；底栏场景改为主动引导去登录
 function goAuthTab(e, path) {
@@ -290,10 +308,19 @@ function onCommand(cmd) {
   border-bottom: 2px solid transparent;
   transition: all 0.15s;
 }
-.nav-links a.router-link-exact-active {
+.nav-links a.router-link-exact-active,
+.nav-links a.active {
   color: var(--mhop-link);
   font-weight: 600;
   border-bottom-color: var(--mhop-link);
+}
+.nav-links a.rescue-link,
+.nav-links a.rescue-link.router-link-exact-active {
+  color: var(--mhop-danger);
+  border-bottom-color: var(--mhop-danger);
+}
+.drawer-rescue {
+  color: var(--mhop-danger) !important;
 }
 .bottle-link {
   position: relative;

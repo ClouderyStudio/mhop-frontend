@@ -46,12 +46,50 @@
         </div>
     </section>
 
-    <!-- 服务入口（登录后可见） -->
+    <!-- 情绪入口（登录后可见） -->
+    <section v-if="auth.isLoggedIn" class="mood-section">
+      <div class="section-head">
+        <h2><el-icon><Sunny /></el-icon> 此刻你最接近哪种感受？</h2>
+        <span class="text-sub">点一下，带你去更合适的地方</span>
+      </div>
+      <div class="mood-entry-grid">
+        <router-link
+          v-for="m in MOOD_ENTRIES"
+          :key="m.key"
+          :to="m.to"
+          class="mood-entry mhop-card"
+          :style="{ borderColor: m.color + '55' }"
+        >
+          <span class="mood-entry-emoji">{{ m.emoji }}</span>
+          <strong :style="{ color: m.color }">{{ m.label }}</strong>
+          <small class="text-sub">{{ m.hint }}</small>
+        </router-link>
+      </div>
+    </section>
+
+    <!-- 随手就能用（登录后可见） -->
+    <section v-if="auth.isLoggedIn" class="tools-section">
+      <div class="section-head">
+        <h2><el-icon><Lightning /></el-icon> 随手就能用</h2>
+        <span class="text-sub">不用想，点一下就开始</span>
+      </div>
+      <div class="tool-row">
+        <router-link v-for="t in QUICK_TOOLS" :key="t.label" :to="t.to" class="tool-item mhop-card">
+          <span class="tool-emoji">{{ t.emoji }}</span>
+          <span class="tool-text">
+            <strong>{{ t.label }}</strong>
+            <small class="text-sub">{{ t.desc }}</small>
+          </span>
+        </router-link>
+      </div>
+    </section>
+
+    <!-- 更多功能（登录后可见） -->
     <section v-if="auth.isLoggedIn" class="feature-grid">
-      <router-link to="/forum" class="feature-card mhop-card">
+      <router-link to="/companion" class="feature-card mhop-card">
         <span class="feature-icon" style="background: var(--mhop-link-light); color: var(--mhop-link)"><el-icon :size="26"><ChatLineSquare /></el-icon></span>
         <h3>互助论坛</h3>
-        <p class="text-sub">匿名说出困扰，AI 即时回应，社区温暖陪伴，管理员持续巡检。</p>
+        <p class="text-sub">按感受选择板块，匿名说出困扰，AI 即时回应，社区温暖陪伴。</p>
       </router-link>
       <router-link to="/bottles" class="feature-card mhop-card">
         <span class="feature-icon" style="background: var(--mhop-ocean-light); color: var(--mhop-ocean)"><el-icon :size="26"><Promotion /></el-icon></span>
@@ -60,14 +98,24 @@
       </router-link>
       <router-link to="/assessment" class="feature-card mhop-card">
         <span class="feature-icon" style="background: var(--mhop-violet-light); color: var(--mhop-violet)"><el-icon :size="26"><DocumentChecked /></el-icon></span>
-        <h3>AI 心理评估</h3>
-        <p class="text-sub">DASS-21 与 PANAS 标准量表（抑郁 / 焦虑 / 压力 / 正负情绪）+ 自由倾诉，生成个性化解读与求助指引。</p>
+        <h3>心理测评</h3>
+        <p class="text-sub">DASS-21 与 PANAS 标准量表（抑郁 / 焦虑 / 压力 / 正负情绪）+ 自由倾诉，生成个性化解读。</p>
       </router-link>
-      <div class="feature-card mhop-card" @click="goHotline">
+      <router-link to="/regulate" class="feature-card mhop-card">
+        <span class="feature-icon" style="background: var(--mhop-teal-light); color: var(--mhop-teal-dark)"><el-icon :size="26"><WindPower /></el-icon></span>
+        <h3>情绪调节</h3>
+        <p class="text-sub">4-4-6 呼吸练习与 5-4-3-2-1 接地练习，情绪上头时先让身体慢下来。</p>
+      </router-link>
+      <router-link to="/journal" class="feature-card mhop-card">
+        <span class="feature-icon" style="background: var(--mhop-amber-light); color: var(--mhop-amber)"><el-icon :size="26"><Notebook /></el-icon></span>
+        <h3>情绪记录</h3>
+        <p class="text-sub">每天一分钟记下心情，只保存在本机，慢慢看见自己的情绪轨迹。</p>
+      </router-link>
+      <router-link to="/rescue" class="feature-card mhop-card">
         <span class="feature-icon" style="background: #fdecea; color: #d83a2e"><el-icon :size="26"><PhoneFilled /></el-icon></span>
-        <h3>紧急援助</h3>
+        <h3>紧急求助</h3>
         <p class="text-sub">全国心理援助热线 12356、危机干预 010-82951332，生命优先，时刻在线。</p>
-      </div>
+      </router-link>
     </section>
 
     <!-- 最新倾诉（登录后可见） -->
@@ -108,7 +156,6 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
-import { ElMessage } from 'element-plus'
 import http from '../../api'
 import { listAnnouncements } from '../../api/announcements'
 import { fromNow } from '../../utils/format'
@@ -120,6 +167,24 @@ import AiAvatar from '../../components/AiAvatar.vue'
 const auth = useAuthStore()
 const posts = ref([])
 const loading = ref(false)
+
+// 情绪分类入口（心晴式「此刻你最接近哪种感受」）
+const MOOD_ENTRIES = [
+  { key: 'low', emoji: '😔', label: '低落·空虚', hint: '去情绪树洞说说', color: '#6a7bb0', to: { path: '/forum', query: { board: 'mood' } } },
+  { key: 'anxious', emoji: '😰', label: '焦虑·紧张', hint: '先做一次呼吸', color: '#e8933c', to: '/regulate' },
+  { key: 'angry', emoji: '😤', label: '愤怒·烦躁', hint: '跟着呼吸慢下来', color: '#d6668f', to: '/regulate' },
+  { key: 'tired', emoji: '😴', label: '疲惫·失眠', hint: '看看睡眠板块', color: '#6a6fd0', to: { path: '/forum', query: { board: 'sleep' } } },
+  { key: 'numb', emoji: '😶', label: '麻木·解离', hint: '做一次接地练习', color: '#8a8f99', to: '/regulate' },
+  { key: 'crisis', emoji: '🆘', label: '想消失', hint: '立刻查看援助热线', color: '#d83a2e', to: '/rescue' },
+]
+
+const QUICK_TOOLS = [
+  { emoji: '🌬️', label: '呼吸', desc: '30 秒平静', to: '/regulate' },
+  { emoji: '📖', label: '记录', desc: '写下此刻心情', to: '/journal' },
+  { emoji: '🧠', label: '测评', desc: '了解自己的状态', to: '/assessment' },
+  { emoji: '🤝', label: '陪伴', desc: '匿名说一说', to: '/companion' },
+  { emoji: '🆘', label: '求助', desc: '24 小时热线', to: '/rescue' },
+]
 
 // 公告（公开，无需登录）
 const announcements = ref([])
@@ -164,10 +229,7 @@ onMounted(async () => {
   }
 })
 
-function goHotline() {
-  ElMessage.success('请查看页面顶部红色紧急援助横幅，或直接拨打 12356')
-  window.scrollTo({ top: 0, behavior: 'smooth' })
-}
+
 </script>
 
 <style scoped>
@@ -289,6 +351,74 @@ function goHotline() {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }
+.mood-section,
+.tools-section {
+  margin-top: 26px;
+}
+.mood-entry-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.mood-entry {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 15px 8px;
+  text-align: center;
+  border: 1px solid transparent;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.mood-entry:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mhop-shadow-hover);
+}
+.mood-entry-emoji {
+  font-size: 26px;
+  line-height: 1;
+}
+.mood-entry strong {
+  font-size: 13.5px;
+}
+.mood-entry small {
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+.tool-row {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.tool-item {
+  flex: 1 0 150px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.tool-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--mhop-shadow-hover);
+}
+.tool-emoji {
+  font-size: 24px;
+  line-height: 1;
+}
+.tool-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+.tool-text strong {
+  font-size: 14px;
+}
+.tool-text small {
+  font-size: 11.5px;
+}
 .feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(215px, 1fr));
@@ -368,7 +498,25 @@ function goHotline() {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+@media (max-width: 980px) {
+  .mood-entry-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 @media (max-width: 760px) {
+  .mood-entry-grid {
+    gap: 8px;
+  }
+  .mood-entry {
+    padding: 12px 4px;
+  }
+  .mood-entry small {
+    display: none;
+  }
+  .mood-section,
+  .tools-section {
+    margin-top: 20px;
+  }
   .hero {
     flex-direction: column-reverse;
     padding: 26px 20px;

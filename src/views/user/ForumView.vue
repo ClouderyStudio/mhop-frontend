@@ -160,7 +160,7 @@
 
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import http from '../../api'
@@ -171,6 +171,7 @@ import { BOARDS, boardOf } from '../../utils/boards'
 import MdComposer from '../../components/MdComposer.vue'
 import { assetUrl } from '../../utils/asset'
 
+const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
 
@@ -351,6 +352,9 @@ async function onImageChange(e) {
 }
 
 onMounted(() => {
+  // 支持从首页情绪入口 / 陪伴页以 ?board=xxx 直达对应板块
+  const q = route.query.board
+  if (typeof q === 'string' && BOARDS.some((b) => b.slug === q)) board.value = q
   fetchSide()
   reload(1)
 })
