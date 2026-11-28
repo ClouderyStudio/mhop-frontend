@@ -793,6 +793,23 @@ html.dark .feature-icon {
   background: #232d39 !important;
 }
 
+/* ---------- 新增模块：陪伴 / 调节 / 记录 / 求助 ---------- */
+/* 这几个页面的浅色渐变 Hero 在深色下会整块发白，统一换成深蓝灰 */
+html.dark .page-hero {
+  background: linear-gradient(120deg, #1b232d 0%, #141b23 100%);
+}
+
+/* 求助页保留红色警示调，但底色压深 */
+html.dark .rescue-hero {
+  background: linear-gradient(120deg, #241a1b 0%, #1c1618 100%);
+  border-left-color: var(--mhop-danger);
+}
+
+/* 情绪入口卡片的标题颜色是内联写死的浅色系，深色下对比度不足 */
+html.dark .mood-entry strong {
+  color: var(--mhop-text) !important;
+}
+
 /* ---------- 漂流瓶海洋页 ---------- */
 html.dark .sea-card {
   background: linear-gradient(180deg, #163247 0%, #102a3e 46%, #0a1f2e 100%);
