@@ -9,6 +9,8 @@
         <el-radio-button value="email">邮箱验证码</el-radio-button>
       </el-radio-group>
 
+      <LegalAgreements v-model="agreed" />
+
       <!-- 密码登录 -->
       <el-form v-if="mode === 'password'" :model="form" :rules="rules" ref="formRef" label-position="top" @submit.prevent>
         <el-form-item label="登录名" prop="username">
@@ -68,10 +70,24 @@ import { ElMessage } from 'element-plus'
 import { Key, Lock, Message, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
 import { sanitizePassword, PASSWORD_REGEX, PASSWORD_HINT } from '../../utils/password'
+import LegalAgreements from '../../components/LegalAgreements.vue'
 
 const router = useRouter()
 const route = useRoute()
 const auth = useAuthStore()
+
+const agreed = ref(false)
+
+function ensureAgreed() {
+  if (agreed.value) return true
+  ElMessage.warning('请先阅读并同意《用户协议》和《隐私政策》')
+  return false
+}
+
+function markNewUser(user) {
+  const id = user?.id ?? user?.username
+  if (id) localStorage.setItem(`mhop_onboarding_pending_${id}`, '1')
+}
 
 const mode = ref('password')
 const identityEnabled = ref(false)
@@ -87,6 +103,7 @@ onMounted(async () => {
 })
 
 async function submitIdentity() {
+  if (!ensureAgreed()) return
   identityLoading.value = true
   try {
     await auth.loginWithIdentity(window.location.origin + '/auth/identity/callback')
@@ -153,6 +170,7 @@ async function sendCode() {
 }
 
 async function submit() {
+  if (!ensureAgreed()) return
   await formRef.value.validate()
   loading.value = true
   try {
@@ -166,11 +184,13 @@ async function submit() {
 }
 
 async function submitEmail() {
+  if (!ensureAgreed()) return
   await mailFormRef.value.validate()
   loading.value = true
   try {
-    const { newAccount } = await auth.loginByEmail(mailForm.email.trim().toLowerCase(), mailForm.code.trim())
+    const { newAccount, user } = await auth.loginByEmail(mailForm.email.trim().toLowerCase(), mailForm.code.trim())
     ElMessage.success(newAccount ? '验证通过，已为你自动注册并登录' : '登录成功')
+    if (newAccount) markNewUser(user)
     router.push(route.query.redirect || '/forum')
   } finally {
     loading.value = false

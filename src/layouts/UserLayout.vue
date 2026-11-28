@@ -54,6 +54,9 @@
                   <el-dropdown-item command="profile">
                     <el-icon><User /></el-icon>个人主页
                   </el-dropdown-item>
+                  <el-dropdown-item command="guide">
+                    <el-icon><Guide /></el-icon>新手引导
+                  </el-dropdown-item>
                   <el-dropdown-item v-if="auth.isAdmin" command="admin">
                     <el-icon><Setting /></el-icon>管理后台
                   </el-dropdown-item>
@@ -106,6 +109,9 @@
           {{ isDark ? '切换到白天模式' : '切换到黑夜模式' }}
         </el-button>
         <template v-if="auth.isLoggedIn">
+          <el-button round @click="openGuide">
+            <el-icon><Guide /></el-icon> 新手引导
+          </el-button>
           <el-button v-if="auth.isAdmin" round @click="go('/admin/dashboard')">
             <el-icon><Setting /></el-icon> 管理后台
           </el-button>
@@ -179,6 +185,9 @@
         <span>我的</span>
       </router-link>
     </nav>
+
+    <!-- 新用户首次注册后的全平台引导 -->
+    <OnboardingTour />
   </div>
 </template>
 
@@ -187,6 +196,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import EmergencyBanner from '../components/EmergencyBanner.vue'
+import OnboardingTour from '../components/OnboardingTour.vue'
 import BrandMark from '../components/BrandMark.vue'
 import { useAuthStore } from '../stores/auth'
 import { useOnlineStore } from '../stores/online'
@@ -244,8 +254,14 @@ function logoutMobile() {
   router.push('/')
 }
 
+function openGuide() {
+  drawer.value = false
+  window.dispatchEvent(new Event('mhop:onboarding'))
+}
+
 function onCommand(cmd) {
   if (cmd === 'profile') router.push('/profile')
+  if (cmd === 'guide') openGuide()
   if (cmd === 'admin') router.push('/admin/dashboard')
   if (cmd === 'logout') {
     ElMessageBox.confirm('确定退出登录吗？', '提示', { type: 'warning' })

@@ -15,6 +15,7 @@
           <el-input v-model="form.confirm" size="large" type="password" show-password placeholder="再次输入密码"
             :prefix-icon="Lock" @input="(v) => form.confirm = sanitizePassword(v)" @keyup.enter="submit" />
         </el-form-item>
+        <LegalAgreements v-model="agreed" />
         <el-button type="primary" size="large" style="width: 100%" :loading="loading" round @click="submit">注 册</el-button>
       </el-form>
       <div class="auth-foot">
@@ -31,11 +32,13 @@ import { ElMessage } from 'element-plus'
 import { Lock, User } from '@element-plus/icons-vue'
 import { useAuthStore } from '../../stores/auth'
 import { sanitizePassword, PASSWORD_REGEX, PASSWORD_HINT } from '../../utils/password'
+import LegalAgreements from '../../components/LegalAgreements.vue'
 
 const router = useRouter()
 const auth = useAuthStore()
 const formRef = ref()
 const loading = ref(false)
+const agreed = ref(false)
 const form = ref({ username: '', password: '', confirm: '' })
 
 const rules = {
@@ -57,10 +60,16 @@ const rules = {
 }
 
 async function submit() {
+  if (!agreed.value) {
+    ElMessage.warning('请先阅读并同意《用户协议》和《隐私政策》')
+    return
+  }
   await formRef.value.validate()
   loading.value = true
   try {
-    await auth.register(form.value.username.trim(), form.value.password)
+    const user = await auth.register(form.value.username.trim(), form.value.password)
+    const id = user?.id ?? user?.username ?? form.value.username.trim()
+    localStorage.setItem(`mhop_onboarding_pending_${id}`, '1')
     ElMessage.success('注册成功，已自动登录')
     router.push('/forum')
   } finally {
